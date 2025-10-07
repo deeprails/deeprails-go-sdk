@@ -41,7 +41,7 @@ func TestUserAgentHeader(t *testing.T) {
 	client.Defend.NewWorkflow(context.Background(), githubcomdeeprailsdeeprailsgosdk.DefendNewWorkflowParams{
 		ImprovementAction: githubcomdeeprailsdeeprailsgosdk.DefendNewWorkflowParamsImprovementActionFixit,
 		Metrics: map[string]float64{
-			"completeness":          0.85,
+			"completeness":          0.8,
 			"instruction_adherence": 0.75,
 		},
 		Name: "Push Alert Workflow",
@@ -73,7 +73,7 @@ func TestRetryAfter(t *testing.T) {
 	_, err := client.Defend.NewWorkflow(context.Background(), githubcomdeeprailsdeeprailsgosdk.DefendNewWorkflowParams{
 		ImprovementAction: githubcomdeeprailsdeeprailsgosdk.DefendNewWorkflowParamsImprovementActionFixit,
 		Metrics: map[string]float64{
-			"completeness":          0.85,
+			"completeness":          0.8,
 			"instruction_adherence": 0.75,
 		},
 		Name: "Push Alert Workflow",
@@ -116,7 +116,7 @@ func TestDeleteRetryCountHeader(t *testing.T) {
 	_, err := client.Defend.NewWorkflow(context.Background(), githubcomdeeprailsdeeprailsgosdk.DefendNewWorkflowParams{
 		ImprovementAction: githubcomdeeprailsdeeprailsgosdk.DefendNewWorkflowParamsImprovementActionFixit,
 		Metrics: map[string]float64{
-			"completeness":          0.85,
+			"completeness":          0.8,
 			"instruction_adherence": 0.75,
 		},
 		Name: "Push Alert Workflow",
@@ -154,7 +154,7 @@ func TestOverwriteRetryCountHeader(t *testing.T) {
 	_, err := client.Defend.NewWorkflow(context.Background(), githubcomdeeprailsdeeprailsgosdk.DefendNewWorkflowParams{
 		ImprovementAction: githubcomdeeprailsdeeprailsgosdk.DefendNewWorkflowParamsImprovementActionFixit,
 		Metrics: map[string]float64{
-			"completeness":          0.85,
+			"completeness":          0.8,
 			"instruction_adherence": 0.75,
 		},
 		Name: "Push Alert Workflow",
@@ -191,7 +191,7 @@ func TestRetryAfterMs(t *testing.T) {
 	_, err := client.Defend.NewWorkflow(context.Background(), githubcomdeeprailsdeeprailsgosdk.DefendNewWorkflowParams{
 		ImprovementAction: githubcomdeeprailsdeeprailsgosdk.DefendNewWorkflowParamsImprovementActionFixit,
 		Metrics: map[string]float64{
-			"completeness":          0.85,
+			"completeness":          0.8,
 			"instruction_adherence": 0.75,
 		},
 		Name: "Push Alert Workflow",
@@ -222,7 +222,7 @@ func TestContextCancel(t *testing.T) {
 	_, err := client.Defend.NewWorkflow(cancelCtx, githubcomdeeprailsdeeprailsgosdk.DefendNewWorkflowParams{
 		ImprovementAction: githubcomdeeprailsdeeprailsgosdk.DefendNewWorkflowParamsImprovementActionFixit,
 		Metrics: map[string]float64{
-			"completeness":          0.85,
+			"completeness":          0.8,
 			"instruction_adherence": 0.75,
 		},
 		Name: "Push Alert Workflow",
@@ -250,7 +250,7 @@ func TestContextCancelDelay(t *testing.T) {
 	_, err := client.Defend.NewWorkflow(cancelCtx, githubcomdeeprailsdeeprailsgosdk.DefendNewWorkflowParams{
 		ImprovementAction: githubcomdeeprailsdeeprailsgosdk.DefendNewWorkflowParamsImprovementActionFixit,
 		Metrics: map[string]float64{
-			"completeness":          0.85,
+			"completeness":          0.8,
 			"instruction_adherence": 0.75,
 		},
 		Name: "Push Alert Workflow",
@@ -284,7 +284,7 @@ func TestContextDeadline(t *testing.T) {
 		_, err := client.Defend.NewWorkflow(deadlineCtx, githubcomdeeprailsdeeprailsgosdk.DefendNewWorkflowParams{
 			ImprovementAction: githubcomdeeprailsdeeprailsgosdk.DefendNewWorkflowParamsImprovementActionFixit,
 			Metrics: map[string]float64{
-				"completeness":          0.85,
+				"completeness":          0.8,
 				"instruction_adherence": 0.75,
 			},
 			Name: "Push Alert Workflow",
