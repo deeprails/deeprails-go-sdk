@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package githubcomdeeprailsdeeprailsgosdk_test
+package deeprails_test
 
 import (
 	"context"
@@ -22,23 +22,23 @@ func TestEvaluateNewWithOptionalParams(t *testing.T) {
 	if !testutil.CheckTestServer(t, baseURL) {
 		return
 	}
-	client := githubcomdeeprailsdeeprailsgosdk.NewClient(
+	client := deeprails.NewClient(
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.Evaluate.New(context.TODO(), githubcomdeeprailsdeeprailsgosdk.EvaluateNewParams{
-		ModelInput: githubcomdeeprailsdeeprailsgosdk.EvaluateNewParamsModelInput{
+	_, err := client.Evaluate.New(context.TODO(), deeprails.EvaluateNewParams{
+		ModelInput: deeprails.EvaluateNewParamsModelInput{
 			UserPrompt: "user_prompt",
-			Context:    githubcomdeeprailsdeeprailsgosdk.String("context"),
+			Context:    deeprails.String("context"),
 		},
 		ModelOutput:      "model_output",
-		RunMode:          githubcomdeeprailsdeeprailsgosdk.EvaluateNewParamsRunModePrecisionPlus,
+		RunMode:          deeprails.EvaluateNewParamsRunModePrecisionPlus,
 		GuardrailMetrics: []string{"correctness"},
-		ModelUsed:        githubcomdeeprailsdeeprailsgosdk.String("model_used"),
-		Nametag:          githubcomdeeprailsdeeprailsgosdk.String("nametag"),
+		ModelUsed:        deeprails.String("model_used"),
+		Nametag:          deeprails.String("nametag"),
 	})
 	if err != nil {
-		var apierr *githubcomdeeprailsdeeprailsgosdk.Error
+		var apierr *deeprails.Error
 		if errors.As(err, &apierr) {
 			t.Log(string(apierr.DumpRequest(true)))
 		}
@@ -55,13 +55,13 @@ func TestEvaluateGet(t *testing.T) {
 	if !testutil.CheckTestServer(t, baseURL) {
 		return
 	}
-	client := githubcomdeeprailsdeeprailsgosdk.NewClient(
+	client := deeprails.NewClient(
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.Evaluate.Get(context.TODO(), "eval_id")
 	if err != nil {
-		var apierr *githubcomdeeprailsdeeprailsgosdk.Error
+		var apierr *deeprails.Error
 		if errors.As(err, &apierr) {
 			t.Log(string(apierr.DumpRequest(true)))
 		}

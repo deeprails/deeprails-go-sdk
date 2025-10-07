@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package githubcomdeeprailsdeeprailsgosdk
+package deeprails
 
 import (
 	"github.com/deeprails/deeprails-go-sdk/internal/apierror"
