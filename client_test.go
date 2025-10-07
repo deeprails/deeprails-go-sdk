@@ -10,9 +10,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/stainless-sdks/deeprails-go"
-	"github.com/stainless-sdks/deeprails-go/internal"
-	"github.com/stainless-sdks/deeprails-go/option"
+	"github.com/deeprails/deeprails-go-sdk"
+	"github.com/deeprails/deeprails-go-sdk/internal"
+	"github.com/deeprails/deeprails-go-sdk/option"
 )
 
 type closureTransport struct {

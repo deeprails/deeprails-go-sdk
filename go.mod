@@ -1,4 +1,4 @@
-module github.com/stainless-sdks/deeprails-go
+module github.com/deeprails/deeprails-go-sdk
 
 go 1.22
 

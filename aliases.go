@@ -3,8 +3,8 @@
 package deeprails
 
 import (
-	"github.com/stainless-sdks/deeprails-go/internal/apierror"
-	"github.com/stainless-sdks/deeprails-go/packages/param"
+	"github.com/deeprails/deeprails-go-sdk/internal/apierror"
+	"github.com/deeprails/deeprails-go-sdk/packages/param"
 )
 
 // aliased to make [param.APIUnion] private when embedding

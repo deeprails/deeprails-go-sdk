@@ -3,7 +3,7 @@ package param
 import (
 	"encoding/json"
 	"fmt"
-	shimjson "github.com/stainless-sdks/deeprails-go/internal/encoding/json"
+	shimjson "github.com/deeprails/deeprails-go-sdk/internal/encoding/json"
 	"time"
 )
 

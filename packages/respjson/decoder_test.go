@@ -3,8 +3,8 @@ package respjson_test
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/stainless-sdks/deeprails-go/internal/apijson"
-	rj "github.com/stainless-sdks/deeprails-go/packages/respjson"
+	"github.com/deeprails/deeprails-go-sdk/internal/apijson"
+	rj "github.com/deeprails/deeprails-go-sdk/packages/respjson"
 	"reflect"
 	"testing"
 )
