@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/stainless-sdks/deeprails-go/packages/param"
+	"github.com/deeprails/deeprails-go-sdk/packages/param"
 )
 
 type Struct struct {

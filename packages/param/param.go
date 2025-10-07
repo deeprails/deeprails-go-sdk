@@ -2,7 +2,7 @@ package param
 
 import (
 	"encoding/json"
-	"github.com/stainless-sdks/deeprails-go/internal/encoding/json/sentinel"
+	"github.com/deeprails/deeprails-go-sdk/internal/encoding/json/sentinel"
 	"reflect"
 )
 

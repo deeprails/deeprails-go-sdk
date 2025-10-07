@@ -1,8 +1,8 @@
 package sentinel_test
 
 import (
-	"github.com/stainless-sdks/deeprails-go/internal/encoding/json/sentinel"
-	"github.com/stainless-sdks/deeprails-go/packages/param"
+	"github.com/deeprails/deeprails-go-sdk/internal/encoding/json/sentinel"
+	"github.com/deeprails/deeprails-go-sdk/packages/param"
 	"reflect"
 	"slices"
 	"testing"

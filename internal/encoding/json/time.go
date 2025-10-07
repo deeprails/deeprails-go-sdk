@@ -2,7 +2,7 @@
 package json
 
 import (
-	"github.com/stainless-sdks/deeprails-go/internal/encoding/json/shims"
+	"github.com/deeprails/deeprails-go-sdk/internal/encoding/json/shims"
 	"reflect"
 	"time"
 )

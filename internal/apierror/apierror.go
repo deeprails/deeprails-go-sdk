@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"net/http/httputil"
 
-	"github.com/stainless-sdks/deeprails-go/internal/apijson"
-	"github.com/stainless-sdks/deeprails-go/packages/respjson"
+	"github.com/deeprails/deeprails-go-sdk/internal/apijson"
+	"github.com/deeprails/deeprails-go-sdk/packages/respjson"
 )
 
 // Error represents an error that originates from the API, i.e. when a request is

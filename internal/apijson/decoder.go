@@ -7,7 +7,7 @@ package apijson
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/stainless-sdks/deeprails-go/packages/param"
+	"github.com/deeprails/deeprails-go-sdk/packages/param"
 	"reflect"
 	"strconv"
 	"sync"

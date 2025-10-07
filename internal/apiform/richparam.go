@@ -1,7 +1,7 @@
 package apiform
 
 import (
-	"github.com/stainless-sdks/deeprails-go/packages/param"
+	"github.com/deeprails/deeprails-go-sdk/packages/param"
 	"mime/multipart"
 	"reflect"
 )

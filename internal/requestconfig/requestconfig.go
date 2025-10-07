@@ -18,10 +18,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/stainless-sdks/deeprails-go/internal"
-	"github.com/stainless-sdks/deeprails-go/internal/apierror"
-	"github.com/stainless-sdks/deeprails-go/internal/apiform"
-	"github.com/stainless-sdks/deeprails-go/internal/apiquery"
+	"github.com/deeprails/deeprails-go-sdk/internal"
+	"github.com/deeprails/deeprails-go-sdk/internal/apierror"
+	"github.com/deeprails/deeprails-go-sdk/internal/apiform"
+	"github.com/deeprails/deeprails-go-sdk/internal/apiquery"
 )
 
 func getDefaultHeaders() map[string]string {

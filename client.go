@@ -8,8 +8,8 @@ import (
 	"os"
 	"slices"
 
-	"github.com/stainless-sdks/deeprails-go/internal/requestconfig"
-	"github.com/stainless-sdks/deeprails-go/option"
+	"github.com/deeprails/deeprails-go-sdk/internal/requestconfig"
+	"github.com/deeprails/deeprails-go-sdk/option"
 )
 
 // Client creates a struct with services and top level methods that help with

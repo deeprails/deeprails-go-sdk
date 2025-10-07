@@ -10,11 +10,11 @@ import (
 	"slices"
 	"time"
 
-	"github.com/stainless-sdks/deeprails-go/internal/apijson"
-	"github.com/stainless-sdks/deeprails-go/internal/requestconfig"
-	"github.com/stainless-sdks/deeprails-go/option"
-	"github.com/stainless-sdks/deeprails-go/packages/param"
-	"github.com/stainless-sdks/deeprails-go/packages/respjson"
+	"github.com/deeprails/deeprails-go-sdk/internal/apijson"
+	"github.com/deeprails/deeprails-go-sdk/internal/requestconfig"
+	"github.com/deeprails/deeprails-go-sdk/option"
+	"github.com/deeprails/deeprails-go-sdk/packages/param"
+	"github.com/deeprails/deeprails-go-sdk/packages/respjson"
 )
 
 // DefendService contains methods and other services that help with interacting

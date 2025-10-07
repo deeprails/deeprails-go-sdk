@@ -3,7 +3,7 @@
 package constant
 
 import (
-	shimjson "github.com/stainless-sdks/deeprails-go/internal/encoding/json"
+	shimjson "github.com/deeprails/deeprails-go-sdk/internal/encoding/json"
 )
 
 type Constant[T any] interface {
