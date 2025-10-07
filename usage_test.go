@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package deeprails_test
+package githubcomdeeprailsdeeprailsgosdk_test
 
 import (
 	"context"
@@ -20,18 +20,18 @@ func TestUsage(t *testing.T) {
 	if !testutil.CheckTestServer(t, baseURL) {
 		return
 	}
-	client := deeprails.NewClient(
+	client := githubcomdeeprailsdeeprailsgosdk.NewClient(
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	defendResponse, err := client.Defend.NewWorkflow(context.TODO(), deeprails.DefendNewWorkflowParams{
-		ImprovementAction: deeprails.DefendNewWorkflowParamsImprovementActionFixit,
+	defendResponse, err := client.Defend.NewWorkflow(context.TODO(), githubcomdeeprailsdeeprailsgosdk.DefendNewWorkflowParams{
+		ImprovementAction: githubcomdeeprailsdeeprailsgosdk.DefendNewWorkflowParamsImprovementActionFixit,
 		Metrics: map[string]float64{
 			"completeness":          0.85,
 			"instruction_adherence": 0.75,
 		},
 		Name: "Push Alert Workflow",
-		Type: deeprails.DefendNewWorkflowParamsTypeCustom,
+		Type: githubcomdeeprailsdeeprailsgosdk.DefendNewWorkflowParamsTypeCustom,
 	})
 	if err != nil {
 		t.Fatalf("err should be nil: %s", err.Error())

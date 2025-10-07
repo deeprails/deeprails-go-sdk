@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package deeprails_test
+package githubcomdeeprailsdeeprailsgosdk_test
 
 import (
 	"context"
@@ -22,23 +22,23 @@ func TestDefendNewWorkflowWithOptionalParams(t *testing.T) {
 	if !testutil.CheckTestServer(t, baseURL) {
 		return
 	}
-	client := deeprails.NewClient(
+	client := githubcomdeeprailsdeeprailsgosdk.NewClient(
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.Defend.NewWorkflow(context.TODO(), deeprails.DefendNewWorkflowParams{
-		ImprovementAction: deeprails.DefendNewWorkflowParamsImprovementActionRegenerate,
+	_, err := client.Defend.NewWorkflow(context.TODO(), githubcomdeeprailsdeeprailsgosdk.DefendNewWorkflowParams{
+		ImprovementAction: githubcomdeeprailsdeeprailsgosdk.DefendNewWorkflowParamsImprovementActionRegenerate,
 		Metrics: map[string]float64{
 			"foo": 0,
 		},
 		Name:               "name",
-		Type:               deeprails.DefendNewWorkflowParamsTypeAutomatic,
-		AutomaticTolerance: deeprails.DefendNewWorkflowParamsAutomaticToleranceLow,
-		Description:        deeprails.String("description"),
-		MaxRetries:         deeprails.Int(0),
+		Type:               githubcomdeeprailsdeeprailsgosdk.DefendNewWorkflowParamsTypeAutomatic,
+		AutomaticTolerance: githubcomdeeprailsdeeprailsgosdk.DefendNewWorkflowParamsAutomaticToleranceLow,
+		Description:        githubcomdeeprailsdeeprailsgosdk.String("description"),
+		MaxRetries:         githubcomdeeprailsdeeprailsgosdk.Int(0),
 	})
 	if err != nil {
-		var apierr *deeprails.Error
+		var apierr *githubcomdeeprailsdeeprailsgosdk.Error
 		if errors.As(err, &apierr) {
 			t.Log(string(apierr.DumpRequest(true)))
 		}
@@ -55,19 +55,19 @@ func TestDefendGetEvent(t *testing.T) {
 	if !testutil.CheckTestServer(t, baseURL) {
 		return
 	}
-	client := deeprails.NewClient(
+	client := githubcomdeeprailsdeeprailsgosdk.NewClient(
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.Defend.GetEvent(
 		context.TODO(),
 		"event_id",
-		deeprails.DefendGetEventParams{
+		githubcomdeeprailsdeeprailsgosdk.DefendGetEventParams{
 			WorkflowID: "workflow_id",
 		},
 	)
 	if err != nil {
-		var apierr *deeprails.Error
+		var apierr *githubcomdeeprailsdeeprailsgosdk.Error
 		if errors.As(err, &apierr) {
 			t.Log(string(apierr.DumpRequest(true)))
 		}
@@ -84,13 +84,13 @@ func TestDefendGetWorkflow(t *testing.T) {
 	if !testutil.CheckTestServer(t, baseURL) {
 		return
 	}
-	client := deeprails.NewClient(
+	client := githubcomdeeprailsdeeprailsgosdk.NewClient(
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.Defend.GetWorkflow(context.TODO(), "workflow_id")
 	if err != nil {
-		var apierr *deeprails.Error
+		var apierr *githubcomdeeprailsdeeprailsgosdk.Error
 		if errors.As(err, &apierr) {
 			t.Log(string(apierr.DumpRequest(true)))
 		}
@@ -107,26 +107,26 @@ func TestDefendSubmitEventWithOptionalParams(t *testing.T) {
 	if !testutil.CheckTestServer(t, baseURL) {
 		return
 	}
-	client := deeprails.NewClient(
+	client := githubcomdeeprailsdeeprailsgosdk.NewClient(
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.Defend.SubmitEvent(
 		context.TODO(),
 		"workflow_id",
-		deeprails.DefendSubmitEventParams{
-			ModelInput: deeprails.DefendSubmitEventParamsModelInput{
+		githubcomdeeprailsdeeprailsgosdk.DefendSubmitEventParams{
+			ModelInput: githubcomdeeprailsdeeprailsgosdk.DefendSubmitEventParamsModelInput{
 				UserPrompt: "user_prompt",
-				Context:    deeprails.String("context"),
+				Context:    githubcomdeeprailsdeeprailsgosdk.String("context"),
 			},
 			ModelOutput: "model_output",
 			ModelUsed:   "model_used",
 			Nametag:     "nametag",
-			RunMode:     deeprails.DefendSubmitEventParamsRunModePrecisionPlus,
+			RunMode:     githubcomdeeprailsdeeprailsgosdk.DefendSubmitEventParamsRunModePrecisionPlus,
 		},
 	)
 	if err != nil {
-		var apierr *deeprails.Error
+		var apierr *githubcomdeeprailsdeeprailsgosdk.Error
 		if errors.As(err, &apierr) {
 			t.Log(string(apierr.DumpRequest(true)))
 		}
@@ -143,21 +143,21 @@ func TestDefendUpdateWorkflowWithOptionalParams(t *testing.T) {
 	if !testutil.CheckTestServer(t, baseURL) {
 		return
 	}
-	client := deeprails.NewClient(
+	client := githubcomdeeprailsdeeprailsgosdk.NewClient(
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.Defend.UpdateWorkflow(
 		context.TODO(),
 		"workflow_id",
-		deeprails.DefendUpdateWorkflowParams{
-			Description: deeprails.String("description"),
-			Name:        deeprails.String("name"),
-			Type:        deeprails.DefendUpdateWorkflowParamsTypeAutomatic,
+		githubcomdeeprailsdeeprailsgosdk.DefendUpdateWorkflowParams{
+			Description: githubcomdeeprailsdeeprailsgosdk.String("description"),
+			Name:        githubcomdeeprailsdeeprailsgosdk.String("name"),
+			Type:        githubcomdeeprailsdeeprailsgosdk.DefendUpdateWorkflowParamsTypeAutomatic,
 		},
 	)
 	if err != nil {
-		var apierr *deeprails.Error
+		var apierr *githubcomdeeprailsdeeprailsgosdk.Error
 		if errors.As(err, &apierr) {
 			t.Log(string(apierr.DumpRequest(true)))
 		}

@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package deeprails_test
+package githubcomdeeprailsdeeprailsgosdk_test
 
 import (
 	"context"
@@ -22,16 +22,16 @@ func TestMonitorNewWithOptionalParams(t *testing.T) {
 	if !testutil.CheckTestServer(t, baseURL) {
 		return
 	}
-	client := deeprails.NewClient(
+	client := githubcomdeeprailsdeeprailsgosdk.NewClient(
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.Monitor.New(context.TODO(), deeprails.MonitorNewParams{
+	_, err := client.Monitor.New(context.TODO(), githubcomdeeprailsdeeprailsgosdk.MonitorNewParams{
 		Name:        "name",
-		Description: deeprails.String("description"),
+		Description: githubcomdeeprailsdeeprailsgosdk.String("description"),
 	})
 	if err != nil {
-		var apierr *deeprails.Error
+		var apierr *githubcomdeeprailsdeeprailsgosdk.Error
 		if errors.As(err, &apierr) {
 			t.Log(string(apierr.DumpRequest(true)))
 		}
@@ -48,19 +48,19 @@ func TestMonitorGetWithOptionalParams(t *testing.T) {
 	if !testutil.CheckTestServer(t, baseURL) {
 		return
 	}
-	client := deeprails.NewClient(
+	client := githubcomdeeprailsdeeprailsgosdk.NewClient(
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.Monitor.Get(
 		context.TODO(),
 		"monitor_id",
-		deeprails.MonitorGetParams{
-			Limit: deeprails.Int(0),
+		githubcomdeeprailsdeeprailsgosdk.MonitorGetParams{
+			Limit: githubcomdeeprailsdeeprailsgosdk.Int(0),
 		},
 	)
 	if err != nil {
-		var apierr *deeprails.Error
+		var apierr *githubcomdeeprailsdeeprailsgosdk.Error
 		if errors.As(err, &apierr) {
 			t.Log(string(apierr.DumpRequest(true)))
 		}
@@ -77,21 +77,21 @@ func TestMonitorUpdateWithOptionalParams(t *testing.T) {
 	if !testutil.CheckTestServer(t, baseURL) {
 		return
 	}
-	client := deeprails.NewClient(
+	client := githubcomdeeprailsdeeprailsgosdk.NewClient(
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.Monitor.Update(
 		context.TODO(),
 		"monitor_id",
-		deeprails.MonitorUpdateParams{
-			Description:   deeprails.String("description"),
-			MonitorStatus: deeprails.MonitorUpdateParamsMonitorStatusActive,
-			Name:          deeprails.String("name"),
+		githubcomdeeprailsdeeprailsgosdk.MonitorUpdateParams{
+			Description:   githubcomdeeprailsdeeprailsgosdk.String("description"),
+			MonitorStatus: githubcomdeeprailsdeeprailsgosdk.MonitorUpdateParamsMonitorStatusActive,
+			Name:          githubcomdeeprailsdeeprailsgosdk.String("name"),
 		},
 	)
 	if err != nil {
-		var apierr *deeprails.Error
+		var apierr *githubcomdeeprailsdeeprailsgosdk.Error
 		if errors.As(err, &apierr) {
 			t.Log(string(apierr.DumpRequest(true)))
 		}
@@ -108,27 +108,27 @@ func TestMonitorSubmitEventWithOptionalParams(t *testing.T) {
 	if !testutil.CheckTestServer(t, baseURL) {
 		return
 	}
-	client := deeprails.NewClient(
+	client := githubcomdeeprailsdeeprailsgosdk.NewClient(
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.Monitor.SubmitEvent(
 		context.TODO(),
 		"monitor_id",
-		deeprails.MonitorSubmitEventParams{
+		githubcomdeeprailsdeeprailsgosdk.MonitorSubmitEventParams{
 			GuardrailMetrics: []string{"correctness"},
-			ModelInput: deeprails.MonitorSubmitEventParamsModelInput{
+			ModelInput: githubcomdeeprailsdeeprailsgosdk.MonitorSubmitEventParamsModelInput{
 				UserPrompt: "user_prompt",
-				Context:    deeprails.String("context"),
+				Context:    githubcomdeeprailsdeeprailsgosdk.String("context"),
 			},
 			ModelOutput: "model_output",
-			ModelUsed:   deeprails.String("model_used"),
-			Nametag:     deeprails.String("nametag"),
-			RunMode:     deeprails.MonitorSubmitEventParamsRunModePrecisionPlus,
+			ModelUsed:   githubcomdeeprailsdeeprailsgosdk.String("model_used"),
+			Nametag:     githubcomdeeprailsdeeprailsgosdk.String("nametag"),
+			RunMode:     githubcomdeeprailsdeeprailsgosdk.MonitorSubmitEventParamsRunModePrecisionPlus,
 		},
 	)
 	if err != nil {
-		var apierr *deeprails.Error
+		var apierr *githubcomdeeprailsdeeprailsgosdk.Error
 		if errors.As(err, &apierr) {
 			t.Log(string(apierr.DumpRequest(true)))
 		}
