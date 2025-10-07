@@ -8,9 +8,9 @@ import (
 	"os"
 	"testing"
 
-	"github.com/stainless-sdks/deeprails-go"
-	"github.com/stainless-sdks/deeprails-go/internal/testutil"
-	"github.com/stainless-sdks/deeprails-go/option"
+	"github.com/deeprails/deeprails-go-sdk"
+	"github.com/deeprails/deeprails-go-sdk/internal/testutil"
+	"github.com/deeprails/deeprails-go-sdk/option"
 )
 
 func TestEvaluateNewWithOptionalParams(t *testing.T) {

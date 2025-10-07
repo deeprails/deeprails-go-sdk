@@ -2,8 +2,8 @@ package apijson_test
 
 import (
 	"encoding/json"
-	"github.com/stainless-sdks/deeprails-go/internal/apijson"
-	"github.com/stainless-sdks/deeprails-go/packages/respjson"
+	"github.com/deeprails/deeprails-go-sdk/internal/apijson"
+	"github.com/deeprails/deeprails-go-sdk/packages/respjson"
 	"testing"
 )
 

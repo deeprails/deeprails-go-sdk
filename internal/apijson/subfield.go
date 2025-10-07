@@ -1,7 +1,7 @@
 package apijson
 
 import (
-	"github.com/stainless-sdks/deeprails-go/packages/respjson"
+	"github.com/deeprails/deeprails-go-sdk/packages/respjson"
 	"reflect"
 )
 
