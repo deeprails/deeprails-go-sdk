@@ -57,7 +57,7 @@ func main() {
 	defendResponse, err := client.Defend.NewWorkflow(context.TODO(), githubcomdeeprailsdeeprailsgosdk.DefendNewWorkflowParams{
 		ImprovementAction: githubcomdeeprailsdeeprailsgosdk.DefendNewWorkflowParamsImprovementActionFixit,
 		Metrics: map[string]float64{
-			"completeness":          0.85,
+			"completeness":          0.8,
 			"instruction_adherence": 0.75,
 		},
 		Name: "Push Alert Workflow",
