@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package deeprails_test
+package githubcomdeeprailsdeeprailsgosdk_test
 
 import (
 	"context"
@@ -22,23 +22,23 @@ func TestEvaluateNewWithOptionalParams(t *testing.T) {
 	if !testutil.CheckTestServer(t, baseURL) {
 		return
 	}
-	client := deeprails.NewClient(
+	client := githubcomdeeprailsdeeprailsgosdk.NewClient(
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.Evaluate.New(context.TODO(), deeprails.EvaluateNewParams{
-		ModelInput: deeprails.EvaluateNewParamsModelInput{
+	_, err := client.Evaluate.New(context.TODO(), githubcomdeeprailsdeeprailsgosdk.EvaluateNewParams{
+		ModelInput: githubcomdeeprailsdeeprailsgosdk.EvaluateNewParamsModelInput{
 			UserPrompt: "user_prompt",
-			Context:    deeprails.String("context"),
+			Context:    githubcomdeeprailsdeeprailsgosdk.String("context"),
 		},
 		ModelOutput:      "model_output",
-		RunMode:          deeprails.EvaluateNewParamsRunModePrecisionPlus,
+		RunMode:          githubcomdeeprailsdeeprailsgosdk.EvaluateNewParamsRunModePrecisionPlus,
 		GuardrailMetrics: []string{"correctness"},
-		ModelUsed:        deeprails.String("model_used"),
-		Nametag:          deeprails.String("nametag"),
+		ModelUsed:        githubcomdeeprailsdeeprailsgosdk.String("model_used"),
+		Nametag:          githubcomdeeprailsdeeprailsgosdk.String("nametag"),
 	})
 	if err != nil {
-		var apierr *deeprails.Error
+		var apierr *githubcomdeeprailsdeeprailsgosdk.Error
 		if errors.As(err, &apierr) {
 			t.Log(string(apierr.DumpRequest(true)))
 		}
@@ -55,13 +55,13 @@ func TestEvaluateGet(t *testing.T) {
 	if !testutil.CheckTestServer(t, baseURL) {
 		return
 	}
-	client := deeprails.NewClient(
+	client := githubcomdeeprailsdeeprailsgosdk.NewClient(
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.Evaluate.Get(context.TODO(), "eval_id")
 	if err != nil {
-		var apierr *deeprails.Error
+		var apierr *githubcomdeeprailsdeeprailsgosdk.Error
 		if errors.As(err, &apierr) {
 			t.Log(string(apierr.DumpRequest(true)))
 		}

@@ -1,4 +1,4 @@
-package deeprails
+package githubcomdeeprailsdeeprailsgosdk
 
 import (
 	"github.com/deeprails/deeprails-go-sdk/packages/param"
