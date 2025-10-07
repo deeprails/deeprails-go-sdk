@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.1.0 (2025-10-07)
+
+Full Changelog: [v0.0.2...v0.1.0](https://github.com/deeprails/deeprails-go-sdk/compare/v0.0.2...v0.1.0)
+
+### Features
+
+* **api:** manual updates ([c2b7cd9](https://github.com/deeprails/deeprails-go-sdk/commit/c2b7cd9b8aa4e7306bbc3a40048607296b9d68b9))
+* **api:** manual updates ([f13b5dd](https://github.com/deeprails/deeprails-go-sdk/commit/f13b5dd08646c224a283c903db162f2a93f17759))
+* **api:** manual updates ([ac6307b](https://github.com/deeprails/deeprails-go-sdk/commit/ac6307bd5020e4201261c8ef6dfbc1f76d277615))
+
+
+### Chores
+
+* update SDK settings ([aef56ed](https://github.com/deeprails/deeprails-go-sdk/commit/aef56edef214772902a0c1f92ce2087e64e989a6))
+
 ## 0.0.2 (2025-10-07)
 
 Full Changelog: [v0.0.1...v0.0.2](https://github.com/deeprails/deeprails-go-sdk/compare/v0.0.1...v0.0.2)
