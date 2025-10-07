@@ -1,0 +1,40 @@
+// File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
+
+package deeprails_test
+
+import (
+	"context"
+	"os"
+	"testing"
+
+	"github.com/stainless-sdks/deeprails-go"
+	"github.com/stainless-sdks/deeprails-go/internal/testutil"
+	"github.com/stainless-sdks/deeprails-go/option"
+)
+
+func TestUsage(t *testing.T) {
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := deeprails.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithAPIKey("My API Key"),
+	)
+	defendResponse, err := client.Defend.NewWorkflow(context.TODO(), deeprails.DefendNewWorkflowParams{
+		ImprovementAction: deeprails.DefendNewWorkflowParamsImprovementActionFixit,
+		Metrics: map[string]float64{
+			"completeness":          0.85,
+			"instruction_adherence": 0.75,
+		},
+		Name: "Push Alert Workflow",
+		Type: deeprails.DefendNewWorkflowParamsTypeCustom,
+	})
+	if err != nil {
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+	t.Logf("%+v\n", defendResponse.WorkflowID)
+}
