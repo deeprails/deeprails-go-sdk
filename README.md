@@ -17,7 +17,7 @@ It is generated with [Stainless](https://www.stainless.com/).
 
 ```go
 import (
-	"github.com/deeprails/deeprails-go-sdk" // imported as githubcomdeeprailsdeeprailsgosdk
+	"github.com/deeprails/deeprails-go-sdk" // imported as deeprails
 )
 ```
 
@@ -53,17 +53,17 @@ import (
 )
 
 func main() {
-	client := githubcomdeeprailsdeeprailsgosdk.NewClient(
+	client := deeprails.NewClient(
 		option.WithAPIKey("My API Key"), // defaults to os.LookupEnv("DEEPRAILS_API_KEY")
 	)
-	defendResponse, err := client.Defend.NewWorkflow(context.TODO(), githubcomdeeprailsdeeprailsgosdk.DefendNewWorkflowParams{
-		ImprovementAction: githubcomdeeprailsdeeprailsgosdk.DefendNewWorkflowParamsImprovementActionFixit,
+	defendResponse, err := client.Defend.NewWorkflow(context.TODO(), deeprails.DefendNewWorkflowParams{
+		ImprovementAction: deeprails.DefendNewWorkflowParamsImprovementActionFixit,
 		Metrics: map[string]float64{
 			"completeness":          0.8,
 			"instruction_adherence": 0.75,
 		},
 		Name: "Push Alert Workflow",
-		Type: githubcomdeeprailsdeeprailsgosdk.DefendNewWorkflowParamsTypeCustom,
+		Type: deeprails.DefendNewWorkflowParamsTypeCustom,
 	})
 	if err != nil {
 		panic(err.Error())
@@ -75,13 +75,13 @@ func main() {
 
 ### Request fields
 
-The githubcomdeeprailsdeeprailsgosdk library uses the [`omitzero`](https://tip.golang.org/doc/go1.24#encodingjsonpkgencodingjson)
+The deeprails library uses the [`omitzero`](https://tip.golang.org/doc/go1.24#encodingjsonpkgencodingjson)
 semantics from the Go 1.24+ `encoding/json` release for request fields.
 
 Required primitive fields (`int64`, `string`, etc.) feature the tag <code>\`json:"...,required"\`</code>. These
 fields are always serialized, even their zero values.
 
-Optional primitive types are wrapped in a `param.Opt[T]`. These fields can be set with the provided constructors, `githubcomdeeprailsdeeprailsgosdk.String(string)`, `githubcomdeeprailsdeeprailsgosdk.Int(int64)`, etc.
+Optional primitive types are wrapped in a `param.Opt[T]`. These fields can be set with the provided constructors, `deeprails.String(string)`, `deeprails.Int(int64)`, etc.
 
 Any `param.Opt[T]`, map, slice, struct or string enum uses the
 tag <code>\`json:"...,omitzero"\`</code>. Its zero value is considered omitted.
@@ -89,17 +89,17 @@ tag <code>\`json:"...,omitzero"\`</code>. Its zero value is considered omitted.
 The `param.IsOmitted(any)` function can confirm the presence of any `omitzero` field.
 
 ```go
-p := githubcomdeeprailsdeeprailsgosdk.ExampleParams{
-	ID:   "id_xxx",                                       // required property
-	Name: githubcomdeeprailsdeeprailsgosdk.String("..."), // optional property
+p := deeprails.ExampleParams{
+	ID:   "id_xxx",                // required property
+	Name: deeprails.String("..."), // optional property
 
-	Point: githubcomdeeprailsdeeprailsgosdk.Point{
-		X: 0,                                       // required field will serialize as 0
-		Y: githubcomdeeprailsdeeprailsgosdk.Int(1), // optional field will serialize as 1
+	Point: deeprails.Point{
+		X: 0,                // required field will serialize as 0
+		Y: deeprails.Int(1), // optional field will serialize as 1
 		// ... omitted non-required fields will not be serialized
 	},
 
-	Origin: githubcomdeeprailsdeeprailsgosdk.Origin{}, // the zero value of [Origin] is considered omitted
+	Origin: deeprails.Origin{}, // the zero value of [Origin] is considered omitted
 }
 ```
 
@@ -128,7 +128,7 @@ p.SetExtraFields(map[string]any{
 })
 
 // Send a number instead of an object
-custom := param.Override[githubcomdeeprailsdeeprailsgosdk.FooParams](12)
+custom := param.Override[deeprails.FooParams](12)
 ```
 
 ### Request unions
@@ -269,7 +269,7 @@ This library uses the functional options pattern. Functions defined in the
 requests. For example:
 
 ```go
-client := githubcomdeeprailsdeeprailsgosdk.NewClient(
+client := deeprails.NewClient(
 	// Adds a header to every request made by the client
 	option.WithHeader("X-Some-Header", "custom_header_info"),
 )
@@ -298,24 +298,24 @@ with additional helper methods like `.GetNextPage()`, e.g.:
 ### Errors
 
 When the API returns a non-success status code, we return an error with type
-`*githubcomdeeprailsdeeprailsgosdk.Error`. This contains the `StatusCode`, `*http.Request`, and
+`*deeprails.Error`. This contains the `StatusCode`, `*http.Request`, and
 `*http.Response` values of the request, as well as the JSON of the error body
 (much like other response objects in the SDK).
 
 To handle errors, we recommend that you use the `errors.As` pattern:
 
 ```go
-_, err := client.Defend.NewWorkflow(context.TODO(), githubcomdeeprailsdeeprailsgosdk.DefendNewWorkflowParams{
-	ImprovementAction: githubcomdeeprailsdeeprailsgosdk.DefendNewWorkflowParamsImprovementActionFixit,
+_, err := client.Defend.NewWorkflow(context.TODO(), deeprails.DefendNewWorkflowParams{
+	ImprovementAction: deeprails.DefendNewWorkflowParamsImprovementActionFixit,
 	Metrics: map[string]float64{
 		"completeness":          0.8,
 		"instruction_adherence": 0.75,
 	},
 	Name: "Push Alert Workflow",
-	Type: githubcomdeeprailsdeeprailsgosdk.DefendNewWorkflowParamsTypeCustom,
+	Type: deeprails.DefendNewWorkflowParamsTypeCustom,
 })
 if err != nil {
-	var apierr *githubcomdeeprailsdeeprailsgosdk.Error
+	var apierr *deeprails.Error
 	if errors.As(err, &apierr) {
 		println(string(apierr.DumpRequest(true)))  // Prints the serialized HTTP request
 		println(string(apierr.DumpResponse(true))) // Prints the serialized HTTP response
@@ -340,14 +340,14 @@ ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
 defer cancel()
 client.Defend.NewWorkflow(
 	ctx,
-	githubcomdeeprailsdeeprailsgosdk.DefendNewWorkflowParams{
-		ImprovementAction: githubcomdeeprailsdeeprailsgosdk.DefendNewWorkflowParamsImprovementActionFixit,
+	deeprails.DefendNewWorkflowParams{
+		ImprovementAction: deeprails.DefendNewWorkflowParamsImprovementActionFixit,
 		Metrics: map[string]float64{
 			"completeness":          0.8,
 			"instruction_adherence": 0.75,
 		},
 		Name: "Push Alert Workflow",
-		Type: githubcomdeeprailsdeeprailsgosdk.DefendNewWorkflowParamsTypeCustom,
+		Type: deeprails.DefendNewWorkflowParamsTypeCustom,
 	},
 	// This sets the per-retry timeout
 	option.WithRequestTimeout(20*time.Second),
@@ -364,7 +364,7 @@ The file name and content-type can be customized by implementing `Name() string`
 string` on the run-time type of `io.Reader`. Note that `os.File` implements `Name() string`, so a
 file returned by `os.Open` will be sent with the file name on disk.
 
-We also provide a helper `githubcomdeeprailsdeeprailsgosdk.File(reader io.Reader, filename string, contentType string)`
+We also provide a helper `deeprails.File(reader io.Reader, filename string, contentType string)`
 which can be used to wrap any `io.Reader` with the appropriate file name and content type.
 
 ### Retries
@@ -377,21 +377,21 @@ You can use the `WithMaxRetries` option to configure or disable this:
 
 ```go
 // Configure the default for all requests:
-client := githubcomdeeprailsdeeprailsgosdk.NewClient(
+client := deeprails.NewClient(
 	option.WithMaxRetries(0), // default is 2
 )
 
 // Override per-request:
 client.Defend.NewWorkflow(
 	context.TODO(),
-	githubcomdeeprailsdeeprailsgosdk.DefendNewWorkflowParams{
-		ImprovementAction: githubcomdeeprailsdeeprailsgosdk.DefendNewWorkflowParamsImprovementActionFixit,
+	deeprails.DefendNewWorkflowParams{
+		ImprovementAction: deeprails.DefendNewWorkflowParamsImprovementActionFixit,
 		Metrics: map[string]float64{
 			"completeness":          0.8,
 			"instruction_adherence": 0.75,
 		},
 		Name: "Push Alert Workflow",
-		Type: githubcomdeeprailsdeeprailsgosdk.DefendNewWorkflowParamsTypeCustom,
+		Type: deeprails.DefendNewWorkflowParamsTypeCustom,
 	},
 	option.WithMaxRetries(5),
 )
@@ -407,14 +407,14 @@ you need to examine response headers, status codes, or other details.
 var response *http.Response
 defendResponse, err := client.Defend.NewWorkflow(
 	context.TODO(),
-	githubcomdeeprailsdeeprailsgosdk.DefendNewWorkflowParams{
-		ImprovementAction: githubcomdeeprailsdeeprailsgosdk.DefendNewWorkflowParamsImprovementActionFixit,
+	deeprails.DefendNewWorkflowParams{
+		ImprovementAction: deeprails.DefendNewWorkflowParamsImprovementActionFixit,
 		Metrics: map[string]float64{
 			"completeness":          0.8,
 			"instruction_adherence": 0.75,
 		},
 		Name: "Push Alert Workflow",
-		Type: githubcomdeeprailsdeeprailsgosdk.DefendNewWorkflowParamsTypeCustom,
+		Type: deeprails.DefendNewWorkflowParamsTypeCustom,
 	},
 	option.WithResponseInto(&response),
 )
@@ -462,7 +462,7 @@ or the `option.WithJSONSet()` methods.
 params := FooNewParams{
     ID:   "id_xxxx",
     Data: FooNewParamsData{
-        FirstName: githubcomdeeprailsdeeprailsgosdk.String("John"),
+        FirstName: deeprails.String("John"),
     },
 }
 client.Foo.New(context.Background(), params, option.WithJSONSet("data.last_name", "Doe"))
@@ -497,7 +497,7 @@ func Logger(req *http.Request, next option.MiddlewareNext) (res *http.Response, 
     return res, err
 }
 
-client := githubcomdeeprailsdeeprailsgosdk.NewClient(
+client := deeprails.NewClient(
 	option.WithMiddleware(Logger),
 )
 ```
