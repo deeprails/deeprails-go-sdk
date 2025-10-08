@@ -11,10 +11,9 @@ import (
 	"time"
 
 	"github.com/deeprails/deeprails-go-sdk/internal/apijson"
+	"github.com/deeprails/deeprails-go-sdk/internal/param"
 	"github.com/deeprails/deeprails-go-sdk/internal/requestconfig"
 	"github.com/deeprails/deeprails-go-sdk/option"
-	"github.com/deeprails/deeprails-go-sdk/packages/param"
-	"github.com/deeprails/deeprails-go-sdk/packages/respjson"
 )
 
 // EvaluateService contains methods and other services that help with interacting
@@ -30,8 +29,8 @@ type EvaluateService struct {
 // NewEvaluateService generates a new service that applies the given options to
 // each request. These options are applied after the parent client's options (if
 // there is one), and before any request-specific options.
-func NewEvaluateService(opts ...option.RequestOption) (r EvaluateService) {
-	r = EvaluateService{}
+func NewEvaluateService(opts ...option.RequestOption) (r *EvaluateService) {
+	r = &EvaluateService{}
 	r.Options = opts
 	return
 }
@@ -45,7 +44,7 @@ func (r *EvaluateService) New(ctx context.Context, body EvaluateNewParams, opts 
 	return
 }
 
-// Retrieve the evaluation record for a given evaluation ID.
+// Use this endpoint to retrieve the evaluation record for a given evaluation ID
 func (r *EvaluateService) Get(ctx context.Context, evalID string, opts ...option.RequestOption) (res *Evaluation, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if evalID == "" {
@@ -61,8 +60,6 @@ type Evaluation struct {
 	// A unique evaluation ID.
 	EvalID string `json:"eval_id,required"`
 	// Status of the evaluation.
-	//
-	// Any of "in_progress", "completed", "canceled", "queued", "failed".
 	EvaluationStatus EvaluationEvaluationStatus `json:"evaluation_status,required"`
 	// A dictionary of inputs sent to the LLM to generate output. The dictionary must
 	// contain a `user_prompt` field and an optional `context` field. Additional
@@ -72,8 +69,6 @@ type Evaluation struct {
 	ModelOutput string `json:"model_output,required"`
 	// Run mode for the evaluation. The run mode allows the user to optimize for speed,
 	// accuracy, and cost by determining which models are used to evaluate the event.
-	//
-	// Any of "precision_plus", "precision", "smart", "economy".
 	RunMode EvaluationRunMode `json:"run_mode,required"`
 	// The time the evaluation was created in UTC.
 	CreatedAt time.Time `json:"created_at" format:"date-time"`
@@ -85,15 +80,12 @@ type Evaluation struct {
 	ErrorTimestamp time.Time `json:"error_timestamp" format:"date-time"`
 	// Evaluation result consisting of average scores and rationales for each of the
 	// evaluated guardrail metrics.
-	EvaluationResult map[string]any `json:"evaluation_result"`
+	EvaluationResult map[string]interface{} `json:"evaluation_result"`
 	// Total cost of the evaluation.
 	EvaluationTotalCost float64 `json:"evaluation_total_cost"`
 	// An array of guardrail metrics that the model input and output pair will be
 	// evaluated on.
-	//
-	// Any of "correctness", "completeness", "instruction_adherence",
-	// "context_adherence", "ground_truth_adherence", "comprehensive_safety".
-	GuardrailMetrics []string `json:"guardrail_metrics"`
+	GuardrailMetrics []EvaluationGuardrailMetric `json:"guardrail_metrics"`
 	// Model ID used to generate the output, like `gpt-4o` or `o3`.
 	ModelUsed string `json:"model_used"`
 	// The most recent time the evaluation was modified in UTC.
@@ -104,35 +96,39 @@ type Evaluation struct {
 	// completed `evaluation_status`.
 	Progress int64 `json:"progress"`
 	// The time the evaluation started in UTC.
-	StartTimestamp time.Time `json:"start_timestamp" format:"date-time"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		EvalID              respjson.Field
-		EvaluationStatus    respjson.Field
-		ModelInput          respjson.Field
-		ModelOutput         respjson.Field
-		RunMode             respjson.Field
-		CreatedAt           respjson.Field
-		EndTimestamp        respjson.Field
-		ErrorMessage        respjson.Field
-		ErrorTimestamp      respjson.Field
-		EvaluationResult    respjson.Field
-		EvaluationTotalCost respjson.Field
-		GuardrailMetrics    respjson.Field
-		ModelUsed           respjson.Field
-		ModifiedAt          respjson.Field
-		Nametag             respjson.Field
-		Progress            respjson.Field
-		StartTimestamp      respjson.Field
-		ExtraFields         map[string]respjson.Field
-		raw                 string
-	} `json:"-"`
+	StartTimestamp time.Time      `json:"start_timestamp" format:"date-time"`
+	JSON           evaluationJSON `json:"-"`
 }
 
-// Returns the unmodified JSON received from the API
-func (r Evaluation) RawJSON() string { return r.JSON.raw }
-func (r *Evaluation) UnmarshalJSON(data []byte) error {
+// evaluationJSON contains the JSON metadata for the struct [Evaluation]
+type evaluationJSON struct {
+	EvalID              apijson.Field
+	EvaluationStatus    apijson.Field
+	ModelInput          apijson.Field
+	ModelOutput         apijson.Field
+	RunMode             apijson.Field
+	CreatedAt           apijson.Field
+	EndTimestamp        apijson.Field
+	ErrorMessage        apijson.Field
+	ErrorTimestamp      apijson.Field
+	EvaluationResult    apijson.Field
+	EvaluationTotalCost apijson.Field
+	GuardrailMetrics    apijson.Field
+	ModelUsed           apijson.Field
+	ModifiedAt          apijson.Field
+	Nametag             apijson.Field
+	Progress            apijson.Field
+	StartTimestamp      apijson.Field
+	raw                 string
+	ExtraFields         map[string]apijson.Field
+}
+
+func (r *Evaluation) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r evaluationJSON) RawJSON() string {
+	return r.raw
 }
 
 // Status of the evaluation.
@@ -146,6 +142,14 @@ const (
 	EvaluationEvaluationStatusFailed     EvaluationEvaluationStatus = "failed"
 )
 
+func (r EvaluationEvaluationStatus) IsKnown() bool {
+	switch r {
+	case EvaluationEvaluationStatusInProgress, EvaluationEvaluationStatusCompleted, EvaluationEvaluationStatusCanceled, EvaluationEvaluationStatusQueued, EvaluationEvaluationStatusFailed:
+		return true
+	}
+	return false
+}
+
 // A dictionary of inputs sent to the LLM to generate output. The dictionary must
 // contain a `user_prompt` field and an optional `context` field. Additional
 // properties are allowed.
@@ -153,21 +157,26 @@ type EvaluationModelInput struct {
 	// The user prompt used to generate the output.
 	UserPrompt string `json:"user_prompt,required"`
 	// Optional context supplied to the LLM when generating the output.
-	Context     string         `json:"context"`
-	ExtraFields map[string]any `json:",extras"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		UserPrompt  respjson.Field
-		Context     respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
+	Context     string                   `json:"context"`
+	ExtraFields map[string]interface{}   `json:"-,extras"`
+	JSON        evaluationModelInputJSON `json:"-"`
 }
 
-// Returns the unmodified JSON received from the API
-func (r EvaluationModelInput) RawJSON() string { return r.JSON.raw }
-func (r *EvaluationModelInput) UnmarshalJSON(data []byte) error {
+// evaluationModelInputJSON contains the JSON metadata for the struct
+// [EvaluationModelInput]
+type evaluationModelInputJSON struct {
+	UserPrompt  apijson.Field
+	Context     apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *EvaluationModelInput) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r evaluationModelInputJSON) RawJSON() string {
+	return r.raw
 }
 
 // Run mode for the evaluation. The run mode allows the user to optimize for speed,
@@ -181,60 +190,70 @@ const (
 	EvaluationRunModeEconomy       EvaluationRunMode = "economy"
 )
 
+func (r EvaluationRunMode) IsKnown() bool {
+	switch r {
+	case EvaluationRunModePrecisionPlus, EvaluationRunModePrecision, EvaluationRunModeSmart, EvaluationRunModeEconomy:
+		return true
+	}
+	return false
+}
+
+type EvaluationGuardrailMetric string
+
+const (
+	EvaluationGuardrailMetricCorrectness          EvaluationGuardrailMetric = "correctness"
+	EvaluationGuardrailMetricCompleteness         EvaluationGuardrailMetric = "completeness"
+	EvaluationGuardrailMetricInstructionAdherence EvaluationGuardrailMetric = "instruction_adherence"
+	EvaluationGuardrailMetricContextAdherence     EvaluationGuardrailMetric = "context_adherence"
+	EvaluationGuardrailMetricGroundTruthAdherence EvaluationGuardrailMetric = "ground_truth_adherence"
+	EvaluationGuardrailMetricComprehensiveSafety  EvaluationGuardrailMetric = "comprehensive_safety"
+)
+
+func (r EvaluationGuardrailMetric) IsKnown() bool {
+	switch r {
+	case EvaluationGuardrailMetricCorrectness, EvaluationGuardrailMetricCompleteness, EvaluationGuardrailMetricInstructionAdherence, EvaluationGuardrailMetricContextAdherence, EvaluationGuardrailMetricGroundTruthAdherence, EvaluationGuardrailMetricComprehensiveSafety:
+		return true
+	}
+	return false
+}
+
 type EvaluateNewParams struct {
 	// A dictionary of inputs sent to the LLM to generate output. This must contain a
 	// `user_prompt` field and an optional `context` field. Additional properties are
 	// allowed.
-	ModelInput EvaluateNewParamsModelInput `json:"model_input,omitzero,required"`
+	ModelInput param.Field[EvaluateNewParamsModelInput] `json:"model_input,required"`
 	// Output generated by the LLM to be evaluated.
-	ModelOutput string `json:"model_output,required"`
+	ModelOutput param.Field[string] `json:"model_output,required"`
 	// Run mode for the evaluation. The run mode allows the user to optimize for speed,
 	// accuracy, and cost by determining which models are used to evaluate the event.
 	// Available run modes include `precision_plus`, `precision`, `smart`, and
 	// `economy`. Defaults to `smart`.
-	//
-	// Any of "precision_plus", "precision", "smart", "economy".
-	RunMode EvaluateNewParamsRunMode `json:"run_mode,omitzero,required"`
-	// Model ID used to generate the output, like `gpt-4o` or `o3`.
-	ModelUsed param.Opt[string] `json:"model_used,omitzero"`
-	// An optional, user-defined tag for the evaluation.
-	Nametag param.Opt[string] `json:"nametag,omitzero"`
+	RunMode param.Field[EvaluateNewParamsRunMode] `json:"run_mode,required"`
 	// An array of guardrail metrics that the model input and output pair will be
 	// evaluated on. For non-enterprise users, these will be limited to the allowed
 	// guardrail metrics.
-	//
-	// Any of "correctness", "completeness", "instruction_adherence",
-	// "context_adherence", "ground_truth_adherence", "comprehensive_safety".
-	GuardrailMetrics []string `json:"guardrail_metrics,omitzero"`
-	paramObj
+	GuardrailMetrics param.Field[[]EvaluateNewParamsGuardrailMetric] `json:"guardrail_metrics"`
+	// Model ID used to generate the output, like `gpt-4o` or `o3`.
+	ModelUsed param.Field[string] `json:"model_used"`
+	// An optional, user-defined tag for the evaluation.
+	Nametag param.Field[string] `json:"nametag"`
 }
 
 func (r EvaluateNewParams) MarshalJSON() (data []byte, err error) {
-	type shadow EvaluateNewParams
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *EvaluateNewParams) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
+	return apijson.MarshalRoot(r)
 }
 
 // A dictionary of inputs sent to the LLM to generate output. This must contain a
 // `user_prompt` field and an optional `context` field. Additional properties are
 // allowed.
-//
-// The property UserPrompt is required.
 type EvaluateNewParamsModelInput struct {
-	UserPrompt  string            `json:"user_prompt,required"`
-	Context     param.Opt[string] `json:"context,omitzero"`
-	ExtraFields map[string]any    `json:"-"`
-	paramObj
+	UserPrompt  param.Field[string]    `json:"user_prompt,required"`
+	Context     param.Field[string]    `json:"context"`
+	ExtraFields map[string]interface{} `json:"-,extras"`
 }
 
 func (r EvaluateNewParamsModelInput) MarshalJSON() (data []byte, err error) {
-	type shadow EvaluateNewParamsModelInput
-	return param.MarshalWithExtras(r, (*shadow)(&r), r.ExtraFields)
-}
-func (r *EvaluateNewParamsModelInput) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
+	return apijson.MarshalRoot(r)
 }
 
 // Run mode for the evaluation. The run mode allows the user to optimize for speed,
@@ -249,3 +268,30 @@ const (
 	EvaluateNewParamsRunModeSmart         EvaluateNewParamsRunMode = "smart"
 	EvaluateNewParamsRunModeEconomy       EvaluateNewParamsRunMode = "economy"
 )
+
+func (r EvaluateNewParamsRunMode) IsKnown() bool {
+	switch r {
+	case EvaluateNewParamsRunModePrecisionPlus, EvaluateNewParamsRunModePrecision, EvaluateNewParamsRunModeSmart, EvaluateNewParamsRunModeEconomy:
+		return true
+	}
+	return false
+}
+
+type EvaluateNewParamsGuardrailMetric string
+
+const (
+	EvaluateNewParamsGuardrailMetricCorrectness          EvaluateNewParamsGuardrailMetric = "correctness"
+	EvaluateNewParamsGuardrailMetricCompleteness         EvaluateNewParamsGuardrailMetric = "completeness"
+	EvaluateNewParamsGuardrailMetricInstructionAdherence EvaluateNewParamsGuardrailMetric = "instruction_adherence"
+	EvaluateNewParamsGuardrailMetricContextAdherence     EvaluateNewParamsGuardrailMetric = "context_adherence"
+	EvaluateNewParamsGuardrailMetricGroundTruthAdherence EvaluateNewParamsGuardrailMetric = "ground_truth_adherence"
+	EvaluateNewParamsGuardrailMetricComprehensiveSafety  EvaluateNewParamsGuardrailMetric = "comprehensive_safety"
+)
+
+func (r EvaluateNewParamsGuardrailMetric) IsKnown() bool {
+	switch r {
+	case EvaluateNewParamsGuardrailMetricCorrectness, EvaluateNewParamsGuardrailMetricCompleteness, EvaluateNewParamsGuardrailMetricInstructionAdherence, EvaluateNewParamsGuardrailMetricContextAdherence, EvaluateNewParamsGuardrailMetricGroundTruthAdherence, EvaluateNewParamsGuardrailMetricComprehensiveSafety:
+		return true
+	}
+	return false
+}

@@ -25,16 +25,17 @@ func TestUsage(t *testing.T) {
 		option.WithAPIKey("My API Key"),
 	)
 	defendResponse, err := client.Defend.NewWorkflow(context.TODO(), deeprails.DefendNewWorkflowParams{
-		ImprovementAction: deeprails.DefendNewWorkflowParamsImprovementActionFixit,
-		Metrics: map[string]float64{
-			"completeness":          0.8,
-			"instruction_adherence": 0.75,
-		},
-		Name: "Push Alert Workflow",
-		Type: deeprails.DefendNewWorkflowParamsTypeCustom,
+		ImprovementAction: deeprails.F(deeprails.DefendNewWorkflowParamsImprovementActionFixit),
+		Metrics: deeprails.F(map[string]float64{
+			"completeness":          0.800000,
+			"instruction_adherence": 0.750000,
+		}),
+		Name: deeprails.F("Push Alert Workflow"),
+		Type: deeprails.F(deeprails.DefendNewWorkflowParamsTypeCustom),
 	})
 	if err != nil {
-		t.Fatalf("err should be nil: %s", err.Error())
+		t.Error(err)
+		return
 	}
 	t.Logf("%+v\n", defendResponse.WorkflowID)
 }

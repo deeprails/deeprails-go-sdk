@@ -27,15 +27,15 @@ func TestEvaluateNewWithOptionalParams(t *testing.T) {
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.Evaluate.New(context.TODO(), deeprails.EvaluateNewParams{
-		ModelInput: deeprails.EvaluateNewParamsModelInput{
-			UserPrompt: "user_prompt",
-			Context:    deeprails.String("context"),
-		},
-		ModelOutput:      "model_output",
-		RunMode:          deeprails.EvaluateNewParamsRunModePrecisionPlus,
-		GuardrailMetrics: []string{"correctness"},
-		ModelUsed:        deeprails.String("model_used"),
-		Nametag:          deeprails.String("nametag"),
+		ModelInput: deeprails.F(deeprails.EvaluateNewParamsModelInput{
+			UserPrompt: deeprails.F("user_prompt"),
+			Context:    deeprails.F("context"),
+		}),
+		ModelOutput:      deeprails.F("model_output"),
+		RunMode:          deeprails.F(deeprails.EvaluateNewParamsRunModePrecisionPlus),
+		GuardrailMetrics: deeprails.F([]deeprails.EvaluateNewParamsGuardrailMetric{deeprails.EvaluateNewParamsGuardrailMetricCorrectness}),
+		ModelUsed:        deeprails.F("model_used"),
+		Nametag:          deeprails.F("nametag"),
 	})
 	if err != nil {
 		var apierr *deeprails.Error

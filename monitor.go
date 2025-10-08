@@ -13,10 +13,9 @@ import (
 
 	"github.com/deeprails/deeprails-go-sdk/internal/apijson"
 	"github.com/deeprails/deeprails-go-sdk/internal/apiquery"
+	"github.com/deeprails/deeprails-go-sdk/internal/param"
 	"github.com/deeprails/deeprails-go-sdk/internal/requestconfig"
 	"github.com/deeprails/deeprails-go-sdk/option"
-	"github.com/deeprails/deeprails-go-sdk/packages/param"
-	"github.com/deeprails/deeprails-go-sdk/packages/respjson"
 )
 
 // MonitorService contains methods and other services that help with interacting
@@ -32,13 +31,14 @@ type MonitorService struct {
 // NewMonitorService generates a new service that applies the given options to each
 // request. These options are applied after the parent client's options (if there
 // is one), and before any request-specific options.
-func NewMonitorService(opts ...option.RequestOption) (r MonitorService) {
-	r = MonitorService{}
+func NewMonitorService(opts ...option.RequestOption) (r *MonitorService) {
+	r = &MonitorService{}
 	r.Options = opts
 	return
 }
 
-// Create a new monitor to evaluate model inputs and outputs using guardrails.
+// Use this endpoint to create a new monitor to evaluate model inputs and outputs
+// using guardrails
 func (r *MonitorService) New(ctx context.Context, body MonitorNewParams, opts ...option.RequestOption) (res *APIResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "monitor"
@@ -46,7 +46,8 @@ func (r *MonitorService) New(ctx context.Context, body MonitorNewParams, opts ..
 	return
 }
 
-// Retrieve the details and evaluations associated with a specific monitor.
+// Use this endpoint to retrieve the details and evaluations associated with a
+// specific monitor
 func (r *MonitorService) Get(ctx context.Context, monitorID string, query MonitorGetParams, opts ...option.RequestOption) (res *MonitorGetResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if monitorID == "" {
@@ -58,7 +59,8 @@ func (r *MonitorService) Get(ctx context.Context, monitorID string, query Monito
 	return
 }
 
-// Update the name, description, or status of an existing monitor.
+// Use this endpoint to update the name, description, or status of an existing
+// monitor
 func (r *MonitorService) Update(ctx context.Context, monitorID string, body MonitorUpdateParams, opts ...option.RequestOption) (res *APIResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if monitorID == "" {
@@ -70,7 +72,8 @@ func (r *MonitorService) Update(ctx context.Context, monitorID string, body Moni
 	return
 }
 
-// Submit a model input and output pair to a monitor for evaluation.
+// Use this endpoint to submit a model input and output pair to a monitor for
+// evaluation
 func (r *MonitorService) SubmitEvent(ctx context.Context, monitorID string, body MonitorSubmitEventParams, opts ...option.RequestOption) (res *MonitorSubmitEventResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if monitorID == "" {
@@ -85,29 +88,31 @@ func (r *MonitorService) SubmitEvent(ctx context.Context, monitorID string, body
 // Response wrapper for operations returning a MonitorResponse.
 type APIResponse struct {
 	// Represents whether the request was completed successfully.
-	Success bool `json:"success,required"`
-	// Response payload for creating or updating a monitor.
-	Data APIResponseData `json:"data"`
+	Success bool            `json:"success,required"`
+	Data    APIResponseData `json:"data"`
 	// The accompanying message for the request. Includes error details when
 	// applicable.
-	Message string `json:"message"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Success     respjson.Field
-		Data        respjson.Field
-		Message     respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
+	Message string          `json:"message"`
+	JSON    apiResponseJSON `json:"-"`
 }
 
-// Returns the unmodified JSON received from the API
-func (r APIResponse) RawJSON() string { return r.JSON.raw }
-func (r *APIResponse) UnmarshalJSON(data []byte) error {
+// apiResponseJSON contains the JSON metadata for the struct [APIResponse]
+type apiResponseJSON struct {
+	Success     apijson.Field
+	Data        apijson.Field
+	Message     apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *APIResponse) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Response payload for creating or updating a monitor.
+func (r apiResponseJSON) RawJSON() string {
+	return r.raw
+}
+
 type APIResponseData struct {
 	// A unique monitor ID.
 	MonitorID string `json:"monitor_id,required"`
@@ -119,67 +124,87 @@ type APIResponseData struct {
 	Description string `json:"description"`
 	// Status of the monitor. Can be `active` or `inactive`. Inactive monitors no
 	// longer record and evaluate events.
-	//
-	// Any of "active", "inactive".
-	MonitorStatus string `json:"monitor_status"`
+	MonitorStatus APIResponseDataMonitorStatus `json:"monitor_status"`
 	// The most recent time the monitor was modified in UTC.
 	UpdatedAt time.Time `json:"updated_at" format:"date-time"`
 	// User ID of the user who created the monitor.
-	UserID string `json:"user_id"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		MonitorID     respjson.Field
-		Name          respjson.Field
-		CreatedAt     respjson.Field
-		Description   respjson.Field
-		MonitorStatus respjson.Field
-		UpdatedAt     respjson.Field
-		UserID        respjson.Field
-		ExtraFields   map[string]respjson.Field
-		raw           string
-	} `json:"-"`
+	UserID string              `json:"user_id"`
+	JSON   apiResponseDataJSON `json:"-"`
 }
 
-// Returns the unmodified JSON received from the API
-func (r APIResponseData) RawJSON() string { return r.JSON.raw }
-func (r *APIResponseData) UnmarshalJSON(data []byte) error {
+// apiResponseDataJSON contains the JSON metadata for the struct [APIResponseData]
+type apiResponseDataJSON struct {
+	MonitorID     apijson.Field
+	Name          apijson.Field
+	CreatedAt     apijson.Field
+	Description   apijson.Field
+	MonitorStatus apijson.Field
+	UpdatedAt     apijson.Field
+	UserID        apijson.Field
+	raw           string
+	ExtraFields   map[string]apijson.Field
+}
+
+func (r *APIResponseData) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r apiResponseDataJSON) RawJSON() string {
+	return r.raw
+}
+
+// Status of the monitor. Can be `active` or `inactive`. Inactive monitors no
+// longer record and evaluate events.
+type APIResponseDataMonitorStatus string
+
+const (
+	APIResponseDataMonitorStatusActive   APIResponseDataMonitorStatus = "active"
+	APIResponseDataMonitorStatusInactive APIResponseDataMonitorStatus = "inactive"
+)
+
+func (r APIResponseDataMonitorStatus) IsKnown() bool {
+	switch r {
+	case APIResponseDataMonitorStatusActive, APIResponseDataMonitorStatusInactive:
+		return true
+	}
+	return false
 }
 
 // Response wrapper for operations returning a MonitorDetailResponse.
 type MonitorGetResponse struct {
 	// Represents whether the request was completed successfully.
-	Success bool `json:"success,required"`
-	// Detailed response payload for retrieving a monitor and its evaluations.
-	Data MonitorGetResponseData `json:"data"`
+	Success bool                   `json:"success,required"`
+	Data    MonitorGetResponseData `json:"data"`
 	// The accompanying message for the request. Includes error details when
 	// applicable.
-	Message string `json:"message"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Success     respjson.Field
-		Data        respjson.Field
-		Message     respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
+	Message string                 `json:"message"`
+	JSON    monitorGetResponseJSON `json:"-"`
 }
 
-// Returns the unmodified JSON received from the API
-func (r MonitorGetResponse) RawJSON() string { return r.JSON.raw }
-func (r *MonitorGetResponse) UnmarshalJSON(data []byte) error {
+// monitorGetResponseJSON contains the JSON metadata for the struct
+// [MonitorGetResponse]
+type monitorGetResponseJSON struct {
+	Success     apijson.Field
+	Data        apijson.Field
+	Message     apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *MonitorGetResponse) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Detailed response payload for retrieving a monitor and its evaluations.
+func (r monitorGetResponseJSON) RawJSON() string {
+	return r.raw
+}
+
 type MonitorGetResponseData struct {
 	// A unique monitor ID.
 	MonitorID string `json:"monitor_id,required"`
 	// Status of the monitor. Can be `active` or `inactive`. Inactive monitors no
 	// longer record and evaluate events.
-	//
-	// Any of "active", "inactive".
-	MonitorStatus string `json:"monitor_status,required"`
+	MonitorStatus MonitorGetResponseDataMonitorStatus `json:"monitor_status,required"`
 	// Name of this monitor.
 	Name string `json:"name,required"`
 	// The time the monitor was created in UTC.
@@ -196,27 +221,49 @@ type MonitorGetResponseData struct {
 	// The most recent time the monitor was modified in UTC.
 	UpdatedAt time.Time `json:"updated_at" format:"date-time"`
 	// User ID of the user who created the monitor.
-	UserID string `json:"user_id"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		MonitorID     respjson.Field
-		MonitorStatus respjson.Field
-		Name          respjson.Field
-		CreatedAt     respjson.Field
-		Description   respjson.Field
-		Evaluations   respjson.Field
-		Stats         respjson.Field
-		UpdatedAt     respjson.Field
-		UserID        respjson.Field
-		ExtraFields   map[string]respjson.Field
-		raw           string
-	} `json:"-"`
+	UserID string                     `json:"user_id"`
+	JSON   monitorGetResponseDataJSON `json:"-"`
 }
 
-// Returns the unmodified JSON received from the API
-func (r MonitorGetResponseData) RawJSON() string { return r.JSON.raw }
-func (r *MonitorGetResponseData) UnmarshalJSON(data []byte) error {
+// monitorGetResponseDataJSON contains the JSON metadata for the struct
+// [MonitorGetResponseData]
+type monitorGetResponseDataJSON struct {
+	MonitorID     apijson.Field
+	MonitorStatus apijson.Field
+	Name          apijson.Field
+	CreatedAt     apijson.Field
+	Description   apijson.Field
+	Evaluations   apijson.Field
+	Stats         apijson.Field
+	UpdatedAt     apijson.Field
+	UserID        apijson.Field
+	raw           string
+	ExtraFields   map[string]apijson.Field
+}
+
+func (r *MonitorGetResponseData) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r monitorGetResponseDataJSON) RawJSON() string {
+	return r.raw
+}
+
+// Status of the monitor. Can be `active` or `inactive`. Inactive monitors no
+// longer record and evaluate events.
+type MonitorGetResponseDataMonitorStatus string
+
+const (
+	MonitorGetResponseDataMonitorStatusActive   MonitorGetResponseDataMonitorStatus = "active"
+	MonitorGetResponseDataMonitorStatusInactive MonitorGetResponseDataMonitorStatus = "inactive"
+)
+
+func (r MonitorGetResponseDataMonitorStatus) IsKnown() bool {
+	switch r {
+	case MonitorGetResponseDataMonitorStatusActive, MonitorGetResponseDataMonitorStatusInactive:
+		return true
+	}
+	return false
 }
 
 // Contains five fields used for stats of this monitor: total evaluations,
@@ -232,51 +279,59 @@ type MonitorGetResponseDataStats struct {
 	// Number of evaluations currently queued.
 	QueuedEvaluations int64 `json:"queued_evaluations"`
 	// Total number of evaluations performed by this monitor.
-	TotalEvaluations int64 `json:"total_evaluations"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		CompletedEvaluations  respjson.Field
-		FailedEvaluations     respjson.Field
-		InProgressEvaluations respjson.Field
-		QueuedEvaluations     respjson.Field
-		TotalEvaluations      respjson.Field
-		ExtraFields           map[string]respjson.Field
-		raw                   string
-	} `json:"-"`
+	TotalEvaluations int64                           `json:"total_evaluations"`
+	JSON             monitorGetResponseDataStatsJSON `json:"-"`
 }
 
-// Returns the unmodified JSON received from the API
-func (r MonitorGetResponseDataStats) RawJSON() string { return r.JSON.raw }
-func (r *MonitorGetResponseDataStats) UnmarshalJSON(data []byte) error {
+// monitorGetResponseDataStatsJSON contains the JSON metadata for the struct
+// [MonitorGetResponseDataStats]
+type monitorGetResponseDataStatsJSON struct {
+	CompletedEvaluations  apijson.Field
+	FailedEvaluations     apijson.Field
+	InProgressEvaluations apijson.Field
+	QueuedEvaluations     apijson.Field
+	TotalEvaluations      apijson.Field
+	raw                   string
+	ExtraFields           map[string]apijson.Field
+}
+
+func (r *MonitorGetResponseDataStats) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r monitorGetResponseDataStatsJSON) RawJSON() string {
+	return r.raw
 }
 
 // Response wrapper for operations returning a MonitorEventResponse.
 type MonitorSubmitEventResponse struct {
 	// Represents whether the request was completed successfully.
-	Success bool `json:"success,required"`
-	// Response payload for monitor event operations.
-	Data MonitorSubmitEventResponseData `json:"data"`
+	Success bool                           `json:"success,required"`
+	Data    MonitorSubmitEventResponseData `json:"data"`
 	// The accompanying message for the request. Includes error details when
 	// applicable.
-	Message string `json:"message"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Success     respjson.Field
-		Data        respjson.Field
-		Message     respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
+	Message string                         `json:"message"`
+	JSON    monitorSubmitEventResponseJSON `json:"-"`
 }
 
-// Returns the unmodified JSON received from the API
-func (r MonitorSubmitEventResponse) RawJSON() string { return r.JSON.raw }
-func (r *MonitorSubmitEventResponse) UnmarshalJSON(data []byte) error {
+// monitorSubmitEventResponseJSON contains the JSON metadata for the struct
+// [MonitorSubmitEventResponse]
+type monitorSubmitEventResponseJSON struct {
+	Success     apijson.Field
+	Data        apijson.Field
+	Message     apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *MonitorSubmitEventResponse) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Response payload for monitor event operations.
+func (r monitorSubmitEventResponseJSON) RawJSON() string {
+	return r.raw
+}
+
 type MonitorSubmitEventResponseData struct {
 	// A unique evaluation ID associated with this event.
 	EvaluationID string `json:"evaluation_id,required"`
@@ -285,48 +340,47 @@ type MonitorSubmitEventResponseData struct {
 	// Monitor ID associated with this event.
 	MonitorID string `json:"monitor_id,required"`
 	// The time the monitor event was created in UTC.
-	CreatedAt time.Time `json:"created_at" format:"date-time"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		EvaluationID respjson.Field
-		EventID      respjson.Field
-		MonitorID    respjson.Field
-		CreatedAt    respjson.Field
-		ExtraFields  map[string]respjson.Field
-		raw          string
-	} `json:"-"`
+	CreatedAt time.Time                          `json:"created_at" format:"date-time"`
+	JSON      monitorSubmitEventResponseDataJSON `json:"-"`
 }
 
-// Returns the unmodified JSON received from the API
-func (r MonitorSubmitEventResponseData) RawJSON() string { return r.JSON.raw }
-func (r *MonitorSubmitEventResponseData) UnmarshalJSON(data []byte) error {
+// monitorSubmitEventResponseDataJSON contains the JSON metadata for the struct
+// [MonitorSubmitEventResponseData]
+type monitorSubmitEventResponseDataJSON struct {
+	EvaluationID apijson.Field
+	EventID      apijson.Field
+	MonitorID    apijson.Field
+	CreatedAt    apijson.Field
+	raw          string
+	ExtraFields  map[string]apijson.Field
+}
+
+func (r *MonitorSubmitEventResponseData) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r monitorSubmitEventResponseDataJSON) RawJSON() string {
+	return r.raw
 }
 
 type MonitorNewParams struct {
 	// Name of the new monitor.
-	Name string `json:"name,required"`
+	Name param.Field[string] `json:"name,required"`
 	// Description of the new monitor.
-	Description param.Opt[string] `json:"description,omitzero"`
-	paramObj
+	Description param.Field[string] `json:"description"`
 }
 
 func (r MonitorNewParams) MarshalJSON() (data []byte, err error) {
-	type shadow MonitorNewParams
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *MonitorNewParams) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
+	return apijson.MarshalRoot(r)
 }
 
 type MonitorGetParams struct {
 	// Limit the returned events associated with this monitor. Defaults to 10.
-	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
-	paramObj
+	Limit param.Field[int64] `query:"limit"`
 }
 
 // URLQuery serializes [MonitorGetParams]'s query parameters as `url.Values`.
-func (r MonitorGetParams) URLQuery() (v url.Values, err error) {
+func (r MonitorGetParams) URLQuery() (v url.Values) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
 		ArrayFormat:  apiquery.ArrayQueryFormatComma,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
@@ -335,23 +389,16 @@ func (r MonitorGetParams) URLQuery() (v url.Values, err error) {
 
 type MonitorUpdateParams struct {
 	// Description of the monitor.
-	Description param.Opt[string] `json:"description,omitzero"`
-	// Name of the monitor.
-	Name param.Opt[string] `json:"name,omitzero"`
+	Description param.Field[string] `json:"description"`
 	// Status of the monitor. Can be `active` or `inactive`. Inactive monitors no
 	// longer record and evaluate events.
-	//
-	// Any of "active", "inactive".
-	MonitorStatus MonitorUpdateParamsMonitorStatus `json:"monitor_status,omitzero"`
-	paramObj
+	MonitorStatus param.Field[MonitorUpdateParamsMonitorStatus] `json:"monitor_status"`
+	// Name of the monitor.
+	Name param.Field[string] `json:"name"`
 }
 
 func (r MonitorUpdateParams) MarshalJSON() (data []byte, err error) {
-	type shadow MonitorUpdateParams
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *MonitorUpdateParams) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
+	return apijson.MarshalRoot(r)
 }
 
 // Status of the monitor. Can be `active` or `inactive`. Inactive monitors no
@@ -363,61 +410,71 @@ const (
 	MonitorUpdateParamsMonitorStatusInactive MonitorUpdateParamsMonitorStatus = "inactive"
 )
 
+func (r MonitorUpdateParamsMonitorStatus) IsKnown() bool {
+	switch r {
+	case MonitorUpdateParamsMonitorStatusActive, MonitorUpdateParamsMonitorStatusInactive:
+		return true
+	}
+	return false
+}
+
 type MonitorSubmitEventParams struct {
 	// An array of guardrail metrics that the model input and output pair will be
 	// evaluated on. For non-enterprise users, these will be limited to `correctness`,
 	// `completeness`, `instruction_adherence`, `context_adherence`,
 	// `ground_truth_adherence`, and/or `comprehensive_safety`.
-	//
-	// Any of "correctness", "completeness", "instruction_adherence",
-	// "context_adherence", "ground_truth_adherence", "comprehensive_safety".
-	GuardrailMetrics []string `json:"guardrail_metrics,omitzero,required"`
+	GuardrailMetrics param.Field[[]MonitorSubmitEventParamsGuardrailMetric] `json:"guardrail_metrics,required"`
 	// A dictionary of inputs sent to the LLM to generate output. This must contain a
 	// `user_prompt` field and an optional `context` field. Additional properties are
 	// allowed.
-	ModelInput MonitorSubmitEventParamsModelInput `json:"model_input,omitzero,required"`
+	ModelInput param.Field[MonitorSubmitEventParamsModelInput] `json:"model_input,required"`
 	// Output generated by the LLM to be evaluated.
-	ModelOutput string `json:"model_output,required"`
+	ModelOutput param.Field[string] `json:"model_output,required"`
 	// Model ID used to generate the output, like `gpt-4o` or `o3`.
-	ModelUsed param.Opt[string] `json:"model_used,omitzero"`
+	ModelUsed param.Field[string] `json:"model_used"`
 	// An optional, user-defined tag for the event.
-	Nametag param.Opt[string] `json:"nametag,omitzero"`
+	Nametag param.Field[string] `json:"nametag"`
 	// Run mode for the monitor event. The run mode allows the user to optimize for
 	// speed, accuracy, and cost by determining which models are used to evaluate the
 	// event. Available run modes include `precision_plus`, `precision`, `smart`, and
 	// `economy`. Defaults to `smart`.
-	//
-	// Any of "precision_plus", "precision", "smart", "economy".
-	RunMode MonitorSubmitEventParamsRunMode `json:"run_mode,omitzero"`
-	paramObj
+	RunMode param.Field[MonitorSubmitEventParamsRunMode] `json:"run_mode"`
 }
 
 func (r MonitorSubmitEventParams) MarshalJSON() (data []byte, err error) {
-	type shadow MonitorSubmitEventParams
-	return param.MarshalObject(r, (*shadow)(&r))
+	return apijson.MarshalRoot(r)
 }
-func (r *MonitorSubmitEventParams) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
+
+type MonitorSubmitEventParamsGuardrailMetric string
+
+const (
+	MonitorSubmitEventParamsGuardrailMetricCorrectness          MonitorSubmitEventParamsGuardrailMetric = "correctness"
+	MonitorSubmitEventParamsGuardrailMetricCompleteness         MonitorSubmitEventParamsGuardrailMetric = "completeness"
+	MonitorSubmitEventParamsGuardrailMetricInstructionAdherence MonitorSubmitEventParamsGuardrailMetric = "instruction_adherence"
+	MonitorSubmitEventParamsGuardrailMetricContextAdherence     MonitorSubmitEventParamsGuardrailMetric = "context_adherence"
+	MonitorSubmitEventParamsGuardrailMetricGroundTruthAdherence MonitorSubmitEventParamsGuardrailMetric = "ground_truth_adherence"
+	MonitorSubmitEventParamsGuardrailMetricComprehensiveSafety  MonitorSubmitEventParamsGuardrailMetric = "comprehensive_safety"
+)
+
+func (r MonitorSubmitEventParamsGuardrailMetric) IsKnown() bool {
+	switch r {
+	case MonitorSubmitEventParamsGuardrailMetricCorrectness, MonitorSubmitEventParamsGuardrailMetricCompleteness, MonitorSubmitEventParamsGuardrailMetricInstructionAdherence, MonitorSubmitEventParamsGuardrailMetricContextAdherence, MonitorSubmitEventParamsGuardrailMetricGroundTruthAdherence, MonitorSubmitEventParamsGuardrailMetricComprehensiveSafety:
+		return true
+	}
+	return false
 }
 
 // A dictionary of inputs sent to the LLM to generate output. This must contain a
 // `user_prompt` field and an optional `context` field. Additional properties are
 // allowed.
-//
-// The property UserPrompt is required.
 type MonitorSubmitEventParamsModelInput struct {
-	UserPrompt  string            `json:"user_prompt,required"`
-	Context     param.Opt[string] `json:"context,omitzero"`
-	ExtraFields map[string]any    `json:"-"`
-	paramObj
+	UserPrompt  param.Field[string]    `json:"user_prompt,required"`
+	Context     param.Field[string]    `json:"context"`
+	ExtraFields map[string]interface{} `json:"-,extras"`
 }
 
 func (r MonitorSubmitEventParamsModelInput) MarshalJSON() (data []byte, err error) {
-	type shadow MonitorSubmitEventParamsModelInput
-	return param.MarshalWithExtras(r, (*shadow)(&r), r.ExtraFields)
-}
-func (r *MonitorSubmitEventParamsModelInput) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
+	return apijson.MarshalRoot(r)
 }
 
 // Run mode for the monitor event. The run mode allows the user to optimize for
@@ -432,3 +489,11 @@ const (
 	MonitorSubmitEventParamsRunModeSmart         MonitorSubmitEventParamsRunMode = "smart"
 	MonitorSubmitEventParamsRunModeEconomy       MonitorSubmitEventParamsRunMode = "economy"
 )
+
+func (r MonitorSubmitEventParamsRunMode) IsKnown() bool {
+	switch r {
+	case MonitorSubmitEventParamsRunModePrecisionPlus, MonitorSubmitEventParamsRunModePrecision, MonitorSubmitEventParamsRunModeSmart, MonitorSubmitEventParamsRunModeEconomy:
+		return true
+	}
+	return false
+}
