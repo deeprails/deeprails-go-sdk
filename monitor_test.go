@@ -27,8 +27,8 @@ func TestMonitorNewWithOptionalParams(t *testing.T) {
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.Monitor.New(context.TODO(), deeprails.MonitorNewParams{
-		Name:        "name",
-		Description: deeprails.String("description"),
+		Name:        deeprails.F("name"),
+		Description: deeprails.F("description"),
 	})
 	if err != nil {
 		var apierr *deeprails.Error
@@ -56,7 +56,7 @@ func TestMonitorGetWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"monitor_id",
 		deeprails.MonitorGetParams{
-			Limit: deeprails.Int(0),
+			Limit: deeprails.F(int64(0)),
 		},
 	)
 	if err != nil {
@@ -85,9 +85,9 @@ func TestMonitorUpdateWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"monitor_id",
 		deeprails.MonitorUpdateParams{
-			Description:   deeprails.String("description"),
-			MonitorStatus: deeprails.MonitorUpdateParamsMonitorStatusActive,
-			Name:          deeprails.String("name"),
+			Description:   deeprails.F("description"),
+			MonitorStatus: deeprails.F(deeprails.MonitorUpdateParamsMonitorStatusActive),
+			Name:          deeprails.F("name"),
 		},
 	)
 	if err != nil {
@@ -116,15 +116,15 @@ func TestMonitorSubmitEventWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"monitor_id",
 		deeprails.MonitorSubmitEventParams{
-			GuardrailMetrics: []string{"correctness"},
-			ModelInput: deeprails.MonitorSubmitEventParamsModelInput{
-				UserPrompt: "user_prompt",
-				Context:    deeprails.String("context"),
-			},
-			ModelOutput: "model_output",
-			ModelUsed:   deeprails.String("model_used"),
-			Nametag:     deeprails.String("nametag"),
-			RunMode:     deeprails.MonitorSubmitEventParamsRunModePrecisionPlus,
+			GuardrailMetrics: deeprails.F([]deeprails.MonitorSubmitEventParamsGuardrailMetric{deeprails.MonitorSubmitEventParamsGuardrailMetricCorrectness}),
+			ModelInput: deeprails.F(deeprails.MonitorSubmitEventParamsModelInput{
+				UserPrompt: deeprails.F("user_prompt"),
+				Context:    deeprails.F("context"),
+			}),
+			ModelOutput: deeprails.F("model_output"),
+			ModelUsed:   deeprails.F("model_used"),
+			Nametag:     deeprails.F("nametag"),
+			RunMode:     deeprails.F(deeprails.MonitorSubmitEventParamsRunModePrecisionPlus),
 		},
 	)
 	if err != nil {

@@ -27,15 +27,15 @@ func TestDefendNewWorkflowWithOptionalParams(t *testing.T) {
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.Defend.NewWorkflow(context.TODO(), deeprails.DefendNewWorkflowParams{
-		ImprovementAction: deeprails.DefendNewWorkflowParamsImprovementActionRegenerate,
-		Metrics: map[string]float64{
-			"foo": 0,
-		},
-		Name:               "name",
-		Type:               deeprails.DefendNewWorkflowParamsTypeAutomatic,
-		AutomaticTolerance: deeprails.DefendNewWorkflowParamsAutomaticToleranceLow,
-		Description:        deeprails.String("description"),
-		MaxRetries:         deeprails.Int(0),
+		ImprovementAction: deeprails.F(deeprails.DefendNewWorkflowParamsImprovementActionRegenerate),
+		Metrics: deeprails.F(map[string]float64{
+			"foo": 0.000000,
+		}),
+		Name:               deeprails.F("name"),
+		Type:               deeprails.F(deeprails.DefendNewWorkflowParamsTypeAutomatic),
+		AutomaticTolerance: deeprails.F(deeprails.DefendNewWorkflowParamsAutomaticToleranceLow),
+		Description:        deeprails.F("description"),
+		MaxRetries:         deeprails.F(int64(0)),
 	})
 	if err != nil {
 		var apierr *deeprails.Error
@@ -61,10 +61,8 @@ func TestDefendGetEvent(t *testing.T) {
 	)
 	_, err := client.Defend.GetEvent(
 		context.TODO(),
+		"workflow_id",
 		"event_id",
-		deeprails.DefendGetEventParams{
-			WorkflowID: "workflow_id",
-		},
 	)
 	if err != nil {
 		var apierr *deeprails.Error
@@ -115,14 +113,14 @@ func TestDefendSubmitEventWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"workflow_id",
 		deeprails.DefendSubmitEventParams{
-			ModelInput: deeprails.DefendSubmitEventParamsModelInput{
-				UserPrompt: "user_prompt",
-				Context:    deeprails.String("context"),
-			},
-			ModelOutput: "model_output",
-			ModelUsed:   "model_used",
-			Nametag:     "nametag",
-			RunMode:     deeprails.DefendSubmitEventParamsRunModePrecisionPlus,
+			ModelInput: deeprails.F(deeprails.DefendSubmitEventParamsModelInput{
+				UserPrompt: deeprails.F("user_prompt"),
+				Context:    deeprails.F("context"),
+			}),
+			ModelOutput: deeprails.F("model_output"),
+			ModelUsed:   deeprails.F("model_used"),
+			Nametag:     deeprails.F("nametag"),
+			RunMode:     deeprails.F(deeprails.DefendSubmitEventParamsRunModePrecisionPlus),
 		},
 	)
 	if err != nil {
@@ -151,9 +149,8 @@ func TestDefendUpdateWorkflowWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"workflow_id",
 		deeprails.DefendUpdateWorkflowParams{
-			Description: deeprails.String("description"),
-			Name:        deeprails.String("name"),
-			Type:        deeprails.DefendUpdateWorkflowParamsTypeAutomatic,
+			Description: deeprails.F("description"),
+			Name:        deeprails.F("name"),
 		},
 	)
 	if err != nil {
