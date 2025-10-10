@@ -119,8 +119,8 @@ func TestDefendSubmitEventWithOptionalParams(t *testing.T) {
 			}),
 			ModelOutput: deeprails.F("model_output"),
 			ModelUsed:   deeprails.F("model_used"),
-			Nametag:     deeprails.F("nametag"),
 			RunMode:     deeprails.F(deeprails.DefendSubmitEventParamsRunModePrecisionPlus),
+			Nametag:     deeprails.F("nametag"),
 		},
 	)
 	if err != nil {
