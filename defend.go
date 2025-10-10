@@ -324,13 +324,13 @@ type DefendSubmitEventParams struct {
 	ModelOutput param.Field[string] `json:"model_output,required"`
 	// Model ID used to generate the output, like `gpt-4o` or `o3`.
 	ModelUsed param.Field[string] `json:"model_used,required"`
-	// An optional, user-defined tag for the event.
-	Nametag param.Field[string] `json:"nametag,required"`
 	// Run mode for the workflow event. The run mode allows the user to optimize for
 	// speed, accuracy, and cost by determining which models are used to evaluate the
 	// event. Available run modes include `precision_plus`, `precision`, `smart`, and
 	// `economy`. Defaults to `smart`.
 	RunMode param.Field[DefendSubmitEventParamsRunMode] `json:"run_mode,required"`
+	// An optional, user-defined tag for the event.
+	Nametag param.Field[string] `json:"nametag"`
 }
 
 func (r DefendSubmitEventParams) MarshalJSON() (data []byte, err error) {
