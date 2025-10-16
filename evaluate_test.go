@@ -28,8 +28,9 @@ func TestEvaluateNewWithOptionalParams(t *testing.T) {
 	)
 	_, err := client.Evaluate.New(context.TODO(), deeprails.EvaluateNewParams{
 		ModelInput: deeprails.F(deeprails.EvaluateNewParamsModelInput{
-			UserPrompt: deeprails.F("user_prompt"),
-			Context:    deeprails.F("context"),
+			GroundTruth:  deeprails.F("ground_truth"),
+			SystemPrompt: deeprails.F("system_prompt"),
+			UserPrompt:   deeprails.F("user_prompt"),
 		}),
 		ModelOutput:      deeprails.F("model_output"),
 		RunMode:          deeprails.F(deeprails.EvaluateNewParamsRunModePrecisionPlus),
