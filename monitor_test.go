@@ -118,8 +118,9 @@ func TestMonitorSubmitEventWithOptionalParams(t *testing.T) {
 		deeprails.MonitorSubmitEventParams{
 			GuardrailMetrics: deeprails.F([]deeprails.MonitorSubmitEventParamsGuardrailMetric{deeprails.MonitorSubmitEventParamsGuardrailMetricCorrectness}),
 			ModelInput: deeprails.F(deeprails.MonitorSubmitEventParamsModelInput{
-				UserPrompt: deeprails.F("user_prompt"),
-				Context:    deeprails.F("context"),
+				GroundTruth:  deeprails.F("ground_truth"),
+				SystemPrompt: deeprails.F("system_prompt"),
+				UserPrompt:   deeprails.F("user_prompt"),
 			}),
 			ModelOutput: deeprails.F("model_output"),
 			ModelUsed:   deeprails.F("model_used"),
