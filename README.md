@@ -22,7 +22,7 @@ Or to pin the version:
 <!-- x-release-please-start-version -->
 
 ```sh
-go get -u 'github.com/deeprails/deeprails-go-sdk@v0.4.0'
+go get -u 'github.com/deeprails/deeprails-go-sdk@v0.5.0'
 ```
 
 <!-- x-release-please-end -->
@@ -53,7 +53,7 @@ func main() {
 	defendResponse, err := client.Defend.NewWorkflow(context.TODO(), deeprails.DefendNewWorkflowParams{
 		ImprovementAction: deeprails.F(deeprails.DefendNewWorkflowParamsImprovementActionFixit),
 		Metrics: deeprails.F(map[string]float64{
-			"completeness":          0.800000,
+			"completeness":          0.700000,
 			"instruction_adherence": 0.750000,
 		}),
 		Name: deeprails.F("Push Alert Workflow"),
@@ -183,7 +183,7 @@ To handle errors, we recommend that you use the `errors.As` pattern:
 _, err := client.Defend.NewWorkflow(context.TODO(), deeprails.DefendNewWorkflowParams{
 	ImprovementAction: deeprails.F(deeprails.DefendNewWorkflowParamsImprovementActionFixit),
 	Metrics: deeprails.F(map[string]float64{
-		"completeness":          0.800000,
+		"completeness":          0.700000,
 		"instruction_adherence": 0.750000,
 	}),
 	Name: deeprails.F("Push Alert Workflow"),
@@ -218,7 +218,7 @@ client.Defend.NewWorkflow(
 	deeprails.DefendNewWorkflowParams{
 		ImprovementAction: deeprails.F(deeprails.DefendNewWorkflowParamsImprovementActionFixit),
 		Metrics: deeprails.F(map[string]float64{
-			"completeness":          0.800000,
+			"completeness":          0.700000,
 			"instruction_adherence": 0.750000,
 		}),
 		Name: deeprails.F("Push Alert Workflow"),
@@ -262,7 +262,7 @@ client.Defend.NewWorkflow(
 	deeprails.DefendNewWorkflowParams{
 		ImprovementAction: deeprails.F(deeprails.DefendNewWorkflowParamsImprovementActionFixit),
 		Metrics: deeprails.F(map[string]float64{
-			"completeness":          0.800000,
+			"completeness":          0.700000,
 			"instruction_adherence": 0.750000,
 		}),
 		Name: deeprails.F("Push Alert Workflow"),
@@ -285,7 +285,7 @@ defendResponse, err := client.Defend.NewWorkflow(
 	deeprails.DefendNewWorkflowParams{
 		ImprovementAction: deeprails.F(deeprails.DefendNewWorkflowParamsImprovementActionFixit),
 		Metrics: deeprails.F(map[string]float64{
-			"completeness":          0.800000,
+			"completeness":          0.700000,
 			"instruction_adherence": 0.750000,
 		}),
 		Name: deeprails.F("Push Alert Workflow"),
