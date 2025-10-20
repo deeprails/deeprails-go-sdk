@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.5.0 (2025-10-20)
+
+Full Changelog: [v0.4.0...v0.5.0](https://github.com/deeprails/deeprails-go-sdk/compare/v0.4.0...v0.5.0)
+
+### Features
+
+* **api:** readme example update ([bdf78fa](https://github.com/deeprails/deeprails-go-sdk/commit/bdf78fae891db21ccde7891c5287682c1d067273))
+
 ## 0.4.0 (2025-10-16)
 
 Full Changelog: [v0.3.0...v0.4.0](https://github.com/deeprails/deeprails-go-sdk/compare/v0.3.0...v0.4.0)
