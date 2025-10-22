@@ -28,6 +28,10 @@ func TestUsage(t *testing.T) {
 		ImprovementAction: deeprails.F(deeprails.DefendNewWorkflowParamsImprovementActionFixit),
 		Name:              deeprails.F("Push Alert Workflow"),
 		Type:              deeprails.F(deeprails.DefendNewWorkflowParamsTypeCustom),
+		CustomHallucinationThresholdValues: deeprails.F(map[string]float64{
+			"completeness":          0.700000,
+			"instruction_adherence": 0.750000,
+		}),
 	})
 	if err != nil {
 		t.Error(err)
