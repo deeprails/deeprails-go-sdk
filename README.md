@@ -56,6 +56,10 @@ func main() {
 		ImprovementAction: deeprails.F(deeprails.DefendNewWorkflowParamsImprovementActionFixit),
 		Name:              deeprails.F("Push Alert Workflow"),
 		Type:              deeprails.F(deeprails.DefendNewWorkflowParamsTypeCustom),
+		CustomHallucinationThresholdValues: deeprails.F(map[string]float64{
+			"completeness":          0.700000,
+			"instruction_adherence": 0.750000,
+		}),
 	})
 	if err != nil {
 		panic(err.Error())
@@ -182,6 +186,10 @@ _, err := client.Defend.NewWorkflow(context.TODO(), deeprails.DefendNewWorkflowP
 	ImprovementAction: deeprails.F(deeprails.DefendNewWorkflowParamsImprovementActionFixit),
 	Name:              deeprails.F("Push Alert Workflow"),
 	Type:              deeprails.F(deeprails.DefendNewWorkflowParamsTypeCustom),
+	CustomHallucinationThresholdValues: deeprails.F(map[string]float64{
+		"completeness":          0.700000,
+		"instruction_adherence": 0.750000,
+	}),
 })
 if err != nil {
 	var apierr *deeprails.Error
@@ -213,6 +221,10 @@ client.Defend.NewWorkflow(
 		ImprovementAction: deeprails.F(deeprails.DefendNewWorkflowParamsImprovementActionFixit),
 		Name:              deeprails.F("Push Alert Workflow"),
 		Type:              deeprails.F(deeprails.DefendNewWorkflowParamsTypeCustom),
+		CustomHallucinationThresholdValues: deeprails.F(map[string]float64{
+			"completeness":          0.700000,
+			"instruction_adherence": 0.750000,
+		}),
 	},
 	// This sets the per-retry timeout
 	option.WithRequestTimeout(20*time.Second),
@@ -253,6 +265,10 @@ client.Defend.NewWorkflow(
 		ImprovementAction: deeprails.F(deeprails.DefendNewWorkflowParamsImprovementActionFixit),
 		Name:              deeprails.F("Push Alert Workflow"),
 		Type:              deeprails.F(deeprails.DefendNewWorkflowParamsTypeCustom),
+		CustomHallucinationThresholdValues: deeprails.F(map[string]float64{
+			"completeness":          0.700000,
+			"instruction_adherence": 0.750000,
+		}),
 	},
 	option.WithMaxRetries(5),
 )
@@ -272,6 +288,10 @@ defendResponse, err := client.Defend.NewWorkflow(
 		ImprovementAction: deeprails.F(deeprails.DefendNewWorkflowParamsImprovementActionFixit),
 		Name:              deeprails.F("Push Alert Workflow"),
 		Type:              deeprails.F(deeprails.DefendNewWorkflowParamsTypeCustom),
+		CustomHallucinationThresholdValues: deeprails.F(map[string]float64{
+			"completeness":          0.700000,
+			"instruction_adherence": 0.750000,
+		}),
 	},
 	option.WithResponseInto(&response),
 )
