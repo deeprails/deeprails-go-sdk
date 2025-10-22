@@ -107,17 +107,17 @@ type DefendResponse struct {
 	// Description for the workflow.
 	Description string `json:"description"`
 	// The action used to improve outputs that fail one or more guardrail metrics for
-	// the workflow events. May be `regenerate`, `fixit`, or null which represents “do
-	// nothing”. Regenerate runs the user's input prompt with minor induced variance.
-	// Fixit attempts to directly address the shortcomings of the output using the
-	// guardrail failure rationale. Do nothing does not attempt any improvement.
-	ImprovementAction DefendResponseImprovementAction `json:"improvement_action,nullable"`
+	// the workflow events. May be `regen`, `fixit`, or `do_nothing`. ReGen runs the
+	// user's input prompt with minor induced variance. FixIt attempts to directly
+	// address the shortcomings of the output using the guardrail failure rationale. Do
+	// Nothing does not attempt any improvement.
+	ImprovementAction DefendResponseImprovementAction `json:"improvement_action"`
 	// Max. number of improvement action retries until a given event passes the
 	// guardrails.
-	MaxRetries int64 `json:"max_retries"`
+	MaxImprovementAttempt int64 `json:"max_improvement_attempt"`
 	// The most recent time the workflow was modified in UTC.
 	ModifiedAt time.Time `json:"modified_at" format:"date-time"`
-	// Status of the selected workflow. May be `archived` or `active`. Archived
+	// Status of the selected workflow. May be `inactive` or `active`. Inactive
 	// workflows will not accept events.
 	Status DefendResponseStatus `json:"status"`
 	// Rate of events associated with this workflow that passed evaluation.
@@ -127,17 +127,17 @@ type DefendResponse struct {
 
 // defendResponseJSON contains the JSON metadata for the struct [DefendResponse]
 type defendResponseJSON struct {
-	Name              apijson.Field
-	WorkflowID        apijson.Field
-	CreatedAt         apijson.Field
-	Description       apijson.Field
-	ImprovementAction apijson.Field
-	MaxRetries        apijson.Field
-	ModifiedAt        apijson.Field
-	Status            apijson.Field
-	SuccessRate       apijson.Field
-	raw               string
-	ExtraFields       map[string]apijson.Field
+	Name                  apijson.Field
+	WorkflowID            apijson.Field
+	CreatedAt             apijson.Field
+	Description           apijson.Field
+	ImprovementAction     apijson.Field
+	MaxImprovementAttempt apijson.Field
+	ModifiedAt            apijson.Field
+	Status                apijson.Field
+	SuccessRate           apijson.Field
+	raw                   string
+	ExtraFields           map[string]apijson.Field
 }
 
 func (r *DefendResponse) UnmarshalJSON(data []byte) (err error) {
@@ -149,37 +149,38 @@ func (r defendResponseJSON) RawJSON() string {
 }
 
 // The action used to improve outputs that fail one or more guardrail metrics for
-// the workflow events. May be `regenerate`, `fixit`, or null which represents “do
-// nothing”. Regenerate runs the user's input prompt with minor induced variance.
-// Fixit attempts to directly address the shortcomings of the output using the
-// guardrail failure rationale. Do nothing does not attempt any improvement.
+// the workflow events. May be `regen`, `fixit`, or `do_nothing`. ReGen runs the
+// user's input prompt with minor induced variance. FixIt attempts to directly
+// address the shortcomings of the output using the guardrail failure rationale. Do
+// Nothing does not attempt any improvement.
 type DefendResponseImprovementAction string
 
 const (
-	DefendResponseImprovementActionRegenerate DefendResponseImprovementAction = "regenerate"
-	DefendResponseImprovementActionFixit      DefendResponseImprovementAction = "fixit"
+	DefendResponseImprovementActionRegen     DefendResponseImprovementAction = "regen"
+	DefendResponseImprovementActionFixit     DefendResponseImprovementAction = "fixit"
+	DefendResponseImprovementActionDoNothing DefendResponseImprovementAction = "do_nothing"
 )
 
 func (r DefendResponseImprovementAction) IsKnown() bool {
 	switch r {
-	case DefendResponseImprovementActionRegenerate, DefendResponseImprovementActionFixit:
+	case DefendResponseImprovementActionRegen, DefendResponseImprovementActionFixit, DefendResponseImprovementActionDoNothing:
 		return true
 	}
 	return false
 }
 
-// Status of the selected workflow. May be `archived` or `active`. Archived
+// Status of the selected workflow. May be `inactive` or `active`. Inactive
 // workflows will not accept events.
 type DefendResponseStatus string
 
 const (
-	DefendResponseStatusArchived DefendResponseStatus = "archived"
+	DefendResponseStatusInactive DefendResponseStatus = "inactive"
 	DefendResponseStatusActive   DefendResponseStatus = "active"
 )
 
 func (r DefendResponseStatus) IsKnown() bool {
 	switch r {
-	case DefendResponseStatusArchived, DefendResponseStatusActive:
+	case DefendResponseStatusInactive, DefendResponseStatusActive:
 		return true
 	}
 	return false
@@ -224,17 +225,11 @@ func (r workflowEventResponseJSON) RawJSON() string {
 
 type DefendNewWorkflowParams struct {
 	// The action used to improve outputs that fail one or guardrail metrics for the
-	// workflow events. May be `regenerate`, `fixit`, or null which represents “do
-	// nothing”. Regenerate runs the user's input prompt with minor induced variance.
-	// Fixit attempts to directly address the shortcomings of the output using the
-	// guardrail failure rationale. Do nothing does not attempt any improvement.
+	// workflow events. May be `regen`, `fixit`, or `do_nothing`. ReGen runs the user's
+	// input prompt with minor induced variance. FixIt attempts to directly address the
+	// shortcomings of the output using the guardrail failure rationale. Do Nothing
+	// does not attempt any improvement.
 	ImprovementAction param.Field[DefendNewWorkflowParamsImprovementAction] `json:"improvement_action,required"`
-	// Mapping of guardrail metrics to floating point threshold values. If the workflow
-	// type is automatic, only the metric names are used (`automatic_tolerance`
-	// determines thresholds). Possible metrics are `correctness`, `completeness`,
-	// `instruction_adherence`, `context_adherence`, `ground_truth_adherence`, or
-	// `comprehensive_safety`.
-	Metrics param.Field[map[string]float64] `json:"metrics,required"`
 	// Name of the workflow.
 	Name param.Field[string] `json:"name,required"`
 	// Type of thresholds to use for the workflow, either `automatic` or `custom`.
@@ -243,14 +238,20 @@ type DefendNewWorkflowParams struct {
 	// set the threshold for each metric as a floating point number between 0.0 and
 	// 1.0.
 	Type param.Field[DefendNewWorkflowParamsType] `json:"type,required"`
-	// Hallucination tolerance for automatic workflows; may be `low`, `medium`, or
-	// `high`. Ignored if `type` is `custom`.
-	AutomaticTolerance param.Field[DefendNewWorkflowParamsAutomaticTolerance] `json:"automatic_tolerance"`
+	// Mapping of guardrail metrics to hallucination tolerance levels (either `low`,
+	// `medium`, or `high`). Possible metrics are `completeness`,
+	// `instruction_adherence`, `context_adherence`, `ground_truth_adherence`, or
+	// `comprehensive_safety`.
+	AutomaticHallucinationToleranceLevels param.Field[map[string]DefendNewWorkflowParamsAutomaticHallucinationToleranceLevels] `json:"automatic_hallucination_tolerance_levels"`
+	// Mapping of guardrail metrics to floating point threshold values. Possible
+	// metrics are `correctness`, `completeness`, `instruction_adherence`,
+	// `context_adherence`, `ground_truth_adherence`, or `comprehensive_safety`.
+	CustomHallucinationThresholdValues param.Field[map[string]float64] `json:"custom_hallucination_threshold_values"`
 	// Description for the workflow.
 	Description param.Field[string] `json:"description"`
 	// Max. number of improvement action retries until a given event passes the
 	// guardrails. Defaults to 10.
-	MaxRetries param.Field[int64] `json:"max_retries"`
+	MaxImprovementAttempt param.Field[int64] `json:"max_improvement_attempt"`
 }
 
 func (r DefendNewWorkflowParams) MarshalJSON() (data []byte, err error) {
@@ -258,20 +259,21 @@ func (r DefendNewWorkflowParams) MarshalJSON() (data []byte, err error) {
 }
 
 // The action used to improve outputs that fail one or guardrail metrics for the
-// workflow events. May be `regenerate`, `fixit`, or null which represents “do
-// nothing”. Regenerate runs the user's input prompt with minor induced variance.
-// Fixit attempts to directly address the shortcomings of the output using the
-// guardrail failure rationale. Do nothing does not attempt any improvement.
+// workflow events. May be `regen`, `fixit`, or `do_nothing`. ReGen runs the user's
+// input prompt with minor induced variance. FixIt attempts to directly address the
+// shortcomings of the output using the guardrail failure rationale. Do Nothing
+// does not attempt any improvement.
 type DefendNewWorkflowParamsImprovementAction string
 
 const (
-	DefendNewWorkflowParamsImprovementActionRegenerate DefendNewWorkflowParamsImprovementAction = "regenerate"
-	DefendNewWorkflowParamsImprovementActionFixit      DefendNewWorkflowParamsImprovementAction = "fixit"
+	DefendNewWorkflowParamsImprovementActionRegen     DefendNewWorkflowParamsImprovementAction = "regen"
+	DefendNewWorkflowParamsImprovementActionFixit     DefendNewWorkflowParamsImprovementAction = "fixit"
+	DefendNewWorkflowParamsImprovementActionDoNothing DefendNewWorkflowParamsImprovementAction = "do_nothing"
 )
 
 func (r DefendNewWorkflowParamsImprovementAction) IsKnown() bool {
 	switch r {
-	case DefendNewWorkflowParamsImprovementActionRegenerate, DefendNewWorkflowParamsImprovementActionFixit:
+	case DefendNewWorkflowParamsImprovementActionRegen, DefendNewWorkflowParamsImprovementActionFixit, DefendNewWorkflowParamsImprovementActionDoNothing:
 		return true
 	}
 	return false
@@ -297,19 +299,17 @@ func (r DefendNewWorkflowParamsType) IsKnown() bool {
 	return false
 }
 
-// Hallucination tolerance for automatic workflows; may be `low`, `medium`, or
-// `high`. Ignored if `type` is `custom`.
-type DefendNewWorkflowParamsAutomaticTolerance string
+type DefendNewWorkflowParamsAutomaticHallucinationToleranceLevels string
 
 const (
-	DefendNewWorkflowParamsAutomaticToleranceLow    DefendNewWorkflowParamsAutomaticTolerance = "low"
-	DefendNewWorkflowParamsAutomaticToleranceMedium DefendNewWorkflowParamsAutomaticTolerance = "medium"
-	DefendNewWorkflowParamsAutomaticToleranceHigh   DefendNewWorkflowParamsAutomaticTolerance = "high"
+	DefendNewWorkflowParamsAutomaticHallucinationToleranceLevelsLow    DefendNewWorkflowParamsAutomaticHallucinationToleranceLevels = "low"
+	DefendNewWorkflowParamsAutomaticHallucinationToleranceLevelsMedium DefendNewWorkflowParamsAutomaticHallucinationToleranceLevels = "medium"
+	DefendNewWorkflowParamsAutomaticHallucinationToleranceLevelsHigh   DefendNewWorkflowParamsAutomaticHallucinationToleranceLevels = "high"
 )
 
-func (r DefendNewWorkflowParamsAutomaticTolerance) IsKnown() bool {
+func (r DefendNewWorkflowParamsAutomaticHallucinationToleranceLevels) IsKnown() bool {
 	switch r {
-	case DefendNewWorkflowParamsAutomaticToleranceLow, DefendNewWorkflowParamsAutomaticToleranceMedium, DefendNewWorkflowParamsAutomaticToleranceHigh:
+	case DefendNewWorkflowParamsAutomaticHallucinationToleranceLevelsLow, DefendNewWorkflowParamsAutomaticHallucinationToleranceLevelsMedium, DefendNewWorkflowParamsAutomaticHallucinationToleranceLevelsHigh:
 		return true
 	}
 	return false
@@ -317,7 +317,7 @@ func (r DefendNewWorkflowParamsAutomaticTolerance) IsKnown() bool {
 
 type DefendSubmitEventParams struct {
 	// A dictionary of inputs sent to the LLM to generate output. The dictionary must
-	// contain at least one of `user_prompt` or `system_prompt`. For
+	// contain at least `user_prompt` or `system_prompt` field. For
 	// ground_truth_aherence guadrail metric, `ground_truth` should be provided.
 	ModelInput param.Field[DefendSubmitEventParamsModelInput] `json:"model_input,required"`
 	// Output generated by the LLM to be evaluated.
@@ -338,7 +338,7 @@ func (r DefendSubmitEventParams) MarshalJSON() (data []byte, err error) {
 }
 
 // A dictionary of inputs sent to the LLM to generate output. The dictionary must
-// contain at least one of `user_prompt` or `system_prompt`. For
+// contain at least `user_prompt` or `system_prompt` field. For
 // ground_truth_aherence guadrail metric, `ground_truth` should be provided.
 type DefendSubmitEventParamsModelInput struct {
 	// The ground truth for evaluating Ground Truth Adherence guardrail.
