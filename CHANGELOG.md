@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.6.0 (2025-10-22)
+
+Full Changelog: [v0.5.0...v0.6.0](https://github.com/deeprails/deeprails-go-sdk/compare/v0.5.0...v0.6.0)
+
+### Features
+
+* **api:** update defend naming and data structures ([28739e9](https://github.com/deeprails/deeprails-go-sdk/commit/28739e954e911f6f765576b91f77fee84bfcbdc7))
+
 ## 0.5.0 (2025-10-20)
 
 Full Changelog: [v0.4.0...v0.5.0](https://github.com/deeprails/deeprails-go-sdk/compare/v0.4.0...v0.5.0)
