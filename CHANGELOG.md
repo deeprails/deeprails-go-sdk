@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.7.0 (2025-10-22)
+
+Full Changelog: [v0.6.0...v0.7.0](https://github.com/deeprails/deeprails-go-sdk/compare/v0.6.0...v0.7.0)
+
+### Features
+
+* **api:** manual updates ([f7f4c1b](https://github.com/deeprails/deeprails-go-sdk/commit/f7f4c1b0177ad8b4f0a77aa9ae5cf764d5767100))
+
 ## 0.6.0 (2025-10-22)
 
 Full Changelog: [v0.5.0...v0.6.0](https://github.com/deeprails/deeprails-go-sdk/compare/v0.5.0...v0.6.0)
