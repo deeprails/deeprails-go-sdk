@@ -26,12 +26,8 @@ func TestUsage(t *testing.T) {
 	)
 	defendResponse, err := client.Defend.NewWorkflow(context.TODO(), deeprails.DefendNewWorkflowParams{
 		ImprovementAction: deeprails.F(deeprails.DefendNewWorkflowParamsImprovementActionFixit),
-		Metrics: deeprails.F(map[string]float64{
-			"completeness":          0.700000,
-			"instruction_adherence": 0.750000,
-		}),
-		Name: deeprails.F("Push Alert Workflow"),
-		Type: deeprails.F(deeprails.DefendNewWorkflowParamsTypeCustom),
+		Name:              deeprails.F("Push Alert Workflow"),
+		Type:              deeprails.F(deeprails.DefendNewWorkflowParamsTypeCustom),
 	})
 	if err != nil {
 		t.Error(err)

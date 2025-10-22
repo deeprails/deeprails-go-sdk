@@ -54,12 +54,8 @@ func main() {
 	)
 	defendResponse, err := client.Defend.NewWorkflow(context.TODO(), deeprails.DefendNewWorkflowParams{
 		ImprovementAction: deeprails.F(deeprails.DefendNewWorkflowParamsImprovementActionFixit),
-		Metrics: deeprails.F(map[string]float64{
-			"completeness":          0.700000,
-			"instruction_adherence": 0.750000,
-		}),
-		Name: deeprails.F("Push Alert Workflow"),
-		Type: deeprails.F(deeprails.DefendNewWorkflowParamsTypeCustom),
+		Name:              deeprails.F("Push Alert Workflow"),
+		Type:              deeprails.F(deeprails.DefendNewWorkflowParamsTypeCustom),
 	})
 	if err != nil {
 		panic(err.Error())
@@ -184,12 +180,8 @@ To handle errors, we recommend that you use the `errors.As` pattern:
 ```go
 _, err := client.Defend.NewWorkflow(context.TODO(), deeprails.DefendNewWorkflowParams{
 	ImprovementAction: deeprails.F(deeprails.DefendNewWorkflowParamsImprovementActionFixit),
-	Metrics: deeprails.F(map[string]float64{
-		"completeness":          0.700000,
-		"instruction_adherence": 0.750000,
-	}),
-	Name: deeprails.F("Push Alert Workflow"),
-	Type: deeprails.F(deeprails.DefendNewWorkflowParamsTypeCustom),
+	Name:              deeprails.F("Push Alert Workflow"),
+	Type:              deeprails.F(deeprails.DefendNewWorkflowParamsTypeCustom),
 })
 if err != nil {
 	var apierr *deeprails.Error
@@ -219,12 +211,8 @@ client.Defend.NewWorkflow(
 	ctx,
 	deeprails.DefendNewWorkflowParams{
 		ImprovementAction: deeprails.F(deeprails.DefendNewWorkflowParamsImprovementActionFixit),
-		Metrics: deeprails.F(map[string]float64{
-			"completeness":          0.700000,
-			"instruction_adherence": 0.750000,
-		}),
-		Name: deeprails.F("Push Alert Workflow"),
-		Type: deeprails.F(deeprails.DefendNewWorkflowParamsTypeCustom),
+		Name:              deeprails.F("Push Alert Workflow"),
+		Type:              deeprails.F(deeprails.DefendNewWorkflowParamsTypeCustom),
 	},
 	// This sets the per-retry timeout
 	option.WithRequestTimeout(20*time.Second),
@@ -263,12 +251,8 @@ client.Defend.NewWorkflow(
 	context.TODO(),
 	deeprails.DefendNewWorkflowParams{
 		ImprovementAction: deeprails.F(deeprails.DefendNewWorkflowParamsImprovementActionFixit),
-		Metrics: deeprails.F(map[string]float64{
-			"completeness":          0.700000,
-			"instruction_adherence": 0.750000,
-		}),
-		Name: deeprails.F("Push Alert Workflow"),
-		Type: deeprails.F(deeprails.DefendNewWorkflowParamsTypeCustom),
+		Name:              deeprails.F("Push Alert Workflow"),
+		Type:              deeprails.F(deeprails.DefendNewWorkflowParamsTypeCustom),
 	},
 	option.WithMaxRetries(5),
 )
@@ -286,12 +270,8 @@ defendResponse, err := client.Defend.NewWorkflow(
 	context.TODO(),
 	deeprails.DefendNewWorkflowParams{
 		ImprovementAction: deeprails.F(deeprails.DefendNewWorkflowParamsImprovementActionFixit),
-		Metrics: deeprails.F(map[string]float64{
-			"completeness":          0.700000,
-			"instruction_adherence": 0.750000,
-		}),
-		Name: deeprails.F("Push Alert Workflow"),
-		Type: deeprails.F(deeprails.DefendNewWorkflowParamsTypeCustom),
+		Name:              deeprails.F("Push Alert Workflow"),
+		Type:              deeprails.F(deeprails.DefendNewWorkflowParamsTypeCustom),
 	},
 	option.WithResponseInto(&response),
 )

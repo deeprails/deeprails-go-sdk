@@ -27,15 +27,17 @@ func TestDefendNewWorkflowWithOptionalParams(t *testing.T) {
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.Defend.NewWorkflow(context.TODO(), deeprails.DefendNewWorkflowParams{
-		ImprovementAction: deeprails.F(deeprails.DefendNewWorkflowParamsImprovementActionRegenerate),
-		Metrics: deeprails.F(map[string]float64{
+		ImprovementAction: deeprails.F(deeprails.DefendNewWorkflowParamsImprovementActionRegen),
+		Name:              deeprails.F("name"),
+		Type:              deeprails.F(deeprails.DefendNewWorkflowParamsTypeAutomatic),
+		AutomaticHallucinationToleranceLevels: deeprails.F(map[string]deeprails.DefendNewWorkflowParamsAutomaticHallucinationToleranceLevels{
+			"foo": deeprails.DefendNewWorkflowParamsAutomaticHallucinationToleranceLevelsLow,
+		}),
+		CustomHallucinationThresholdValues: deeprails.F(map[string]float64{
 			"foo": 0.000000,
 		}),
-		Name:               deeprails.F("name"),
-		Type:               deeprails.F(deeprails.DefendNewWorkflowParamsTypeAutomatic),
-		AutomaticTolerance: deeprails.F(deeprails.DefendNewWorkflowParamsAutomaticToleranceLow),
-		Description:        deeprails.F("description"),
-		MaxRetries:         deeprails.F(int64(0)),
+		Description:           deeprails.F("description"),
+		MaxImprovementAttempt: deeprails.F(int64(0)),
 	})
 	if err != nil {
 		var apierr *deeprails.Error
