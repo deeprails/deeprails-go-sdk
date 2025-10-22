@@ -40,12 +40,8 @@ func TestUserAgentHeader(t *testing.T) {
 	)
 	client.Defend.NewWorkflow(context.Background(), deeprails.DefendNewWorkflowParams{
 		ImprovementAction: deeprails.F(deeprails.DefendNewWorkflowParamsImprovementActionFixit),
-		Metrics: deeprails.F(map[string]float64{
-			"completeness":          0.700000,
-			"instruction_adherence": 0.750000,
-		}),
-		Name: deeprails.F("Push Alert Workflow"),
-		Type: deeprails.F(deeprails.DefendNewWorkflowParamsTypeCustom),
+		Name:              deeprails.F("Push Alert Workflow"),
+		Type:              deeprails.F(deeprails.DefendNewWorkflowParamsTypeCustom),
 	})
 	if userAgent != fmt.Sprintf("Deeprails/Go %s", internal.PackageVersion) {
 		t.Errorf("Expected User-Agent to be correct, but got: %#v", userAgent)
@@ -72,12 +68,8 @@ func TestRetryAfter(t *testing.T) {
 	)
 	_, err := client.Defend.NewWorkflow(context.Background(), deeprails.DefendNewWorkflowParams{
 		ImprovementAction: deeprails.F(deeprails.DefendNewWorkflowParamsImprovementActionFixit),
-		Metrics: deeprails.F(map[string]float64{
-			"completeness":          0.700000,
-			"instruction_adherence": 0.750000,
-		}),
-		Name: deeprails.F("Push Alert Workflow"),
-		Type: deeprails.F(deeprails.DefendNewWorkflowParamsTypeCustom),
+		Name:              deeprails.F("Push Alert Workflow"),
+		Type:              deeprails.F(deeprails.DefendNewWorkflowParamsTypeCustom),
 	})
 	if err == nil {
 		t.Error("Expected there to be a cancel error")
@@ -115,12 +107,8 @@ func TestDeleteRetryCountHeader(t *testing.T) {
 	)
 	_, err := client.Defend.NewWorkflow(context.Background(), deeprails.DefendNewWorkflowParams{
 		ImprovementAction: deeprails.F(deeprails.DefendNewWorkflowParamsImprovementActionFixit),
-		Metrics: deeprails.F(map[string]float64{
-			"completeness":          0.700000,
-			"instruction_adherence": 0.750000,
-		}),
-		Name: deeprails.F("Push Alert Workflow"),
-		Type: deeprails.F(deeprails.DefendNewWorkflowParamsTypeCustom),
+		Name:              deeprails.F("Push Alert Workflow"),
+		Type:              deeprails.F(deeprails.DefendNewWorkflowParamsTypeCustom),
 	})
 	if err == nil {
 		t.Error("Expected there to be a cancel error")
@@ -153,12 +141,8 @@ func TestOverwriteRetryCountHeader(t *testing.T) {
 	)
 	_, err := client.Defend.NewWorkflow(context.Background(), deeprails.DefendNewWorkflowParams{
 		ImprovementAction: deeprails.F(deeprails.DefendNewWorkflowParamsImprovementActionFixit),
-		Metrics: deeprails.F(map[string]float64{
-			"completeness":          0.700000,
-			"instruction_adherence": 0.750000,
-		}),
-		Name: deeprails.F("Push Alert Workflow"),
-		Type: deeprails.F(deeprails.DefendNewWorkflowParamsTypeCustom),
+		Name:              deeprails.F("Push Alert Workflow"),
+		Type:              deeprails.F(deeprails.DefendNewWorkflowParamsTypeCustom),
 	})
 	if err == nil {
 		t.Error("Expected there to be a cancel error")
@@ -190,12 +174,8 @@ func TestRetryAfterMs(t *testing.T) {
 	)
 	_, err := client.Defend.NewWorkflow(context.Background(), deeprails.DefendNewWorkflowParams{
 		ImprovementAction: deeprails.F(deeprails.DefendNewWorkflowParamsImprovementActionFixit),
-		Metrics: deeprails.F(map[string]float64{
-			"completeness":          0.700000,
-			"instruction_adherence": 0.750000,
-		}),
-		Name: deeprails.F("Push Alert Workflow"),
-		Type: deeprails.F(deeprails.DefendNewWorkflowParamsTypeCustom),
+		Name:              deeprails.F("Push Alert Workflow"),
+		Type:              deeprails.F(deeprails.DefendNewWorkflowParamsTypeCustom),
 	})
 	if err == nil {
 		t.Error("Expected there to be a cancel error")
@@ -221,12 +201,8 @@ func TestContextCancel(t *testing.T) {
 	cancel()
 	_, err := client.Defend.NewWorkflow(cancelCtx, deeprails.DefendNewWorkflowParams{
 		ImprovementAction: deeprails.F(deeprails.DefendNewWorkflowParamsImprovementActionFixit),
-		Metrics: deeprails.F(map[string]float64{
-			"completeness":          0.700000,
-			"instruction_adherence": 0.750000,
-		}),
-		Name: deeprails.F("Push Alert Workflow"),
-		Type: deeprails.F(deeprails.DefendNewWorkflowParamsTypeCustom),
+		Name:              deeprails.F("Push Alert Workflow"),
+		Type:              deeprails.F(deeprails.DefendNewWorkflowParamsTypeCustom),
 	})
 	if err == nil {
 		t.Error("Expected there to be a cancel error")
@@ -249,12 +225,8 @@ func TestContextCancelDelay(t *testing.T) {
 	defer cancel()
 	_, err := client.Defend.NewWorkflow(cancelCtx, deeprails.DefendNewWorkflowParams{
 		ImprovementAction: deeprails.F(deeprails.DefendNewWorkflowParamsImprovementActionFixit),
-		Metrics: deeprails.F(map[string]float64{
-			"completeness":          0.700000,
-			"instruction_adherence": 0.750000,
-		}),
-		Name: deeprails.F("Push Alert Workflow"),
-		Type: deeprails.F(deeprails.DefendNewWorkflowParamsTypeCustom),
+		Name:              deeprails.F("Push Alert Workflow"),
+		Type:              deeprails.F(deeprails.DefendNewWorkflowParamsTypeCustom),
 	})
 	if err == nil {
 		t.Error("expected there to be a cancel error")
@@ -283,12 +255,8 @@ func TestContextDeadline(t *testing.T) {
 		)
 		_, err := client.Defend.NewWorkflow(deadlineCtx, deeprails.DefendNewWorkflowParams{
 			ImprovementAction: deeprails.F(deeprails.DefendNewWorkflowParamsImprovementActionFixit),
-			Metrics: deeprails.F(map[string]float64{
-				"completeness":          0.700000,
-				"instruction_adherence": 0.750000,
-			}),
-			Name: deeprails.F("Push Alert Workflow"),
-			Type: deeprails.F(deeprails.DefendNewWorkflowParamsTypeCustom),
+			Name:              deeprails.F("Push Alert Workflow"),
+			Type:              deeprails.F(deeprails.DefendNewWorkflowParamsTypeCustom),
 		})
 		if err == nil {
 			t.Error("expected there to be a deadline error")
