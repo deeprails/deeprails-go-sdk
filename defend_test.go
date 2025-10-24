@@ -36,8 +36,8 @@ func TestDefendNewWorkflowWithOptionalParams(t *testing.T) {
 		CustomHallucinationThresholdValues: deeprails.F(map[string]float64{
 			"foo": 0.000000,
 		}),
-		Description:           deeprails.F("description"),
-		MaxImprovementAttempt: deeprails.F(int64(0)),
+		Description:            deeprails.F("description"),
+		MaxImprovementAttempts: deeprails.F(int64(0)),
 	})
 	if err != nil {
 		var apierr *deeprails.Error
