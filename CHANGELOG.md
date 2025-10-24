@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.8.0 (2025-10-24)
+
+Full Changelog: [v0.7.0...v0.8.0](https://github.com/deeprails/deeprails-go-sdk/compare/v0.7.0...v0.8.0)
+
+### Features
+
+* **api:** remove apiresponse from monitor ([204119e](https://github.com/deeprails/deeprails-go-sdk/commit/204119e3dff0b6da59a183f581fa017daa39274c))
+
 ## 0.7.0 (2025-10-22)
 
 Full Changelog: [v0.6.0...v0.7.0](https://github.com/deeprails/deeprails-go-sdk/compare/v0.6.0...v0.7.0)
