@@ -16,10 +16,9 @@ import (
 // interacting with the deeprails API. You should not instantiate this client
 // directly, and instead use the [NewClient] method instead.
 type Client struct {
-	Options  []option.RequestOption
-	Defend   *DefendService
-	Monitor  *MonitorService
-	Evaluate *EvaluateService
+	Options []option.RequestOption
+	Defend  *DefendService
+	Monitor *MonitorService
 }
 
 // DefaultClientOptions read from the environment (DEEPRAILS_API_KEY,
@@ -46,7 +45,6 @@ func NewClient(opts ...option.RequestOption) (r *Client) {
 
 	r.Defend = NewDefendService(opts...)
 	r.Monitor = NewMonitorService(opts...)
-	r.Evaluate = NewEvaluateService(opts...)
 
 	return
 }
