@@ -19,6 +19,7 @@ type Client struct {
 	Options []option.RequestOption
 	Defend  *DefendService
 	Monitor *MonitorService
+	Files   *FileService
 }
 
 // DefaultClientOptions read from the environment (DEEPRAILS_API_KEY,
@@ -45,6 +46,7 @@ func NewClient(opts ...option.RequestOption) (r *Client) {
 
 	r.Defend = NewDefendService(opts...)
 	r.Monitor = NewMonitorService(opts...)
+	r.Files = NewFileService(opts...)
 
 	return
 }
