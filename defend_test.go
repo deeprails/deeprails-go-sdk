@@ -37,7 +37,9 @@ func TestDefendNewWorkflowWithOptionalParams(t *testing.T) {
 			"foo": 0.000000,
 		}),
 		Description:            deeprails.F("description"),
+		FileSearch:             deeprails.F([]string{"string"}),
 		MaxImprovementAttempts: deeprails.F(int64(0)),
+		WebSearch:              deeprails.F(true),
 	})
 	if err != nil {
 		var apierr *deeprails.Error
