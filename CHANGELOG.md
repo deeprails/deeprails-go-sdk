@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.10.0 (2025-10-30)
+
+Full Changelog: [v0.9.0...v0.10.0](https://github.com/deeprails/deeprails-go-sdk/compare/v0.9.0...v0.10.0)
+
+### Features
+
+* **api:** Add file and web search as extended ai capabilities ([8137219](https://github.com/deeprails/deeprails-go-sdk/commit/813721975fe44e09cb22d1ea43483e47b5424107))
+* **api:** manual updates ([a5b404e](https://github.com/deeprails/deeprails-go-sdk/commit/a5b404e253d1dc22269dd9de21f2928b83160824))
+
 ## 0.9.0 (2025-10-29)
 
 Full Changelog: [v0.8.0...v0.9.0](https://github.com/deeprails/deeprails-go-sdk/compare/v0.8.0...v0.9.0)
