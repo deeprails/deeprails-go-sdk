@@ -34,7 +34,9 @@ func TestDefendNewWorkflowWithOptionalParams(t *testing.T) {
 			"foo": deeprails.DefendNewWorkflowParamsAutomaticHallucinationToleranceLevelsLow,
 		}),
 		Description:            deeprails.F("description"),
+		FileSearch:             deeprails.F([]string{"string"}),
 		MaxImprovementAttempts: deeprails.F(int64(3)),
+		WebSearch:              deeprails.F(true),
 	})
 	if err != nil {
 		var apierr *deeprails.Error

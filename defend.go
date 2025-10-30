@@ -249,9 +249,14 @@ type DefendNewWorkflowParams struct {
 	CustomHallucinationThresholdValues param.Field[map[string]float64] `json:"custom_hallucination_threshold_values"`
 	// Description for the workflow.
 	Description param.Field[string] `json:"description"`
+	// An array of file IDs to search in the workflow's evaluations. Files must be
+	// uploaded via the DeepRails API first.
+	FileSearch param.Field[[]string] `json:"file_search"`
 	// Max. number of improvement action retries until a given event passes the
 	// guardrails. Defaults to 10.
 	MaxImprovementAttempts param.Field[int64] `json:"max_improvement_attempts"`
+	// Whether to enable web search for this workflow's evaluations. Defaults to false.
+	WebSearch param.Field[bool] `json:"web_search"`
 }
 
 func (r DefendNewWorkflowParams) MarshalJSON() (data []byte, err error) {
