@@ -38,14 +38,14 @@ func NewFileService(opts ...option.RequestOption) (r *FileService) {
 }
 
 // Use this endpoint to upload a file to the DeepRails API
-func (r *FileService) Upload(ctx context.Context, body FileUploadParams, opts ...option.RequestOption) (res *FileUploadResponse, err error) {
+func (r *FileService) Upload(ctx context.Context, body FileUploadParams, opts ...option.RequestOption) (res *FileResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "files/upload"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
-type FileUploadResponse struct {
+type FileResponse struct {
 	// The time the file was created in UTC.
 	CreatedAt time.Time `json:"created_at" format:"date-time"`
 	// A unique file ID.
@@ -55,13 +55,12 @@ type FileUploadResponse struct {
 	// Path to the s3 bucket where the file is stored.
 	FilePath string `json:"file_path"`
 	// The most recent time the file was modified in UTC.
-	UpdatedAt time.Time              `json:"updated_at" format:"date-time"`
-	JSON      fileUploadResponseJSON `json:"-"`
+	UpdatedAt time.Time        `json:"updated_at" format:"date-time"`
+	JSON      fileResponseJSON `json:"-"`
 }
 
-// fileUploadResponseJSON contains the JSON metadata for the struct
-// [FileUploadResponse]
-type fileUploadResponseJSON struct {
+// fileResponseJSON contains the JSON metadata for the struct [FileResponse]
+type fileResponseJSON struct {
 	CreatedAt   apijson.Field
 	FileID      apijson.Field
 	FileName    apijson.Field
@@ -71,11 +70,11 @@ type fileUploadResponseJSON struct {
 	ExtraFields map[string]apijson.Field
 }
 
-func (r *FileUploadResponse) UnmarshalJSON(data []byte) (err error) {
+func (r *FileResponse) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r fileUploadResponseJSON) RawJSON() string {
+func (r fileResponseJSON) RawJSON() string {
 	return r.raw
 }
 
