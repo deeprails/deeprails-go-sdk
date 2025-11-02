@@ -27,8 +27,11 @@ func TestMonitorNewWithOptionalParams(t *testing.T) {
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.Monitor.New(context.TODO(), deeprails.MonitorNewParams{
-		Name:        deeprails.F("name"),
-		Description: deeprails.F("description"),
+		GuardrailMetrics: deeprails.F([]deeprails.MonitorNewParamsGuardrailMetric{deeprails.MonitorNewParamsGuardrailMetricCorrectness}),
+		Name:             deeprails.F("name"),
+		Description:      deeprails.F("description"),
+		FileSearch:       deeprails.F([]string{"string"}),
+		WebSearch:        deeprails.F(true),
 	})
 	if err != nil {
 		var apierr *deeprails.Error
@@ -116,14 +119,12 @@ func TestMonitorSubmitEventWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"monitor_id",
 		deeprails.MonitorSubmitEventParams{
-			GuardrailMetrics: deeprails.F([]deeprails.MonitorSubmitEventParamsGuardrailMetric{deeprails.MonitorSubmitEventParamsGuardrailMetricCorrectness}),
 			ModelInput: deeprails.F(deeprails.MonitorSubmitEventParamsModelInput{
 				GroundTruth:  deeprails.F("ground_truth"),
 				SystemPrompt: deeprails.F("system_prompt"),
 				UserPrompt:   deeprails.F("user_prompt"),
 			}),
 			ModelOutput: deeprails.F("model_output"),
-			ModelUsed:   deeprails.F("model_used"),
 			Nametag:     deeprails.F("nametag"),
 			RunMode:     deeprails.F(deeprails.MonitorSubmitEventParamsRunModePrecisionPlus),
 		},
