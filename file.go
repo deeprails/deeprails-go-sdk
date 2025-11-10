@@ -5,11 +5,9 @@ package deeprails
 import (
 	"bytes"
 	"context"
-	"io"
 	"mime/multipart"
 	"net/http"
 	"slices"
-	"time"
 
 	"github.com/deeprails/deeprails-go-sdk/internal/apiform"
 	"github.com/deeprails/deeprails-go-sdk/internal/apijson"
@@ -46,26 +44,20 @@ func (r *FileService) Upload(ctx context.Context, body FileUploadParams, opts ..
 }
 
 type FileResponse struct {
-	// The time the file was created in UTC.
-	CreatedAt time.Time `json:"created_at" format:"date-time"`
 	// A unique file ID.
 	FileID string `json:"file_id"`
 	// Name of the file.
 	FileName string `json:"file_name"`
-	// Path to the s3 bucket where the file is stored.
-	FilePath string `json:"file_path"`
-	// The most recent time the file was modified in UTC.
-	UpdatedAt time.Time        `json:"updated_at" format:"date-time"`
-	JSON      fileResponseJSON `json:"-"`
+	// The size of the file in bytes.
+	FileSize int64            `json:"file_size"`
+	JSON     fileResponseJSON `json:"-"`
 }
 
 // fileResponseJSON contains the JSON metadata for the struct [FileResponse]
 type fileResponseJSON struct {
-	CreatedAt   apijson.Field
 	FileID      apijson.Field
 	FileName    apijson.Field
-	FilePath    apijson.Field
-	UpdatedAt   apijson.Field
+	FileSize    apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
@@ -80,7 +72,7 @@ func (r fileResponseJSON) RawJSON() string {
 
 type FileUploadParams struct {
 	// The contents of the file to upload.
-	File param.Field[io.Reader] `json:"file,required" format:"binary"`
+	File param.Field[[]string] `json:"file,required"`
 }
 
 func (r FileUploadParams) MarshalMultipart() (data []byte, contentType string, err error) {

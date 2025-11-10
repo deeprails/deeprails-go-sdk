@@ -1,4 +1,4 @@
 configured_endpoints: 10
-openapi_spec_url: https://storage.googleapis.com/stainless-sdk-openapi-specs/deeprails-inc%2Fdeeprails-27d1851b1716eda30b76efc8eeb3a626e04e46015628f661db6490dff24695b6.yml
-openapi_spec_hash: 5450dc5595322c95243a74f0b2bccc15
-config_hash: fcc938a54b0de3f15eca048f50196517
+openapi_spec_url: https://storage.googleapis.com/stainless-sdk-openapi-specs/deeprails-inc%2Fdeeprails-f817bda32367a8ca26a97e8c35fe6ffa867c296e09f66cbddf087626dc19aa86.yml
+openapi_spec_hash: 5c23a871cf44694c60e424767bc93a80
+config_hash: 5964690b6915b94697dd9341fdbe420a
