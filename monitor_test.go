@@ -88,9 +88,9 @@ func TestMonitorUpdateWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"monitor_id",
 		deeprails.MonitorUpdateParams{
-			Description:   deeprails.F("description"),
-			MonitorStatus: deeprails.F(deeprails.MonitorUpdateParamsMonitorStatusActive),
-			Name:          deeprails.F("name"),
+			Description: deeprails.F("description"),
+			Name:        deeprails.F("name"),
+			Status:      deeprails.F(deeprails.MonitorUpdateParamsStatusActive),
 		},
 	)
 	if err != nil {

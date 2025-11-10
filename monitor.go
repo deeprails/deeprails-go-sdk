@@ -39,7 +39,7 @@ func NewMonitorService(opts ...option.RequestOption) (r *MonitorService) {
 
 // Use this endpoint to create a new monitor to evaluate model inputs and outputs
 // using guardrails
-func (r *MonitorService) New(ctx context.Context, body MonitorNewParams, opts ...option.RequestOption) (res *MonitorResponse, err error) {
+func (r *MonitorService) New(ctx context.Context, body MonitorNewParams, opts ...option.RequestOption) (res *MonitorCreateResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "monitor"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
@@ -61,7 +61,7 @@ func (r *MonitorService) Get(ctx context.Context, monitorID string, query Monito
 
 // Use this endpoint to update the name, description, or status of an existing
 // monitor
-func (r *MonitorService) Update(ctx context.Context, monitorID string, body MonitorUpdateParams, opts ...option.RequestOption) (res *MonitorResponse, err error) {
+func (r *MonitorService) Update(ctx context.Context, monitorID string, body MonitorUpdateParams, opts ...option.RequestOption) (res *MonitorUpdateResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if monitorID == "" {
 		err = errors.New("missing required monitor_id parameter")
@@ -85,14 +85,62 @@ func (r *MonitorService) SubmitEvent(ctx context.Context, monitorID string, body
 	return
 }
 
-type MonitorDetailResponse struct {
+type MonitorCreateResponse struct {
+	// The time the monitor was created in UTC.
+	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
 	// A unique monitor ID.
 	MonitorID string `json:"monitor_id,required"`
 	// Status of the monitor. Can be `active` or `inactive`. Inactive monitors no
 	// longer record and evaluate events.
-	MonitorStatus MonitorDetailResponseMonitorStatus `json:"monitor_status,required"`
+	Status MonitorCreateResponseStatus `json:"status,required"`
+	JSON   monitorCreateResponseJSON   `json:"-"`
+}
+
+// monitorCreateResponseJSON contains the JSON metadata for the struct
+// [MonitorCreateResponse]
+type monitorCreateResponseJSON struct {
+	CreatedAt   apijson.Field
+	MonitorID   apijson.Field
+	Status      apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *MonitorCreateResponse) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r monitorCreateResponseJSON) RawJSON() string {
+	return r.raw
+}
+
+// Status of the monitor. Can be `active` or `inactive`. Inactive monitors no
+// longer record and evaluate events.
+type MonitorCreateResponseStatus string
+
+const (
+	MonitorCreateResponseStatusActive   MonitorCreateResponseStatus = "active"
+	MonitorCreateResponseStatusInactive MonitorCreateResponseStatus = "inactive"
+)
+
+func (r MonitorCreateResponseStatus) IsKnown() bool {
+	switch r {
+	case MonitorCreateResponseStatusActive, MonitorCreateResponseStatusInactive:
+		return true
+	}
+	return false
+}
+
+type MonitorDetailResponse struct {
+	// A unique monitor ID.
+	MonitorID string `json:"monitor_id,required"`
 	// Name of this monitor.
 	Name string `json:"name,required"`
+	// Status of the monitor. Can be `active` or `inactive`. Inactive monitors no
+	// longer record and evaluate events.
+	Status MonitorDetailResponseStatus `json:"status,required"`
+	// An array of capabilities associated with this monitor.
+	Capabilities []MonitorDetailResponseCapability `json:"capabilities"`
 	// The time the monitor was created in UTC.
 	CreatedAt time.Time `json:"created_at" format:"date-time"`
 	// Description of this monitor.
@@ -100,31 +148,32 @@ type MonitorDetailResponse struct {
 	// An array of all evaluations performed by this monitor. Each one corresponds to a
 	// separate monitor event.
 	Evaluations []MonitorDetailResponseEvaluation `json:"evaluations"`
+	// An array of files associated with this monitor.
+	Files []MonitorDetailResponseFile `json:"files"`
 	// Contains five fields used for stats of this monitor: total evaluations,
 	// completed evaluations, failed evaluations, queued evaluations, and in progress
 	// evaluations.
 	Stats MonitorDetailResponseStats `json:"stats"`
 	// The most recent time the monitor was modified in UTC.
-	UpdatedAt time.Time `json:"updated_at" format:"date-time"`
-	// User ID of the user who created the monitor.
-	UserID string                    `json:"user_id"`
-	JSON   monitorDetailResponseJSON `json:"-"`
+	UpdatedAt time.Time                 `json:"updated_at" format:"date-time"`
+	JSON      monitorDetailResponseJSON `json:"-"`
 }
 
 // monitorDetailResponseJSON contains the JSON metadata for the struct
 // [MonitorDetailResponse]
 type monitorDetailResponseJSON struct {
-	MonitorID     apijson.Field
-	MonitorStatus apijson.Field
-	Name          apijson.Field
-	CreatedAt     apijson.Field
-	Description   apijson.Field
-	Evaluations   apijson.Field
-	Stats         apijson.Field
-	UpdatedAt     apijson.Field
-	UserID        apijson.Field
-	raw           string
-	ExtraFields   map[string]apijson.Field
+	MonitorID    apijson.Field
+	Name         apijson.Field
+	Status       apijson.Field
+	Capabilities apijson.Field
+	CreatedAt    apijson.Field
+	Description  apijson.Field
+	Evaluations  apijson.Field
+	Files        apijson.Field
+	Stats        apijson.Field
+	UpdatedAt    apijson.Field
+	raw          string
+	ExtraFields  map[string]apijson.Field
 }
 
 func (r *MonitorDetailResponse) UnmarshalJSON(data []byte) (err error) {
@@ -137,24 +186,44 @@ func (r monitorDetailResponseJSON) RawJSON() string {
 
 // Status of the monitor. Can be `active` or `inactive`. Inactive monitors no
 // longer record and evaluate events.
-type MonitorDetailResponseMonitorStatus string
+type MonitorDetailResponseStatus string
 
 const (
-	MonitorDetailResponseMonitorStatusActive   MonitorDetailResponseMonitorStatus = "active"
-	MonitorDetailResponseMonitorStatusInactive MonitorDetailResponseMonitorStatus = "inactive"
+	MonitorDetailResponseStatusActive   MonitorDetailResponseStatus = "active"
+	MonitorDetailResponseStatusInactive MonitorDetailResponseStatus = "inactive"
 )
 
-func (r MonitorDetailResponseMonitorStatus) IsKnown() bool {
+func (r MonitorDetailResponseStatus) IsKnown() bool {
 	switch r {
-	case MonitorDetailResponseMonitorStatusActive, MonitorDetailResponseMonitorStatusInactive:
+	case MonitorDetailResponseStatusActive, MonitorDetailResponseStatusInactive:
 		return true
 	}
 	return false
 }
 
+type MonitorDetailResponseCapability struct {
+	// The type of capability.
+	Capability string                              `json:"capability"`
+	JSON       monitorDetailResponseCapabilityJSON `json:"-"`
+}
+
+// monitorDetailResponseCapabilityJSON contains the JSON metadata for the struct
+// [MonitorDetailResponseCapability]
+type monitorDetailResponseCapabilityJSON struct {
+	Capability  apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *MonitorDetailResponseCapability) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r monitorDetailResponseCapabilityJSON) RawJSON() string {
+	return r.raw
+}
+
 type MonitorDetailResponseEvaluation struct {
-	// A unique evaluation ID.
-	EvalID string `json:"eval_id,required"`
 	// Status of the evaluation.
 	EvaluationStatus MonitorDetailResponseEvaluationsEvaluationStatus `json:"evaluation_status,required"`
 	// A dictionary of inputs sent to the LLM to generate output. The dictionary must
@@ -168,12 +237,8 @@ type MonitorDetailResponseEvaluation struct {
 	RunMode MonitorDetailResponseEvaluationsRunMode `json:"run_mode,required"`
 	// The time the evaluation was created in UTC.
 	CreatedAt time.Time `json:"created_at" format:"date-time"`
-	// The time the evaluation completed in UTC.
-	EndTimestamp time.Time `json:"end_timestamp" format:"date-time"`
-	// Description of the error causing the evaluation to fail, if any.
+	// Error message if the evaluation failed.
 	ErrorMessage string `json:"error_message"`
-	// The time the error causing the evaluation to fail was recorded.
-	ErrorTimestamp time.Time `json:"error_timestamp" format:"date-time"`
 	// Evaluation result consisting of average scores and rationales for each of the
 	// evaluated guardrail metrics.
 	EvaluationResult map[string]interface{} `json:"evaluation_result"`
@@ -182,40 +247,28 @@ type MonitorDetailResponseEvaluation struct {
 	// An array of guardrail metrics that the model input and output pair will be
 	// evaluated on.
 	GuardrailMetrics []MonitorDetailResponseEvaluationsGuardrailMetric `json:"guardrail_metrics"`
-	// Model ID used to generate the output, like `gpt-4o` or `o3`.
-	ModelUsed string `json:"model_used"`
-	// The most recent time the evaluation was modified in UTC.
-	ModifiedAt time.Time `json:"modified_at" format:"date-time"`
 	// An optional, user-defined tag for the evaluation.
 	Nametag string `json:"nametag"`
 	// Evaluation progress. Values range between 0 and 100; 100 corresponds to a
 	// completed `evaluation_status`.
-	Progress int64 `json:"progress"`
-	// The time the evaluation started in UTC.
-	StartTimestamp time.Time                           `json:"start_timestamp" format:"date-time"`
-	JSON           monitorDetailResponseEvaluationJSON `json:"-"`
+	Progress int64                               `json:"progress"`
+	JSON     monitorDetailResponseEvaluationJSON `json:"-"`
 }
 
 // monitorDetailResponseEvaluationJSON contains the JSON metadata for the struct
 // [MonitorDetailResponseEvaluation]
 type monitorDetailResponseEvaluationJSON struct {
-	EvalID              apijson.Field
 	EvaluationStatus    apijson.Field
 	ModelInput          apijson.Field
 	ModelOutput         apijson.Field
 	RunMode             apijson.Field
 	CreatedAt           apijson.Field
-	EndTimestamp        apijson.Field
 	ErrorMessage        apijson.Field
-	ErrorTimestamp      apijson.Field
 	EvaluationResult    apijson.Field
 	EvaluationTotalCost apijson.Field
 	GuardrailMetrics    apijson.Field
-	ModelUsed           apijson.Field
-	ModifiedAt          apijson.Field
 	Nametag             apijson.Field
 	Progress            apijson.Field
-	StartTimestamp      apijson.Field
 	raw                 string
 	ExtraFields         map[string]apijson.Field
 }
@@ -316,6 +369,34 @@ func (r MonitorDetailResponseEvaluationsGuardrailMetric) IsKnown() bool {
 	return false
 }
 
+type MonitorDetailResponseFile struct {
+	// The ID of the file.
+	FileID string `json:"file_id"`
+	// The name of the file.
+	FileName string `json:"file_name"`
+	// The size of the file in bytes.
+	FileSize int64                         `json:"file_size"`
+	JSON     monitorDetailResponseFileJSON `json:"-"`
+}
+
+// monitorDetailResponseFileJSON contains the JSON metadata for the struct
+// [MonitorDetailResponseFile]
+type monitorDetailResponseFileJSON struct {
+	FileID      apijson.Field
+	FileName    apijson.Field
+	FileSize    apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *MonitorDetailResponseFile) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r monitorDetailResponseFileJSON) RawJSON() string {
+	return r.raw
+}
+
 // Contains five fields used for stats of this monitor: total evaluations,
 // completed evaluations, failed evaluations, queued evaluations, and in progress
 // evaluations.
@@ -354,8 +435,6 @@ func (r monitorDetailResponseStatsJSON) RawJSON() string {
 }
 
 type MonitorEventResponse struct {
-	// A unique evaluation ID associated with this event.
-	EvaluationID string `json:"evaluation_id,required"`
 	// A unique monitor event ID.
 	EventID string `json:"event_id,required"`
 	// Monitor ID associated with this event.
@@ -368,12 +447,11 @@ type MonitorEventResponse struct {
 // monitorEventResponseJSON contains the JSON metadata for the struct
 // [MonitorEventResponse]
 type monitorEventResponseJSON struct {
-	EvaluationID apijson.Field
-	EventID      apijson.Field
-	MonitorID    apijson.Field
-	CreatedAt    apijson.Field
-	raw          string
-	ExtraFields  map[string]apijson.Field
+	EventID     apijson.Field
+	MonitorID   apijson.Field
+	CreatedAt   apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
 }
 
 func (r *MonitorEventResponse) UnmarshalJSON(data []byte) (err error) {
@@ -384,58 +462,47 @@ func (r monitorEventResponseJSON) RawJSON() string {
 	return r.raw
 }
 
-type MonitorResponse struct {
+type MonitorUpdateResponse struct {
+	// The time the monitor was last modified in UTC.
+	ModifiedAt time.Time `json:"modified_at,required" format:"date-time"`
 	// A unique monitor ID.
 	MonitorID string `json:"monitor_id,required"`
-	// Name of the monitor.
-	Name string `json:"name,required"`
-	// The time the monitor was created in UTC.
-	CreatedAt time.Time `json:"created_at" format:"date-time"`
-	// Description of the monitor.
-	Description string `json:"description"`
 	// Status of the monitor. Can be `active` or `inactive`. Inactive monitors no
 	// longer record and evaluate events.
-	MonitorStatus MonitorResponseMonitorStatus `json:"monitor_status"`
-	// The most recent time the monitor was modified in UTC.
-	UpdatedAt time.Time `json:"updated_at" format:"date-time"`
-	// User ID of the user who created the monitor.
-	UserID string              `json:"user_id"`
-	JSON   monitorResponseJSON `json:"-"`
+	Status MonitorUpdateResponseStatus `json:"status,required"`
+	JSON   monitorUpdateResponseJSON   `json:"-"`
 }
 
-// monitorResponseJSON contains the JSON metadata for the struct [MonitorResponse]
-type monitorResponseJSON struct {
-	MonitorID     apijson.Field
-	Name          apijson.Field
-	CreatedAt     apijson.Field
-	Description   apijson.Field
-	MonitorStatus apijson.Field
-	UpdatedAt     apijson.Field
-	UserID        apijson.Field
-	raw           string
-	ExtraFields   map[string]apijson.Field
+// monitorUpdateResponseJSON contains the JSON metadata for the struct
+// [MonitorUpdateResponse]
+type monitorUpdateResponseJSON struct {
+	ModifiedAt  apijson.Field
+	MonitorID   apijson.Field
+	Status      apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
 }
 
-func (r *MonitorResponse) UnmarshalJSON(data []byte) (err error) {
+func (r *MonitorUpdateResponse) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r monitorResponseJSON) RawJSON() string {
+func (r monitorUpdateResponseJSON) RawJSON() string {
 	return r.raw
 }
 
 // Status of the monitor. Can be `active` or `inactive`. Inactive monitors no
 // longer record and evaluate events.
-type MonitorResponseMonitorStatus string
+type MonitorUpdateResponseStatus string
 
 const (
-	MonitorResponseMonitorStatusActive   MonitorResponseMonitorStatus = "active"
-	MonitorResponseMonitorStatusInactive MonitorResponseMonitorStatus = "inactive"
+	MonitorUpdateResponseStatusActive   MonitorUpdateResponseStatus = "active"
+	MonitorUpdateResponseStatusInactive MonitorUpdateResponseStatus = "inactive"
 )
 
-func (r MonitorResponseMonitorStatus) IsKnown() bool {
+func (r MonitorUpdateResponseStatus) IsKnown() bool {
 	switch r {
-	case MonitorResponseMonitorStatusActive, MonitorResponseMonitorStatusInactive:
+	case MonitorUpdateResponseStatusActive, MonitorUpdateResponseStatusInactive:
 		return true
 	}
 	return false
@@ -482,7 +549,8 @@ func (r MonitorNewParamsGuardrailMetric) IsKnown() bool {
 }
 
 type MonitorGetParams struct {
-	// Limit the returned events associated with this monitor. Defaults to 10.
+	// Limit the number of returned evaluations associated with this monitor. Defaults
+	// to 10.
 	Limit param.Field[int64] `query:"limit"`
 }
 
@@ -497,11 +565,11 @@ func (r MonitorGetParams) URLQuery() (v url.Values) {
 type MonitorUpdateParams struct {
 	// Description of the monitor.
 	Description param.Field[string] `json:"description"`
-	// Status of the monitor. Can be `active` or `inactive`. Inactive monitors no
-	// longer record and evaluate events.
-	MonitorStatus param.Field[MonitorUpdateParamsMonitorStatus] `json:"monitor_status"`
 	// Name of the monitor.
 	Name param.Field[string] `json:"name"`
+	// Status of the monitor. Can be `active` or `inactive`. Inactive monitors no
+	// longer record and evaluate events.
+	Status param.Field[MonitorUpdateParamsStatus] `json:"status"`
 }
 
 func (r MonitorUpdateParams) MarshalJSON() (data []byte, err error) {
@@ -510,16 +578,16 @@ func (r MonitorUpdateParams) MarshalJSON() (data []byte, err error) {
 
 // Status of the monitor. Can be `active` or `inactive`. Inactive monitors no
 // longer record and evaluate events.
-type MonitorUpdateParamsMonitorStatus string
+type MonitorUpdateParamsStatus string
 
 const (
-	MonitorUpdateParamsMonitorStatusActive   MonitorUpdateParamsMonitorStatus = "active"
-	MonitorUpdateParamsMonitorStatusInactive MonitorUpdateParamsMonitorStatus = "inactive"
+	MonitorUpdateParamsStatusActive   MonitorUpdateParamsStatus = "active"
+	MonitorUpdateParamsStatusInactive MonitorUpdateParamsStatus = "inactive"
 )
 
-func (r MonitorUpdateParamsMonitorStatus) IsKnown() bool {
+func (r MonitorUpdateParamsStatus) IsKnown() bool {
 	switch r {
-	case MonitorUpdateParamsMonitorStatusActive, MonitorUpdateParamsMonitorStatusInactive:
+	case MonitorUpdateParamsStatusActive, MonitorUpdateParamsStatusInactive:
 		return true
 	}
 	return false

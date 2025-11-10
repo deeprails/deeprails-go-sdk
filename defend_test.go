@@ -29,7 +29,7 @@ func TestDefendNewWorkflowWithOptionalParams(t *testing.T) {
 	_, err := client.Defend.NewWorkflow(context.TODO(), deeprails.DefendNewWorkflowParams{
 		ImprovementAction: deeprails.F(deeprails.DefendNewWorkflowParamsImprovementActionRegen),
 		Name:              deeprails.F("name"),
-		Type:              deeprails.F(deeprails.DefendNewWorkflowParamsTypeAutomatic),
+		ThresholdType:     deeprails.F(deeprails.DefendNewWorkflowParamsThresholdTypeAutomatic),
 		AutomaticHallucinationToleranceLevels: deeprails.F(map[string]deeprails.DefendNewWorkflowParamsAutomaticHallucinationToleranceLevels{
 			"foo": deeprails.DefendNewWorkflowParamsAutomaticHallucinationToleranceLevelsLow,
 		}),
@@ -74,7 +74,7 @@ func TestDefendGetEvent(t *testing.T) {
 	}
 }
 
-func TestDefendGetWorkflow(t *testing.T) {
+func TestDefendGetWorkflowWithOptionalParams(t *testing.T) {
 	t.Skip("Prism tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -87,7 +87,13 @@ func TestDefendGetWorkflow(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.Defend.GetWorkflow(context.TODO(), "workflow_id")
+	_, err := client.Defend.GetWorkflow(
+		context.TODO(),
+		"workflow_id",
+		deeprails.DefendGetWorkflowParams{
+			Limit: deeprails.F(int64(0)),
+		},
+	)
 	if err != nil {
 		var apierr *deeprails.Error
 		if errors.As(err, &apierr) {
