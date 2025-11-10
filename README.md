@@ -52,19 +52,20 @@ func main() {
 	client := deeprails.NewClient(
 		option.WithAPIKey("My API Key"), // defaults to os.LookupEnv("DEEPRAILS_API_KEY")
 	)
-	defendResponse, err := client.Defend.NewWorkflow(context.TODO(), deeprails.DefendNewWorkflowParams{
+	defendCreateResponse, err := client.Defend.NewWorkflow(context.TODO(), deeprails.DefendNewWorkflowParams{
 		ImprovementAction: deeprails.F(deeprails.DefendNewWorkflowParamsImprovementActionFixit),
 		Name:              deeprails.F("Push Alert Workflow"),
-		Type:              deeprails.F(deeprails.DefendNewWorkflowParamsTypeCustom),
+		ThresholdType:     deeprails.F(deeprails.DefendNewWorkflowParamsThresholdTypeAutomatic),
 		CustomHallucinationThresholdValues: deeprails.F(map[string]float64{
 			"completeness":          0.700000,
 			"instruction_adherence": 0.750000,
 		}),
+		WebSearch: deeprails.F(true),
 	})
 	if err != nil {
 		panic(err.Error())
 	}
-	fmt.Printf("%+v\n", defendResponse.WorkflowID)
+	fmt.Printf("%+v\n", defendCreateResponse.WorkflowID)
 }
 
 ```
@@ -185,11 +186,12 @@ To handle errors, we recommend that you use the `errors.As` pattern:
 _, err := client.Defend.NewWorkflow(context.TODO(), deeprails.DefendNewWorkflowParams{
 	ImprovementAction: deeprails.F(deeprails.DefendNewWorkflowParamsImprovementActionFixit),
 	Name:              deeprails.F("Push Alert Workflow"),
-	Type:              deeprails.F(deeprails.DefendNewWorkflowParamsTypeCustom),
+	ThresholdType:     deeprails.F(deeprails.DefendNewWorkflowParamsThresholdTypeAutomatic),
 	CustomHallucinationThresholdValues: deeprails.F(map[string]float64{
 		"completeness":          0.700000,
 		"instruction_adherence": 0.750000,
 	}),
+	WebSearch: deeprails.F(true),
 })
 if err != nil {
 	var apierr *deeprails.Error
@@ -220,11 +222,12 @@ client.Defend.NewWorkflow(
 	deeprails.DefendNewWorkflowParams{
 		ImprovementAction: deeprails.F(deeprails.DefendNewWorkflowParamsImprovementActionFixit),
 		Name:              deeprails.F("Push Alert Workflow"),
-		Type:              deeprails.F(deeprails.DefendNewWorkflowParamsTypeCustom),
+		ThresholdType:     deeprails.F(deeprails.DefendNewWorkflowParamsThresholdTypeAutomatic),
 		CustomHallucinationThresholdValues: deeprails.F(map[string]float64{
 			"completeness":          0.700000,
 			"instruction_adherence": 0.750000,
 		}),
+		WebSearch: deeprails.F(true),
 	},
 	// This sets the per-retry timeout
 	option.WithRequestTimeout(20*time.Second),
@@ -243,24 +246,6 @@ file returned by `os.Open` will be sent with the file name on disk.
 
 We also provide a helper `deeprails.FileParam(reader io.Reader, filename string, contentType string)`
 which can be used to wrap any `io.Reader` with the appropriate file name and content type.
-
-```go
-// A file from the file system
-file, err := os.Open("/path/to/file")
-deeprails.FileUploadParams{
-	File: deeprails.F[io.Reader](file),
-}
-
-// A file from a string
-deeprails.FileUploadParams{
-	File: deeprails.F[io.Reader](strings.NewReader("my file contents")),
-}
-
-// With a custom filename and contentType
-deeprails.FileUploadParams{
-	File: deeprails.FileParam(strings.NewReader(`{"hello": "foo"}`), "file.go", "application/json"),
-}
-```
 
 ### Retries
 
@@ -282,11 +267,12 @@ client.Defend.NewWorkflow(
 	deeprails.DefendNewWorkflowParams{
 		ImprovementAction: deeprails.F(deeprails.DefendNewWorkflowParamsImprovementActionFixit),
 		Name:              deeprails.F("Push Alert Workflow"),
-		Type:              deeprails.F(deeprails.DefendNewWorkflowParamsTypeCustom),
+		ThresholdType:     deeprails.F(deeprails.DefendNewWorkflowParamsThresholdTypeAutomatic),
 		CustomHallucinationThresholdValues: deeprails.F(map[string]float64{
 			"completeness":          0.700000,
 			"instruction_adherence": 0.750000,
 		}),
+		WebSearch: deeprails.F(true),
 	},
 	option.WithMaxRetries(5),
 )
@@ -300,23 +286,24 @@ you need to examine response headers, status codes, or other details.
 ```go
 // Create a variable to store the HTTP response
 var response *http.Response
-defendResponse, err := client.Defend.NewWorkflow(
+defendCreateResponse, err := client.Defend.NewWorkflow(
 	context.TODO(),
 	deeprails.DefendNewWorkflowParams{
 		ImprovementAction: deeprails.F(deeprails.DefendNewWorkflowParamsImprovementActionFixit),
 		Name:              deeprails.F("Push Alert Workflow"),
-		Type:              deeprails.F(deeprails.DefendNewWorkflowParamsTypeCustom),
+		ThresholdType:     deeprails.F(deeprails.DefendNewWorkflowParamsThresholdTypeAutomatic),
 		CustomHallucinationThresholdValues: deeprails.F(map[string]float64{
 			"completeness":          0.700000,
 			"instruction_adherence": 0.750000,
 		}),
+		WebSearch: deeprails.F(true),
 	},
 	option.WithResponseInto(&response),
 )
 if err != nil {
 	// handle error
 }
-fmt.Printf("%+v\n", defendResponse)
+fmt.Printf("%+v\n", defendCreateResponse)
 
 fmt.Printf("Status Code: %d\n", response.StatusCode)
 fmt.Printf("Headers: %+#v\n", response.Header)

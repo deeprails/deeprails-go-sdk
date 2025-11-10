@@ -3,10 +3,8 @@
 package deeprails_test
 
 import (
-	"bytes"
 	"context"
 	"errors"
-	"io"
 	"os"
 	"testing"
 
@@ -29,7 +27,7 @@ func TestFileUpload(t *testing.T) {
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.Files.Upload(context.TODO(), deeprails.FileUploadParams{
-		File: deeprails.F(io.Reader(bytes.NewBuffer([]byte("some file contents")))),
+		File: deeprails.F([]string{"string"}),
 	})
 	if err != nil {
 		var apierr *deeprails.Error
