@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.12.0 (2025-11-10)
+
+Full Changelog: [v0.11.0...v0.12.0](https://github.com/deeprails/deeprails-go-sdk/compare/v0.11.0...v0.12.0)
+
+### Features
+
+* **api:** Mass restructuring of API, including response bodies and naming schemes ([c40c751](https://github.com/deeprails/deeprails-go-sdk/commit/c40c7512d4a40af267ffaf70eebb04fd37770365))
+
 ## 0.11.0 (2025-11-02)
 
 Full Changelog: [v0.10.0...v0.11.0](https://github.com/deeprails/deeprails-go-sdk/compare/v0.10.0...v0.11.0)
