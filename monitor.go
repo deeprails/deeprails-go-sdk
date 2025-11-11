@@ -72,6 +72,22 @@ func (r *MonitorService) Update(ctx context.Context, monitorID string, body Moni
 	return
 }
 
+// Use this endpoint to retrieve the details of a specific monitor event
+func (r *MonitorService) GetEvent(ctx context.Context, monitorID string, eventID string, opts ...option.RequestOption) (res *MonitorEventDetailResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if monitorID == "" {
+		err = errors.New("missing required monitor_id parameter")
+		return
+	}
+	if eventID == "" {
+		err = errors.New("missing required event_id parameter")
+		return
+	}
+	path := fmt.Sprintf("monitor/%s/events/%s", monitorID, eventID)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
+	return
+}
+
 // Use this endpoint to submit a model input and output pair to a monitor for
 // evaluation
 func (r *MonitorService) SubmitEvent(ctx context.Context, monitorID string, body MonitorSubmitEventParams, opts ...option.RequestOption) (res *MonitorEventResponse, err error) {
@@ -132,46 +148,46 @@ func (r MonitorCreateResponseStatus) IsKnown() bool {
 }
 
 type MonitorDetailResponse struct {
+	// An array of capabilities associated with this monitor.
+	Capabilities []MonitorDetailResponseCapability `json:"capabilities,required"`
+	// The time the monitor was created in UTC.
+	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
+	// An array of all evaluations performed by this monitor. Each one corresponds to a
+	// separate monitor event.
+	Evaluations []MonitorDetailResponseEvaluation `json:"evaluations,required"`
+	// An array of files associated with this monitor.
+	Files []MonitorDetailResponseFile `json:"files,required"`
 	// A unique monitor ID.
 	MonitorID string `json:"monitor_id,required"`
 	// Name of this monitor.
 	Name string `json:"name,required"`
-	// Status of the monitor. Can be `active` or `inactive`. Inactive monitors no
-	// longer record and evaluate events.
-	Status MonitorDetailResponseStatus `json:"status,required"`
-	// An array of capabilities associated with this monitor.
-	Capabilities []MonitorDetailResponseCapability `json:"capabilities"`
-	// The time the monitor was created in UTC.
-	CreatedAt time.Time `json:"created_at" format:"date-time"`
-	// Description of this monitor.
-	Description string `json:"description"`
-	// An array of all evaluations performed by this monitor. Each one corresponds to a
-	// separate monitor event.
-	Evaluations []MonitorDetailResponseEvaluation `json:"evaluations"`
-	// An array of files associated with this monitor.
-	Files []MonitorDetailResponseFile `json:"files"`
 	// Contains five fields used for stats of this monitor: total evaluations,
 	// completed evaluations, failed evaluations, queued evaluations, and in progress
 	// evaluations.
-	Stats MonitorDetailResponseStats `json:"stats"`
+	Stats MonitorDetailResponseStats `json:"stats,required"`
+	// Status of the monitor. Can be `active` or `inactive`. Inactive monitors no
+	// longer record and evaluate events.
+	Status MonitorDetailResponseStatus `json:"status,required"`
 	// The most recent time the monitor was modified in UTC.
-	UpdatedAt time.Time                 `json:"updated_at" format:"date-time"`
-	JSON      monitorDetailResponseJSON `json:"-"`
+	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
+	// Description of this monitor.
+	Description string                    `json:"description"`
+	JSON        monitorDetailResponseJSON `json:"-"`
 }
 
 // monitorDetailResponseJSON contains the JSON metadata for the struct
 // [MonitorDetailResponse]
 type monitorDetailResponseJSON struct {
-	MonitorID    apijson.Field
-	Name         apijson.Field
-	Status       apijson.Field
 	Capabilities apijson.Field
 	CreatedAt    apijson.Field
-	Description  apijson.Field
 	Evaluations  apijson.Field
 	Files        apijson.Field
+	MonitorID    apijson.Field
+	Name         apijson.Field
 	Stats        apijson.Field
+	Status       apijson.Field
 	UpdatedAt    apijson.Field
+	Description  apijson.Field
 	raw          string
 	ExtraFields  map[string]apijson.Field
 }
@@ -182,23 +198,6 @@ func (r *MonitorDetailResponse) UnmarshalJSON(data []byte) (err error) {
 
 func (r monitorDetailResponseJSON) RawJSON() string {
 	return r.raw
-}
-
-// Status of the monitor. Can be `active` or `inactive`. Inactive monitors no
-// longer record and evaluate events.
-type MonitorDetailResponseStatus string
-
-const (
-	MonitorDetailResponseStatusActive   MonitorDetailResponseStatus = "active"
-	MonitorDetailResponseStatusInactive MonitorDetailResponseStatus = "inactive"
-)
-
-func (r MonitorDetailResponseStatus) IsKnown() bool {
-	switch r {
-	case MonitorDetailResponseStatusActive, MonitorDetailResponseStatusInactive:
-		return true
-	}
-	return false
 }
 
 type MonitorDetailResponseCapability struct {
@@ -432,6 +431,168 @@ func (r *MonitorDetailResponseStats) UnmarshalJSON(data []byte) (err error) {
 
 func (r monitorDetailResponseStatsJSON) RawJSON() string {
 	return r.raw
+}
+
+// Status of the monitor. Can be `active` or `inactive`. Inactive monitors no
+// longer record and evaluate events.
+type MonitorDetailResponseStatus string
+
+const (
+	MonitorDetailResponseStatusActive   MonitorDetailResponseStatus = "active"
+	MonitorDetailResponseStatusInactive MonitorDetailResponseStatus = "inactive"
+)
+
+func (r MonitorDetailResponseStatus) IsKnown() bool {
+	switch r {
+	case MonitorDetailResponseStatusActive, MonitorDetailResponseStatusInactive:
+		return true
+	}
+	return false
+}
+
+type MonitorEventDetailResponse struct {
+	// The capabilities associated with the monitor event.
+	Capabilities []MonitorEventDetailResponseCapability `json:"capabilities"`
+	// The time spent on the evaluation in seconds.
+	EvalTime string `json:"eval_time"`
+	// The result of the evaluation of the monitor event.
+	EvaluationResult map[string]interface{} `json:"evaluation_result"`
+	// A unique monitor event ID.
+	EventID string `json:"event_id"`
+	// The files associated with the monitor event.
+	Files []MonitorEventDetailResponseFile `json:"files"`
+	// The guardrail metrics evaluated by the monitor event.
+	GuardrailMetrics []string `json:"guardrail_metrics"`
+	// The model input used to create the monitor event.
+	ModelInput map[string]interface{} `json:"model_input"`
+	// The output evaluated by the monitor event.
+	ModelOutput string `json:"model_output"`
+	// Monitor ID associated with this event.
+	MonitorID string `json:"monitor_id"`
+	// A human-readable tag for the monitor event.
+	Nametag string `json:"nametag"`
+	// The run mode used to evaluate the monitor event.
+	RunMode MonitorEventDetailResponseRunMode `json:"run_mode"`
+	// Status of the monitor event's evaluation.
+	Status MonitorEventDetailResponseStatus `json:"status"`
+	// The time the monitor event was created in UTC.
+	Timestamp time.Time                      `json:"timestamp" format:"date-time"`
+	JSON      monitorEventDetailResponseJSON `json:"-"`
+}
+
+// monitorEventDetailResponseJSON contains the JSON metadata for the struct
+// [MonitorEventDetailResponse]
+type monitorEventDetailResponseJSON struct {
+	Capabilities     apijson.Field
+	EvalTime         apijson.Field
+	EvaluationResult apijson.Field
+	EventID          apijson.Field
+	Files            apijson.Field
+	GuardrailMetrics apijson.Field
+	ModelInput       apijson.Field
+	ModelOutput      apijson.Field
+	MonitorID        apijson.Field
+	Nametag          apijson.Field
+	RunMode          apijson.Field
+	Status           apijson.Field
+	Timestamp        apijson.Field
+	raw              string
+	ExtraFields      map[string]apijson.Field
+}
+
+func (r *MonitorEventDetailResponse) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r monitorEventDetailResponseJSON) RawJSON() string {
+	return r.raw
+}
+
+type MonitorEventDetailResponseCapability struct {
+	// The type of capability.
+	Capability string                                   `json:"capability"`
+	JSON       monitorEventDetailResponseCapabilityJSON `json:"-"`
+}
+
+// monitorEventDetailResponseCapabilityJSON contains the JSON metadata for the
+// struct [MonitorEventDetailResponseCapability]
+type monitorEventDetailResponseCapabilityJSON struct {
+	Capability  apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *MonitorEventDetailResponseCapability) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r monitorEventDetailResponseCapabilityJSON) RawJSON() string {
+	return r.raw
+}
+
+type MonitorEventDetailResponseFile struct {
+	// The ID of the file.
+	FileID string `json:"file_id"`
+	// The name of the file.
+	FileName string `json:"file_name"`
+	// The size of the file in bytes.
+	FileSize int64                              `json:"file_size"`
+	JSON     monitorEventDetailResponseFileJSON `json:"-"`
+}
+
+// monitorEventDetailResponseFileJSON contains the JSON metadata for the struct
+// [MonitorEventDetailResponseFile]
+type monitorEventDetailResponseFileJSON struct {
+	FileID      apijson.Field
+	FileName    apijson.Field
+	FileSize    apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *MonitorEventDetailResponseFile) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r monitorEventDetailResponseFileJSON) RawJSON() string {
+	return r.raw
+}
+
+// The run mode used to evaluate the monitor event.
+type MonitorEventDetailResponseRunMode string
+
+const (
+	MonitorEventDetailResponseRunModePrecisionPlus MonitorEventDetailResponseRunMode = "precision_plus"
+	MonitorEventDetailResponseRunModePrecision     MonitorEventDetailResponseRunMode = "precision"
+	MonitorEventDetailResponseRunModeSmart         MonitorEventDetailResponseRunMode = "smart"
+	MonitorEventDetailResponseRunModeEconomy       MonitorEventDetailResponseRunMode = "economy"
+)
+
+func (r MonitorEventDetailResponseRunMode) IsKnown() bool {
+	switch r {
+	case MonitorEventDetailResponseRunModePrecisionPlus, MonitorEventDetailResponseRunModePrecision, MonitorEventDetailResponseRunModeSmart, MonitorEventDetailResponseRunModeEconomy:
+		return true
+	}
+	return false
+}
+
+// Status of the monitor event's evaluation.
+type MonitorEventDetailResponseStatus string
+
+const (
+	MonitorEventDetailResponseStatusInProgress MonitorEventDetailResponseStatus = "in_progress"
+	MonitorEventDetailResponseStatusCompleted  MonitorEventDetailResponseStatus = "completed"
+	MonitorEventDetailResponseStatusCanceled   MonitorEventDetailResponseStatus = "canceled"
+	MonitorEventDetailResponseStatusQueued     MonitorEventDetailResponseStatus = "queued"
+	MonitorEventDetailResponseStatusFailed     MonitorEventDetailResponseStatus = "failed"
+)
+
+func (r MonitorEventDetailResponseStatus) IsKnown() bool {
+	switch r {
+	case MonitorEventDetailResponseStatusInProgress, MonitorEventDetailResponseStatusCompleted, MonitorEventDetailResponseStatusCanceled, MonitorEventDetailResponseStatusQueued, MonitorEventDetailResponseStatusFailed:
+		return true
+	}
+	return false
 }
 
 type MonitorEventResponse struct {

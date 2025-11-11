@@ -55,7 +55,7 @@ func main() {
 	defendCreateResponse, err := client.Defend.NewWorkflow(context.TODO(), deeprails.DefendNewWorkflowParams{
 		ImprovementAction: deeprails.F(deeprails.DefendNewWorkflowParamsImprovementActionFixit),
 		Name:              deeprails.F("Push Alert Workflow"),
-		ThresholdType:     deeprails.F(deeprails.DefendNewWorkflowParamsThresholdTypeAutomatic),
+		ThresholdType:     deeprails.F(deeprails.DefendNewWorkflowParamsThresholdTypeCustom),
 		CustomHallucinationThresholdValues: deeprails.F(map[string]float64{
 			"completeness":          0.700000,
 			"instruction_adherence": 0.750000,
@@ -186,7 +186,7 @@ To handle errors, we recommend that you use the `errors.As` pattern:
 _, err := client.Defend.NewWorkflow(context.TODO(), deeprails.DefendNewWorkflowParams{
 	ImprovementAction: deeprails.F(deeprails.DefendNewWorkflowParamsImprovementActionFixit),
 	Name:              deeprails.F("Push Alert Workflow"),
-	ThresholdType:     deeprails.F(deeprails.DefendNewWorkflowParamsThresholdTypeAutomatic),
+	ThresholdType:     deeprails.F(deeprails.DefendNewWorkflowParamsThresholdTypeCustom),
 	CustomHallucinationThresholdValues: deeprails.F(map[string]float64{
 		"completeness":          0.700000,
 		"instruction_adherence": 0.750000,
@@ -222,7 +222,7 @@ client.Defend.NewWorkflow(
 	deeprails.DefendNewWorkflowParams{
 		ImprovementAction: deeprails.F(deeprails.DefendNewWorkflowParamsImprovementActionFixit),
 		Name:              deeprails.F("Push Alert Workflow"),
-		ThresholdType:     deeprails.F(deeprails.DefendNewWorkflowParamsThresholdTypeAutomatic),
+		ThresholdType:     deeprails.F(deeprails.DefendNewWorkflowParamsThresholdTypeCustom),
 		CustomHallucinationThresholdValues: deeprails.F(map[string]float64{
 			"completeness":          0.700000,
 			"instruction_adherence": 0.750000,
@@ -267,7 +267,7 @@ client.Defend.NewWorkflow(
 	deeprails.DefendNewWorkflowParams{
 		ImprovementAction: deeprails.F(deeprails.DefendNewWorkflowParamsImprovementActionFixit),
 		Name:              deeprails.F("Push Alert Workflow"),
-		ThresholdType:     deeprails.F(deeprails.DefendNewWorkflowParamsThresholdTypeAutomatic),
+		ThresholdType:     deeprails.F(deeprails.DefendNewWorkflowParamsThresholdTypeCustom),
 		CustomHallucinationThresholdValues: deeprails.F(map[string]float64{
 			"completeness":          0.700000,
 			"instruction_adherence": 0.750000,
@@ -291,7 +291,7 @@ defendCreateResponse, err := client.Defend.NewWorkflow(
 	deeprails.DefendNewWorkflowParams{
 		ImprovementAction: deeprails.F(deeprails.DefendNewWorkflowParamsImprovementActionFixit),
 		Name:              deeprails.F("Push Alert Workflow"),
-		ThresholdType:     deeprails.F(deeprails.DefendNewWorkflowParamsThresholdTypeAutomatic),
+		ThresholdType:     deeprails.F(deeprails.DefendNewWorkflowParamsThresholdTypeCustom),
 		CustomHallucinationThresholdValues: deeprails.F(map[string]float64{
 			"completeness":          0.700000,
 			"instruction_adherence": 0.750000,
