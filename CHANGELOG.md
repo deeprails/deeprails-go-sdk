@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.13.0 (2025-11-11)
+
+Full Changelog: [v0.12.0...v0.13.0](https://github.com/deeprails/deeprails-go-sdk/compare/v0.12.0...v0.13.0)
+
+### Features
+
+* **api:** add retrieve monitor event and examples ([7a27b8d](https://github.com/deeprails/deeprails-go-sdk/commit/7a27b8d245152f105f998a1328f409f8fbf20f7a))
+
 ## 0.12.0 (2025-11-10)
 
 Full Changelog: [v0.11.0...v0.12.0](https://github.com/deeprails/deeprails-go-sdk/compare/v0.11.0...v0.12.0)

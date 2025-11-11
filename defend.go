@@ -146,43 +146,41 @@ func (r DefendCreateResponseStatus) IsKnown() bool {
 }
 
 type DefendResponse struct {
-	// Name of the workflow.
-	Name string `json:"name,required"`
-	// A unique workflow ID.
-	WorkflowID string `json:"workflow_id,required"`
 	// Mapping of guardrail metric names to tolerance values. Values can be strings
 	// (`low`, `medium`, `high`) for automatic tolerance levels.
-	AutomaticHallucinationToleranceLevels map[string]DefendResponseAutomaticHallucinationToleranceLevel `json:"automatic_hallucination_tolerance_levels"`
+	AutomaticHallucinationToleranceLevels map[string]DefendResponseAutomaticHallucinationToleranceLevel `json:"automatic_hallucination_tolerance_levels,required"`
 	// Extended AI capabilities available to the event, if any. Can be `web_search`
 	// and/or `file_search`.
-	Capabilities []DefendResponseCapability `json:"capabilities"`
+	Capabilities []DefendResponseCapability `json:"capabilities,required"`
 	// The time the workflow was created in UTC.
-	CreatedAt time.Time `json:"created_at" format:"date-time"`
+	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
 	// Mapping of guardrail metric names to threshold values. Values can be floating
 	// point numbers (0.0-1.0) for custom thresholds.
-	CustomHallucinationThresholdValues map[string]float64 `json:"custom_hallucination_threshold_values"`
+	CustomHallucinationThresholdValues map[string]float64 `json:"custom_hallucination_threshold_values,required"`
 	// Description for the workflow.
-	Description string `json:"description"`
+	Description string `json:"description,required"`
 	// An array of events associated with this workflow.
-	Events []DefendResponseEvent `json:"events"`
+	Events []DefendResponseEvent `json:"events,required"`
 	// List of files associated with the workflow. If this is not empty, models can
 	// search these files when performing evaluations or remediations
-	Files []DefendResponseFile `json:"files"`
-	Stats DefendResponseStats  `json:"stats"`
+	Files []DefendResponseFile `json:"files,required"`
+	// Name of the workflow.
+	Name string `json:"name,required"`
 	// Status of the selected workflow. May be `inactive` or `active`. Inactive
 	// workflows will not accept events.
-	Status DefendResponseStatus `json:"status"`
+	Status DefendResponseStatus `json:"status,required"`
 	// Type of thresholds used to evaluate the event.
-	ThresholdType DefendResponseThresholdType `json:"threshold_type"`
+	ThresholdType DefendResponseThresholdType `json:"threshold_type,required"`
 	// The most recent time the workflow was updated in UTC.
-	UpdatedAt time.Time          `json:"updated_at" format:"date-time"`
-	JSON      defendResponseJSON `json:"-"`
+	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
+	// A unique workflow ID.
+	WorkflowID string              `json:"workflow_id,required"`
+	Stats      DefendResponseStats `json:"stats"`
+	JSON       defendResponseJSON  `json:"-"`
 }
 
 // defendResponseJSON contains the JSON metadata for the struct [DefendResponse]
 type defendResponseJSON struct {
-	Name                                  apijson.Field
-	WorkflowID                            apijson.Field
 	AutomaticHallucinationToleranceLevels apijson.Field
 	Capabilities                          apijson.Field
 	CreatedAt                             apijson.Field
@@ -190,10 +188,12 @@ type defendResponseJSON struct {
 	Description                           apijson.Field
 	Events                                apijson.Field
 	Files                                 apijson.Field
-	Stats                                 apijson.Field
+	Name                                  apijson.Field
 	Status                                apijson.Field
 	ThresholdType                         apijson.Field
 	UpdatedAt                             apijson.Field
+	WorkflowID                            apijson.Field
+	Stats                                 apijson.Field
 	raw                                   string
 	ExtraFields                           map[string]apijson.Field
 }
@@ -357,34 +357,6 @@ func (r defendResponseFileJSON) RawJSON() string {
 	return r.raw
 }
 
-type DefendResponseStats struct {
-	// Number of AI outputs that failed the guardrails.
-	OutputsBelowThreshold int64 `json:"outputs_below_threshold"`
-	// Number of AI outputs that were improved.
-	OutputsImproved int64 `json:"outputs_improved"`
-	// Total number of AI outputs processed by the workflow.
-	OutputsProcessed int64                   `json:"outputs_processed"`
-	JSON             defendResponseStatsJSON `json:"-"`
-}
-
-// defendResponseStatsJSON contains the JSON metadata for the struct
-// [DefendResponseStats]
-type defendResponseStatsJSON struct {
-	OutputsBelowThreshold apijson.Field
-	OutputsImproved       apijson.Field
-	OutputsProcessed      apijson.Field
-	raw                   string
-	ExtraFields           map[string]apijson.Field
-}
-
-func (r *DefendResponseStats) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r defendResponseStatsJSON) RawJSON() string {
-	return r.raw
-}
-
 // Status of the selected workflow. May be `inactive` or `active`. Inactive
 // workflows will not accept events.
 type DefendResponseStatus string
@@ -416,6 +388,34 @@ func (r DefendResponseThresholdType) IsKnown() bool {
 		return true
 	}
 	return false
+}
+
+type DefendResponseStats struct {
+	// Number of AI outputs that failed the guardrails.
+	OutputsBelowThreshold int64 `json:"outputs_below_threshold"`
+	// Number of AI outputs that were improved.
+	OutputsImproved int64 `json:"outputs_improved"`
+	// Total number of AI outputs processed by the workflow.
+	OutputsProcessed int64                   `json:"outputs_processed"`
+	JSON             defendResponseStatsJSON `json:"-"`
+}
+
+// defendResponseStatsJSON contains the JSON metadata for the struct
+// [DefendResponseStats]
+type defendResponseStatsJSON struct {
+	OutputsBelowThreshold apijson.Field
+	OutputsImproved       apijson.Field
+	OutputsProcessed      apijson.Field
+	raw                   string
+	ExtraFields           map[string]apijson.Field
+}
+
+func (r *DefendResponseStats) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r defendResponseStatsJSON) RawJSON() string {
+	return r.raw
 }
 
 type DefendUpdateResponse struct {
@@ -465,14 +465,26 @@ func (r DefendUpdateResponseStatus) IsKnown() bool {
 }
 
 type WorkflowEventDetailResponse struct {
+	// History of evaluations for the event.
+	EvaluationHistory []WorkflowEventDetailResponseEvaluationHistory `json:"evaluation_history,required"`
+	// Evaluation result consisting of average scores and rationales for each of the
+	// evaluated guardrail metrics.
+	EvaluationResult map[string]interface{} `json:"evaluation_result,required"`
 	// A unique workflow event ID.
 	EventID string `json:"event_id,required"`
 	// Status of the event.
 	EventStatus WorkflowEventDetailResponseEventStatus `json:"event_status,required"`
 	// Whether the event was filtered and requires improvement.
 	Filtered bool `json:"filtered,required"`
+	// Improved model output after improvement tool was applied and each metric passed
+	// evaluation.
+	ImprovedModelOutput string `json:"improved_model_output,required"`
+	// Status of the improvement tool used to improve the event.
+	ImprovementToolStatus WorkflowEventDetailResponseImprovementToolStatus `json:"improvement_tool_status,required,nullable"`
 	// Type of improvement tool used to improve the event.
 	ImprovementToolType WorkflowEventDetailResponseImprovementToolType `json:"improvement_tool_type,required"`
+	// Type of thresholds used to evaluate the event.
+	ThresholdType WorkflowEventDetailResponseThresholdType `json:"threshold_type,required"`
 	// Workflow ID associated with the event.
 	WorkflowID string `json:"workflow_id,required"`
 	// Mapping of guardrail metric names to tolerance values. Values are strings
@@ -484,41 +496,29 @@ type WorkflowEventDetailResponse struct {
 	// Mapping of guardrail metric names to threshold values. Values are floating point
 	// numbers (0.0-1.0) representing custom thresholds.
 	CustomHallucinationThresholdValues map[string]float64 `json:"custom_hallucination_threshold_values"`
-	// History of evaluations for the event.
-	EvaluationHistory []WorkflowEventDetailResponseEvaluationHistory `json:"evaluation_history"`
-	// Evaluation result consisting of average scores and rationales for each of the
-	// evaluated guardrail metrics.
-	EvaluationResult map[string]interface{} `json:"evaluation_result"`
 	// List of files available to the event, if any. Will only be present if
 	// `file_search` is enabled.
 	Files []WorkflowEventDetailResponseFile `json:"files"`
-	// Improved model output after improvement tool was applied and each metric passed
-	// evaluation.
-	ImprovedModelOutput string `json:"improved_model_output"`
-	// Status of the improvement tool used to improve the event.
-	ImprovementToolStatus WorkflowEventDetailResponseImprovementToolStatus `json:"improvement_tool_status,nullable"`
-	// Type of thresholds used to evaluate the event.
-	ThresholdType WorkflowEventDetailResponseThresholdType `json:"threshold_type"`
-	JSON          workflowEventDetailResponseJSON          `json:"-"`
+	JSON  workflowEventDetailResponseJSON   `json:"-"`
 }
 
 // workflowEventDetailResponseJSON contains the JSON metadata for the struct
 // [WorkflowEventDetailResponse]
 type workflowEventDetailResponseJSON struct {
+	EvaluationHistory                     apijson.Field
+	EvaluationResult                      apijson.Field
 	EventID                               apijson.Field
 	EventStatus                           apijson.Field
 	Filtered                              apijson.Field
+	ImprovedModelOutput                   apijson.Field
+	ImprovementToolStatus                 apijson.Field
 	ImprovementToolType                   apijson.Field
+	ThresholdType                         apijson.Field
 	WorkflowID                            apijson.Field
 	AutomaticHallucinationToleranceLevels apijson.Field
 	Capabilities                          apijson.Field
 	CustomHallucinationThresholdValues    apijson.Field
-	EvaluationHistory                     apijson.Field
-	EvaluationResult                      apijson.Field
 	Files                                 apijson.Field
-	ImprovedModelOutput                   apijson.Field
-	ImprovementToolStatus                 apijson.Field
-	ThresholdType                         apijson.Field
 	raw                                   string
 	ExtraFields                           map[string]apijson.Field
 }
@@ -528,76 +528,6 @@ func (r *WorkflowEventDetailResponse) UnmarshalJSON(data []byte) (err error) {
 }
 
 func (r workflowEventDetailResponseJSON) RawJSON() string {
-	return r.raw
-}
-
-// Status of the event.
-type WorkflowEventDetailResponseEventStatus string
-
-const (
-	WorkflowEventDetailResponseEventStatusInProgress WorkflowEventDetailResponseEventStatus = "In Progress"
-	WorkflowEventDetailResponseEventStatusCompleted  WorkflowEventDetailResponseEventStatus = "Completed"
-)
-
-func (r WorkflowEventDetailResponseEventStatus) IsKnown() bool {
-	switch r {
-	case WorkflowEventDetailResponseEventStatusInProgress, WorkflowEventDetailResponseEventStatusCompleted:
-		return true
-	}
-	return false
-}
-
-// Type of improvement tool used to improve the event.
-type WorkflowEventDetailResponseImprovementToolType string
-
-const (
-	WorkflowEventDetailResponseImprovementToolTypeRegen     WorkflowEventDetailResponseImprovementToolType = "regen"
-	WorkflowEventDetailResponseImprovementToolTypeFixit     WorkflowEventDetailResponseImprovementToolType = "fixit"
-	WorkflowEventDetailResponseImprovementToolTypeDoNothing WorkflowEventDetailResponseImprovementToolType = "do_nothing"
-)
-
-func (r WorkflowEventDetailResponseImprovementToolType) IsKnown() bool {
-	switch r {
-	case WorkflowEventDetailResponseImprovementToolTypeRegen, WorkflowEventDetailResponseImprovementToolTypeFixit, WorkflowEventDetailResponseImprovementToolTypeDoNothing:
-		return true
-	}
-	return false
-}
-
-type WorkflowEventDetailResponseAutomaticHallucinationToleranceLevel string
-
-const (
-	WorkflowEventDetailResponseAutomaticHallucinationToleranceLevelLow    WorkflowEventDetailResponseAutomaticHallucinationToleranceLevel = "low"
-	WorkflowEventDetailResponseAutomaticHallucinationToleranceLevelMedium WorkflowEventDetailResponseAutomaticHallucinationToleranceLevel = "medium"
-	WorkflowEventDetailResponseAutomaticHallucinationToleranceLevelHigh   WorkflowEventDetailResponseAutomaticHallucinationToleranceLevel = "high"
-)
-
-func (r WorkflowEventDetailResponseAutomaticHallucinationToleranceLevel) IsKnown() bool {
-	switch r {
-	case WorkflowEventDetailResponseAutomaticHallucinationToleranceLevelLow, WorkflowEventDetailResponseAutomaticHallucinationToleranceLevelMedium, WorkflowEventDetailResponseAutomaticHallucinationToleranceLevelHigh:
-		return true
-	}
-	return false
-}
-
-type WorkflowEventDetailResponseCapability struct {
-	Capability string                                    `json:"capability"`
-	JSON       workflowEventDetailResponseCapabilityJSON `json:"-"`
-}
-
-// workflowEventDetailResponseCapabilityJSON contains the JSON metadata for the
-// struct [WorkflowEventDetailResponseCapability]
-type workflowEventDetailResponseCapabilityJSON struct {
-	Capability  apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *WorkflowEventDetailResponseCapability) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r workflowEventDetailResponseCapabilityJSON) RawJSON() string {
 	return r.raw
 }
 
@@ -646,6 +576,109 @@ func (r workflowEventDetailResponseEvaluationHistoryJSON) RawJSON() string {
 	return r.raw
 }
 
+// Status of the event.
+type WorkflowEventDetailResponseEventStatus string
+
+const (
+	WorkflowEventDetailResponseEventStatusInProgress WorkflowEventDetailResponseEventStatus = "In Progress"
+	WorkflowEventDetailResponseEventStatusCompleted  WorkflowEventDetailResponseEventStatus = "Completed"
+)
+
+func (r WorkflowEventDetailResponseEventStatus) IsKnown() bool {
+	switch r {
+	case WorkflowEventDetailResponseEventStatusInProgress, WorkflowEventDetailResponseEventStatusCompleted:
+		return true
+	}
+	return false
+}
+
+// Status of the improvement tool used to improve the event.
+type WorkflowEventDetailResponseImprovementToolStatus string
+
+const (
+	WorkflowEventDetailResponseImprovementToolStatusImproved            WorkflowEventDetailResponseImprovementToolStatus = "improved"
+	WorkflowEventDetailResponseImprovementToolStatusFailedOnMaxRetries  WorkflowEventDetailResponseImprovementToolStatus = "failed on max retries"
+	WorkflowEventDetailResponseImprovementToolStatusImprovementRequired WorkflowEventDetailResponseImprovementToolStatus = "improvement_required"
+)
+
+func (r WorkflowEventDetailResponseImprovementToolStatus) IsKnown() bool {
+	switch r {
+	case WorkflowEventDetailResponseImprovementToolStatusImproved, WorkflowEventDetailResponseImprovementToolStatusFailedOnMaxRetries, WorkflowEventDetailResponseImprovementToolStatusImprovementRequired:
+		return true
+	}
+	return false
+}
+
+// Type of improvement tool used to improve the event.
+type WorkflowEventDetailResponseImprovementToolType string
+
+const (
+	WorkflowEventDetailResponseImprovementToolTypeRegen     WorkflowEventDetailResponseImprovementToolType = "regen"
+	WorkflowEventDetailResponseImprovementToolTypeFixit     WorkflowEventDetailResponseImprovementToolType = "fixit"
+	WorkflowEventDetailResponseImprovementToolTypeDoNothing WorkflowEventDetailResponseImprovementToolType = "do_nothing"
+)
+
+func (r WorkflowEventDetailResponseImprovementToolType) IsKnown() bool {
+	switch r {
+	case WorkflowEventDetailResponseImprovementToolTypeRegen, WorkflowEventDetailResponseImprovementToolTypeFixit, WorkflowEventDetailResponseImprovementToolTypeDoNothing:
+		return true
+	}
+	return false
+}
+
+// Type of thresholds used to evaluate the event.
+type WorkflowEventDetailResponseThresholdType string
+
+const (
+	WorkflowEventDetailResponseThresholdTypeCustom    WorkflowEventDetailResponseThresholdType = "custom"
+	WorkflowEventDetailResponseThresholdTypeAutomatic WorkflowEventDetailResponseThresholdType = "automatic"
+)
+
+func (r WorkflowEventDetailResponseThresholdType) IsKnown() bool {
+	switch r {
+	case WorkflowEventDetailResponseThresholdTypeCustom, WorkflowEventDetailResponseThresholdTypeAutomatic:
+		return true
+	}
+	return false
+}
+
+type WorkflowEventDetailResponseAutomaticHallucinationToleranceLevel string
+
+const (
+	WorkflowEventDetailResponseAutomaticHallucinationToleranceLevelLow    WorkflowEventDetailResponseAutomaticHallucinationToleranceLevel = "low"
+	WorkflowEventDetailResponseAutomaticHallucinationToleranceLevelMedium WorkflowEventDetailResponseAutomaticHallucinationToleranceLevel = "medium"
+	WorkflowEventDetailResponseAutomaticHallucinationToleranceLevelHigh   WorkflowEventDetailResponseAutomaticHallucinationToleranceLevel = "high"
+)
+
+func (r WorkflowEventDetailResponseAutomaticHallucinationToleranceLevel) IsKnown() bool {
+	switch r {
+	case WorkflowEventDetailResponseAutomaticHallucinationToleranceLevelLow, WorkflowEventDetailResponseAutomaticHallucinationToleranceLevelMedium, WorkflowEventDetailResponseAutomaticHallucinationToleranceLevelHigh:
+		return true
+	}
+	return false
+}
+
+type WorkflowEventDetailResponseCapability struct {
+	Capability string                                    `json:"capability"`
+	JSON       workflowEventDetailResponseCapabilityJSON `json:"-"`
+}
+
+// workflowEventDetailResponseCapabilityJSON contains the JSON metadata for the
+// struct [WorkflowEventDetailResponseCapability]
+type workflowEventDetailResponseCapabilityJSON struct {
+	Capability  apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *WorkflowEventDetailResponseCapability) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r workflowEventDetailResponseCapabilityJSON) RawJSON() string {
+	return r.raw
+}
+
 type WorkflowEventDetailResponseFile struct {
 	FileID   string                              `json:"file_id"`
 	FileName string                              `json:"file_name"`
@@ -669,39 +702,6 @@ func (r *WorkflowEventDetailResponseFile) UnmarshalJSON(data []byte) (err error)
 
 func (r workflowEventDetailResponseFileJSON) RawJSON() string {
 	return r.raw
-}
-
-// Status of the improvement tool used to improve the event.
-type WorkflowEventDetailResponseImprovementToolStatus string
-
-const (
-	WorkflowEventDetailResponseImprovementToolStatusImproved            WorkflowEventDetailResponseImprovementToolStatus = "improved"
-	WorkflowEventDetailResponseImprovementToolStatusFailedOnMaxRetries  WorkflowEventDetailResponseImprovementToolStatus = "failed on max retries"
-	WorkflowEventDetailResponseImprovementToolStatusImprovementRequired WorkflowEventDetailResponseImprovementToolStatus = "improvement_required"
-)
-
-func (r WorkflowEventDetailResponseImprovementToolStatus) IsKnown() bool {
-	switch r {
-	case WorkflowEventDetailResponseImprovementToolStatusImproved, WorkflowEventDetailResponseImprovementToolStatusFailedOnMaxRetries, WorkflowEventDetailResponseImprovementToolStatusImprovementRequired:
-		return true
-	}
-	return false
-}
-
-// Type of thresholds used to evaluate the event.
-type WorkflowEventDetailResponseThresholdType string
-
-const (
-	WorkflowEventDetailResponseThresholdTypeCustom    WorkflowEventDetailResponseThresholdType = "custom"
-	WorkflowEventDetailResponseThresholdTypeAutomatic WorkflowEventDetailResponseThresholdType = "automatic"
-)
-
-func (r WorkflowEventDetailResponseThresholdType) IsKnown() bool {
-	switch r {
-	case WorkflowEventDetailResponseThresholdTypeCustom, WorkflowEventDetailResponseThresholdTypeAutomatic:
-		return true
-	}
-	return false
 }
 
 type WorkflowEventResponse struct {
