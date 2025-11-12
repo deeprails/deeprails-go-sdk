@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.14.0 (2025-11-12)
+
+Full Changelog: [v0.13.0...v0.14.0](https://github.com/deeprails/deeprails-go-sdk/compare/v0.13.0...v0.14.0)
+
+### Features
+
+* **api:** remove dev server ([716cb2f](https://github.com/deeprails/deeprails-go-sdk/commit/716cb2fb8736fa65975f9b17beee99d776b8fd2b))
+
 ## 0.13.0 (2025-11-11)
 
 Full Changelog: [v0.12.0...v0.13.0](https://github.com/deeprails/deeprails-go-sdk/compare/v0.12.0...v0.13.0)
