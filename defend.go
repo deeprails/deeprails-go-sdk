@@ -157,14 +157,15 @@ type DefendResponse struct {
 	// Mapping of guardrail metric names to threshold values. Values can be floating
 	// point numbers (0.0-1.0) for custom thresholds.
 	CustomHallucinationThresholdValues map[string]float64 `json:"custom_hallucination_threshold_values,required"`
-	// Description for the workflow.
+	// A description for the workflow, to help you remember what that workflow means to
+	// your organization.
 	Description string `json:"description,required"`
 	// An array of events associated with this workflow.
 	Events []DefendResponseEvent `json:"events,required"`
 	// List of files associated with the workflow. If this is not empty, models can
 	// search these files when performing evaluations or remediations
 	Files []DefendResponseFile `json:"files,required"`
-	// Name of the workflow.
+	// A human-readable name for the workflow that will correspond to it's workflow ID.
 	Name string `json:"name,required"`
 	// Status of the selected workflow. May be `inactive` or `active`. Inactive
 	// workflows will not accept events.
@@ -174,9 +175,12 @@ type DefendResponse struct {
 	// The most recent time the workflow was updated in UTC.
 	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
 	// A unique workflow ID.
-	WorkflowID string              `json:"workflow_id,required"`
-	Stats      DefendResponseStats `json:"stats"`
-	JSON       defendResponseJSON  `json:"-"`
+	WorkflowID string `json:"workflow_id,required"`
+	// The action used to improve outputs that fail one or more guardrail metrics for
+	// the workflow events.
+	ImprovementAction DefendResponseImprovementAction `json:"improvement_action"`
+	Stats             DefendResponseStats             `json:"stats"`
+	JSON              defendResponseJSON              `json:"-"`
 }
 
 // defendResponseJSON contains the JSON metadata for the struct [DefendResponse]
@@ -193,6 +197,7 @@ type defendResponseJSON struct {
 	ThresholdType                         apijson.Field
 	UpdatedAt                             apijson.Field
 	WorkflowID                            apijson.Field
+	ImprovementAction                     apijson.Field
 	Stats                                 apijson.Field
 	raw                                   string
 	ExtraFields                           map[string]apijson.Field
@@ -390,6 +395,24 @@ func (r DefendResponseThresholdType) IsKnown() bool {
 	return false
 }
 
+// The action used to improve outputs that fail one or more guardrail metrics for
+// the workflow events.
+type DefendResponseImprovementAction string
+
+const (
+	DefendResponseImprovementActionRegen     DefendResponseImprovementAction = "regen"
+	DefendResponseImprovementActionFixit     DefendResponseImprovementAction = "fixit"
+	DefendResponseImprovementActionDoNothing DefendResponseImprovementAction = "do_nothing"
+)
+
+func (r DefendResponseImprovementAction) IsKnown() bool {
+	switch r {
+	case DefendResponseImprovementActionRegen, DefendResponseImprovementActionFixit, DefendResponseImprovementActionDoNothing:
+		return true
+	}
+	return false
+}
+
 type DefendResponseStats struct {
 	// Number of AI outputs that failed the guardrails.
 	OutputsBelowThreshold int64 `json:"outputs_below_threshold"`
@@ -479,10 +502,10 @@ type WorkflowEventDetailResponse struct {
 	// Improved model output after improvement tool was applied and each metric passed
 	// evaluation.
 	ImprovedModelOutput string `json:"improved_model_output,required"`
+	// Type of improvement action used to improve the event.
+	ImprovementAction WorkflowEventDetailResponseImprovementAction `json:"improvement_action,required"`
 	// Status of the improvement tool used to improve the event.
 	ImprovementToolStatus WorkflowEventDetailResponseImprovementToolStatus `json:"improvement_tool_status,required,nullable"`
-	// Type of improvement tool used to improve the event.
-	ImprovementToolType WorkflowEventDetailResponseImprovementToolType `json:"improvement_tool_type,required"`
 	// Type of thresholds used to evaluate the event.
 	ThresholdType WorkflowEventDetailResponseThresholdType `json:"threshold_type,required"`
 	// Workflow ID associated with the event.
@@ -511,8 +534,8 @@ type workflowEventDetailResponseJSON struct {
 	EventStatus                           apijson.Field
 	Filtered                              apijson.Field
 	ImprovedModelOutput                   apijson.Field
+	ImprovementAction                     apijson.Field
 	ImprovementToolStatus                 apijson.Field
-	ImprovementToolType                   apijson.Field
 	ThresholdType                         apijson.Field
 	WorkflowID                            apijson.Field
 	AutomaticHallucinationToleranceLevels apijson.Field
@@ -592,6 +615,23 @@ func (r WorkflowEventDetailResponseEventStatus) IsKnown() bool {
 	return false
 }
 
+// Type of improvement action used to improve the event.
+type WorkflowEventDetailResponseImprovementAction string
+
+const (
+	WorkflowEventDetailResponseImprovementActionRegen     WorkflowEventDetailResponseImprovementAction = "regen"
+	WorkflowEventDetailResponseImprovementActionFixit     WorkflowEventDetailResponseImprovementAction = "fixit"
+	WorkflowEventDetailResponseImprovementActionDoNothing WorkflowEventDetailResponseImprovementAction = "do_nothing"
+)
+
+func (r WorkflowEventDetailResponseImprovementAction) IsKnown() bool {
+	switch r {
+	case WorkflowEventDetailResponseImprovementActionRegen, WorkflowEventDetailResponseImprovementActionFixit, WorkflowEventDetailResponseImprovementActionDoNothing:
+		return true
+	}
+	return false
+}
+
 // Status of the improvement tool used to improve the event.
 type WorkflowEventDetailResponseImprovementToolStatus string
 
@@ -604,23 +644,6 @@ const (
 func (r WorkflowEventDetailResponseImprovementToolStatus) IsKnown() bool {
 	switch r {
 	case WorkflowEventDetailResponseImprovementToolStatusImproved, WorkflowEventDetailResponseImprovementToolStatusFailedOnMaxRetries, WorkflowEventDetailResponseImprovementToolStatusImprovementRequired:
-		return true
-	}
-	return false
-}
-
-// Type of improvement tool used to improve the event.
-type WorkflowEventDetailResponseImprovementToolType string
-
-const (
-	WorkflowEventDetailResponseImprovementToolTypeRegen     WorkflowEventDetailResponseImprovementToolType = "regen"
-	WorkflowEventDetailResponseImprovementToolTypeFixit     WorkflowEventDetailResponseImprovementToolType = "fixit"
-	WorkflowEventDetailResponseImprovementToolTypeDoNothing WorkflowEventDetailResponseImprovementToolType = "do_nothing"
-)
-
-func (r WorkflowEventDetailResponseImprovementToolType) IsKnown() bool {
-	switch r {
-	case WorkflowEventDetailResponseImprovementToolTypeRegen, WorkflowEventDetailResponseImprovementToolTypeFixit, WorkflowEventDetailResponseImprovementToolTypeDoNothing:
 		return true
 	}
 	return false
