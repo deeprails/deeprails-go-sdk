@@ -1,8 +1,8 @@
-# Deep Rails Go API Library
+# DeepRails Go API Library
 
 <a href="https://pkg.go.dev/github.com/deeprails/deeprails-go-sdk"><img src="https://pkg.go.dev/badge/github.com/deeprails/deeprails-go-sdk.svg" alt="Go Reference"></a>
 
-The Deep Rails Go library provides convenient access to the [Deep Rails REST API](https://docs.deeprails.com)
+The DeepRails Go library provides convenient access to the [DeepRails REST API](https://docs.deeprails.com)
 from applications written in Go.
 
 ## Installation
