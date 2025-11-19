@@ -243,8 +243,8 @@ type MonitorDetailResponseEvaluation struct {
 	EvaluationResult map[string]interface{} `json:"evaluation_result"`
 	// Total cost of the evaluation.
 	EvaluationTotalCost float64 `json:"evaluation_total_cost"`
-	// An array of guardrail metrics that the model input and output pair will be
-	// evaluated on.
+	// An array of guardrail metrics that the input and output pair will be evaluated
+	// on.
 	GuardrailMetrics []MonitorDetailResponseEvaluationsGuardrailMetric `json:"guardrail_metrics"`
 	// An optional, user-defined tag for the evaluation.
 	Nametag string `json:"nametag"`
