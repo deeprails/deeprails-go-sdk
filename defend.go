@@ -37,8 +37,8 @@ func NewDefendService(opts ...option.RequestOption) (r *DefendService) {
 	return
 }
 
-// Use this endpoint to create a new guardrail workflow with optional guardrail
-// thresholds and improvement actions
+// Use this endpoint to create a new guardrail workflow by specifying guardrail
+// thresholds, an improvement action, and optional extended capabilities.
 func (r *DefendService) NewWorkflow(ctx context.Context, body DefendNewWorkflowParams, opts ...option.RequestOption) (res *DefendCreateResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "defend"
@@ -87,7 +87,7 @@ func (r *DefendService) SubmitEvent(ctx context.Context, workflowID string, body
 	return
 }
 
-// Use this endpoint to update an existing defend workflow
+// Use this endpoint to update an existing defend workflow if its details change.
 func (r *DefendService) UpdateWorkflow(ctx context.Context, workflowID string, body DefendUpdateWorkflowParams, opts ...option.RequestOption) (res *DefendUpdateResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if workflowID == "" {
@@ -174,7 +174,7 @@ type DefendResponse struct {
 	ThresholdType DefendResponseThresholdType `json:"threshold_type,required"`
 	// The most recent time the workflow was updated in UTC.
 	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
-	// A unique workflow ID.
+	// A unique workflow ID used to identify the workflow in other endpoints.
 	WorkflowID string `json:"workflow_id,required"`
 	// The action used to improve outputs that fail one or more guardrail metrics for
 	// the workflow events.
@@ -495,8 +495,6 @@ type WorkflowEventDetailResponse struct {
 	EvaluationResult map[string]interface{} `json:"evaluation_result,required"`
 	// A unique workflow event ID.
 	EventID string `json:"event_id,required"`
-	// Status of the event.
-	EventStatus WorkflowEventDetailResponseEventStatus `json:"event_status,required"`
 	// Whether the event was filtered and requires improvement.
 	Filtered bool `json:"filtered,required"`
 	// Improved model output after improvement tool was applied and each metric passed
@@ -506,6 +504,8 @@ type WorkflowEventDetailResponse struct {
 	ImprovementAction WorkflowEventDetailResponseImprovementAction `json:"improvement_action,required"`
 	// Status of the improvement tool used to improve the event.
 	ImprovementToolStatus WorkflowEventDetailResponseImprovementToolStatus `json:"improvement_tool_status,required,nullable"`
+	// Status of the event.
+	Status WorkflowEventDetailResponseStatus `json:"status,required"`
 	// Type of thresholds used to evaluate the event.
 	ThresholdType WorkflowEventDetailResponseThresholdType `json:"threshold_type,required"`
 	// Workflow ID associated with the event.
@@ -531,11 +531,11 @@ type workflowEventDetailResponseJSON struct {
 	EvaluationHistory                     apijson.Field
 	EvaluationResult                      apijson.Field
 	EventID                               apijson.Field
-	EventStatus                           apijson.Field
 	Filtered                              apijson.Field
 	ImprovedModelOutput                   apijson.Field
 	ImprovementAction                     apijson.Field
 	ImprovementToolStatus                 apijson.Field
+	Status                                apijson.Field
 	ThresholdType                         apijson.Field
 	WorkflowID                            apijson.Field
 	AutomaticHallucinationToleranceLevels apijson.Field
@@ -599,22 +599,6 @@ func (r workflowEventDetailResponseEvaluationHistoryJSON) RawJSON() string {
 	return r.raw
 }
 
-// Status of the event.
-type WorkflowEventDetailResponseEventStatus string
-
-const (
-	WorkflowEventDetailResponseEventStatusInProgress WorkflowEventDetailResponseEventStatus = "In Progress"
-	WorkflowEventDetailResponseEventStatusCompleted  WorkflowEventDetailResponseEventStatus = "Completed"
-)
-
-func (r WorkflowEventDetailResponseEventStatus) IsKnown() bool {
-	switch r {
-	case WorkflowEventDetailResponseEventStatusInProgress, WorkflowEventDetailResponseEventStatusCompleted:
-		return true
-	}
-	return false
-}
-
 // Type of improvement action used to improve the event.
 type WorkflowEventDetailResponseImprovementAction string
 
@@ -644,6 +628,22 @@ const (
 func (r WorkflowEventDetailResponseImprovementToolStatus) IsKnown() bool {
 	switch r {
 	case WorkflowEventDetailResponseImprovementToolStatusImproved, WorkflowEventDetailResponseImprovementToolStatusFailedOnMaxRetries, WorkflowEventDetailResponseImprovementToolStatusImprovementRequired:
+		return true
+	}
+	return false
+}
+
+// Status of the event.
+type WorkflowEventDetailResponseStatus string
+
+const (
+	WorkflowEventDetailResponseStatusInProgress WorkflowEventDetailResponseStatus = "In Progress"
+	WorkflowEventDetailResponseStatusCompleted  WorkflowEventDetailResponseStatus = "Completed"
+)
+
+func (r WorkflowEventDetailResponseStatus) IsKnown() bool {
+	switch r {
+	case WorkflowEventDetailResponseStatusInProgress, WorkflowEventDetailResponseStatusCompleted:
 		return true
 	}
 	return false
