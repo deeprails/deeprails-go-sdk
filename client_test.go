@@ -48,7 +48,7 @@ func TestUserAgentHeader(t *testing.T) {
 		}),
 		WebSearch: deeprails.F(true),
 	})
-	if userAgent != fmt.Sprintf("Deeprails/Go %s", internal.PackageVersion) {
+	if userAgent != fmt.Sprintf("DeepRails/Go %s", internal.PackageVersion) {
 		t.Errorf("Expected User-Agent to be correct, but got: %#v", userAgent)
 	}
 }
