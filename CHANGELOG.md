@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.16.0 (2025-11-19)
+
+Full Changelog: [v0.15.0...v0.16.0](https://github.com/deeprails/deeprails-go-sdk/compare/v0.15.0...v0.16.0)
+
+### Features
+
+* **api:** revert docs URL ([e11ec97](https://github.com/deeprails/deeprails-go-sdk/commit/e11ec97812fd5270f5bb1003cafe04afb84e99d7))
+* **api:** update package name casing ([5a672c6](https://github.com/deeprails/deeprails-go-sdk/commit/5a672c6761b9932bb1c1de742ead9a6adb8c5954))
+
 ## 0.15.0 (2025-11-18)
 
 Full Changelog: [v0.14.0...v0.15.0](https://github.com/deeprails/deeprails-go-sdk/compare/v0.14.0...v0.15.0)
