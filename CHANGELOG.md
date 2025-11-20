@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.18.0 (2025-11-20)
+
+Full Changelog: [v0.17.0...v0.18.0](https://github.com/deeprails/deeprails-go-sdk/compare/v0.17.0...v0.18.0)
+
+### Features
+
+* **api:** fix files upload parameter ([8c03453](https://github.com/deeprails/deeprails-go-sdk/commit/8c03453c41dc0a77a6eca5dc303c7b1122305239))
+
 ## 0.17.0 (2025-11-19)
 
 Full Changelog: [v0.16.0...v0.17.0](https://github.com/deeprails/deeprails-go-sdk/compare/v0.16.0...v0.17.0)
