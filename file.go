@@ -71,8 +71,8 @@ func (r fileResponseJSON) RawJSON() string {
 }
 
 type FileUploadParams struct {
-	// The contents of the file to upload.
-	File param.Field[[]string] `json:"file,required"`
+	// The contents of the files to upload.
+	Files param.Field[[]string] `json:"files,required"`
 }
 
 func (r FileUploadParams) MarshalMultipart() (data []byte, contentType string, err error) {
