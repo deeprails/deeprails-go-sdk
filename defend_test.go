@@ -162,8 +162,20 @@ func TestDefendUpdateWorkflowWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"workflow_id",
 		deeprails.DefendUpdateWorkflowParams{
-			Description: deeprails.F("description"),
-			Name:        deeprails.F("name"),
+			AutomaticHallucinationToleranceLevels: deeprails.F(map[string]deeprails.DefendUpdateWorkflowParamsAutomaticHallucinationToleranceLevels{
+				"foo": deeprails.DefendUpdateWorkflowParamsAutomaticHallucinationToleranceLevelsLow,
+			}),
+			ContextAwareness: deeprails.F(true),
+			CustomHallucinationThresholdValues: deeprails.F(map[string]float64{
+				"foo": 0.000000,
+			}),
+			Description:            deeprails.F("description"),
+			FileSearch:             deeprails.F([]string{"string"}),
+			ImprovementAction:      deeprails.F(deeprails.DefendUpdateWorkflowParamsImprovementActionRegen),
+			MaxImprovementAttempts: deeprails.F(int64(0)),
+			Name:                   deeprails.F("name"),
+			ThresholdType:          deeprails.F(deeprails.DefendUpdateWorkflowParamsThresholdTypeAutomatic),
+			WebSearch:              deeprails.F(true),
 		},
 	)
 	if err != nil {

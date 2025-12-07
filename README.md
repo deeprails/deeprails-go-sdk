@@ -52,7 +52,7 @@ func main() {
 	client := deeprails.NewClient(
 		option.WithAPIKey("My API Key"), // defaults to os.LookupEnv("DEEPRAILS_API_KEY")
 	)
-	defendCreateResponse, err := client.Defend.NewWorkflow(context.TODO(), deeprails.DefendNewWorkflowParams{
+	response, err := client.Defend.NewWorkflow(context.TODO(), deeprails.DefendNewWorkflowParams{
 		ImprovementAction: deeprails.F(deeprails.DefendNewWorkflowParamsImprovementActionFixit),
 		Name:              deeprails.F("Push Alert Workflow"),
 		ThresholdType:     deeprails.F(deeprails.DefendNewWorkflowParamsThresholdTypeCustom),
@@ -65,7 +65,7 @@ func main() {
 	if err != nil {
 		panic(err.Error())
 	}
-	fmt.Printf("%+v\n", defendCreateResponse.WorkflowID)
+	fmt.Printf("%+v\n", response)
 }
 
 ```
@@ -286,7 +286,7 @@ you need to examine response headers, status codes, or other details.
 ```go
 // Create a variable to store the HTTP response
 var response *http.Response
-defendCreateResponse, err := client.Defend.NewWorkflow(
+response, err := client.Defend.NewWorkflow(
 	context.TODO(),
 	deeprails.DefendNewWorkflowParams{
 		ImprovementAction: deeprails.F(deeprails.DefendNewWorkflowParamsImprovementActionFixit),
@@ -303,7 +303,7 @@ defendCreateResponse, err := client.Defend.NewWorkflow(
 if err != nil {
 	// handle error
 }
-fmt.Printf("%+v\n", defendCreateResponse)
+fmt.Printf("%+v\n", response)
 
 fmt.Printf("Status Code: %d\n", response.StatusCode)
 fmt.Printf("Headers: %+#v\n", response.Header)
