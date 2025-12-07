@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.19.0 (2025-12-07)
+
+Full Changelog: [v0.18.0...v0.19.0](https://github.com/deeprails/deeprails-go-sdk/compare/v0.18.0...v0.19.0)
+
+### Features
+
+* **api:** added context_awareness and context ([30e4c89](https://github.com/deeprails/deeprails-go-sdk/commit/30e4c89bc7800e3dcd3c5e75c1b8f14aafa5473c))
+
+
+### Bug Fixes
+
+* **mcp:** correct code tool API endpoint ([ed88073](https://github.com/deeprails/deeprails-go-sdk/commit/ed88073cd2dfb86b58382c1e9a04f2a204115b18))
+* rename param to avoid collision ([ccf54ac](https://github.com/deeprails/deeprails-go-sdk/commit/ccf54ac2c40e9231ba063f286967c54c529eca50))
+
+
+### Chores
+
+* elide duplicate aliases ([c1f9f18](https://github.com/deeprails/deeprails-go-sdk/commit/c1f9f18e4e4d6da2bcb95a22686ceac005af9f71))
+* **internal:** codegen related update ([ebe6fe2](https://github.com/deeprails/deeprails-go-sdk/commit/ebe6fe2f24408be6ab31bf27c32310332e11b9bb))
+
 ## 0.18.0 (2025-11-20)
 
 Full Changelog: [v0.17.0...v0.18.0](https://github.com/deeprails/deeprails-go-sdk/compare/v0.17.0...v0.18.0)
