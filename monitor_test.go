@@ -29,6 +29,7 @@ func TestMonitorNewWithOptionalParams(t *testing.T) {
 	_, err := client.Monitor.New(context.TODO(), deeprails.MonitorNewParams{
 		GuardrailMetrics: deeprails.F([]deeprails.MonitorNewParamsGuardrailMetric{deeprails.MonitorNewParamsGuardrailMetricCorrectness}),
 		Name:             deeprails.F("name"),
+		ContextAwareness: deeprails.F(true),
 		Description:      deeprails.F("description"),
 		FileSearch:       deeprails.F([]string{"string"}),
 		WebSearch:        deeprails.F(true),
@@ -147,6 +148,7 @@ func TestMonitorSubmitEventWithOptionalParams(t *testing.T) {
 		"monitor_id",
 		deeprails.MonitorSubmitEventParams{
 			ModelInput: deeprails.F(deeprails.MonitorSubmitEventParamsModelInput{
+				Context:      deeprails.F([]string{"string"}),
 				GroundTruth:  deeprails.F("ground_truth"),
 				SystemPrompt: deeprails.F("system_prompt"),
 				UserPrompt:   deeprails.F("user_prompt"),
