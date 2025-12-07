@@ -24,7 +24,7 @@ func TestUsage(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	response, err := client.Defend.NewWorkflow(context.TODO(), deeprails.DefendNewWorkflowParams{
+	defendCreateResponse, err := client.Defend.NewWorkflow(context.TODO(), deeprails.DefendNewWorkflowParams{
 		ImprovementAction: deeprails.F(deeprails.DefendNewWorkflowParamsImprovementActionFixit),
 		Name:              deeprails.F("Push Alert Workflow"),
 		ThresholdType:     deeprails.F(deeprails.DefendNewWorkflowParamsThresholdTypeCustom),
@@ -38,5 +38,5 @@ func TestUsage(t *testing.T) {
 		t.Error(err)
 		return
 	}
-	t.Logf("%+v\n", response)
+	t.Logf("%+v\n", defendCreateResponse.WorkflowID)
 }
