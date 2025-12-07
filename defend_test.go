@@ -33,6 +33,7 @@ func TestDefendNewWorkflowWithOptionalParams(t *testing.T) {
 		AutomaticHallucinationToleranceLevels: deeprails.F(map[string]deeprails.DefendNewWorkflowParamsAutomaticHallucinationToleranceLevels{
 			"foo": deeprails.DefendNewWorkflowParamsAutomaticHallucinationToleranceLevelsLow,
 		}),
+		ContextAwareness: deeprails.F(true),
 		CustomHallucinationThresholdValues: deeprails.F(map[string]float64{
 			"foo": 0.000000,
 		}),
@@ -124,6 +125,7 @@ func TestDefendSubmitEventWithOptionalParams(t *testing.T) {
 		"workflow_id",
 		deeprails.DefendSubmitEventParams{
 			ModelInput: deeprails.F(deeprails.DefendSubmitEventParamsModelInput{
+				Context:      deeprails.F([]string{"string"}),
 				GroundTruth:  deeprails.F("ground_truth"),
 				SystemPrompt: deeprails.F("system_prompt"),
 				UserPrompt:   deeprails.F("user_prompt"),
