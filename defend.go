@@ -149,8 +149,8 @@ type DefendResponse struct {
 	// Mapping of guardrail metric names to tolerance values. Values can be strings
 	// (`low`, `medium`, `high`) for automatic tolerance levels.
 	AutomaticHallucinationToleranceLevels map[string]DefendResponseAutomaticHallucinationToleranceLevel `json:"automatic_hallucination_tolerance_levels,required"`
-	// Extended AI capabilities available to the event, if any. Can be `web_search`
-	// and/or `file_search`.
+	// Extended AI capabilities available to the event, if any. Can be `web_search`,
+	// `context_awareness`, and/or `file_search`.
 	Capabilities []DefendResponseCapability `json:"capabilities,required"`
 	// The time the workflow was created in UTC.
 	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
@@ -513,8 +513,8 @@ type WorkflowEventDetailResponse struct {
 	// Mapping of guardrail metric names to tolerance values. Values are strings
 	// (`low`, `medium`, `high`) representing automatic tolerance levels.
 	AutomaticHallucinationToleranceLevels map[string]WorkflowEventDetailResponseAutomaticHallucinationToleranceLevel `json:"automatic_hallucination_tolerance_levels"`
-	// Extended AI capabilities available to the event, if any. Can be `web_search`
-	// and/or `file_search`.
+	// Extended AI capabilities available to the event, if any. Can be `web_search`,
+	// `context_awareness`, and/or `file_search`.
 	Capabilities []WorkflowEventDetailResponseCapability `json:"capabilities"`
 	// Mapping of guardrail metric names to threshold values. Values are floating point
 	// numbers (0.0-1.0) representing custom thresholds.
@@ -794,6 +794,8 @@ type DefendNewWorkflowParams struct {
 	// `instruction_adherence`, `context_adherence`, `ground_truth_adherence`, or
 	// `comprehensive_safety`.
 	AutomaticHallucinationToleranceLevels param.Field[map[string]DefendNewWorkflowParamsAutomaticHallucinationToleranceLevels] `json:"automatic_hallucination_tolerance_levels"`
+	// Whether to enable context for this workflow's evaluations. Defaults to false.
+	ContextAwareness param.Field[bool] `json:"context_awareness"`
 	// Mapping of guardrail metrics to floating point threshold values. Possible
 	// metrics are `correctness`, `completeness`, `instruction_adherence`,
 	// `context_adherence`, `ground_truth_adherence`, or `comprehensive_safety`.
@@ -912,6 +914,12 @@ func (r DefendSubmitEventParams) MarshalJSON() (data []byte, err error) {
 // contain at least a `user_prompt` field or a `system_prompt` field. For the
 // ground_truth_adherence guardrail metric, `ground_truth` should be provided.
 type DefendSubmitEventParamsModelInput struct {
+	// Any structured information that directly relates to the model’s input and
+	// expected output —e.g., the recent turn-by-turn history between an AI tutor and a
+	// student, facts or state passed through an agentic workflow, or other
+	// domain-specific signals your system already knows and wants the model to
+	// condition on.
+	Context param.Field[[]string] `json:"context"`
 	// The ground truth for evaluating the Ground Truth Adherence guardrail.
 	GroundTruth param.Field[string] `json:"ground_truth"`
 	// The system prompt used to generate the output.

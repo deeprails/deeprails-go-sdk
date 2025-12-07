@@ -303,6 +303,12 @@ func (r MonitorDetailResponseEvaluationsEvaluationStatus) IsKnown() bool {
 // contain at least a `user_prompt` field or a `system_prompt` field. For
 // ground_truth_adherence guardrail metric, `ground_truth` should be provided.
 type MonitorDetailResponseEvaluationsModelInput struct {
+	// Any structured information that directly relates to the model’s input and
+	// expected output —e.g., the recent turn-by-turn history between an AI tutor and a
+	// student, facts or state passed through an agentic workflow, or other
+	// domain-specific signals your system already knows and wants the model to
+	// condition on.
+	Context []string `json:"context"`
 	// The ground truth for evaluating Ground Truth Adherence guardrail.
 	GroundTruth string `json:"ground_truth"`
 	// The system prompt used to generate the output.
@@ -315,6 +321,7 @@ type MonitorDetailResponseEvaluationsModelInput struct {
 // monitorDetailResponseEvaluationsModelInputJSON contains the JSON metadata for
 // the struct [MonitorDetailResponseEvaluationsModelInput]
 type monitorDetailResponseEvaluationsModelInputJSON struct {
+	Context      apijson.Field
 	GroundTruth  apijson.Field
 	SystemPrompt apijson.Field
 	UserPrompt   apijson.Field
@@ -677,6 +684,8 @@ type MonitorNewParams struct {
 	GuardrailMetrics param.Field[[]MonitorNewParamsGuardrailMetric] `json:"guardrail_metrics,required"`
 	// Name of the new monitor.
 	Name param.Field[string] `json:"name,required"`
+	// Whether to enable context for this workflow's evaluations. Defaults to false.
+	ContextAwareness param.Field[bool] `json:"context_awareness"`
 	// Description of the new monitor.
 	Description param.Field[string] `json:"description"`
 	// An array of file IDs to search in the monitor's evaluations. Files must be
@@ -778,6 +787,12 @@ func (r MonitorSubmitEventParams) MarshalJSON() (data []byte, err error) {
 // contain at least a `user_prompt` field or a `system_prompt` field. For
 // ground_truth_adherence guardrail metric, `ground_truth` should be provided.
 type MonitorSubmitEventParamsModelInput struct {
+	// Any structured information that directly relates to the model’s input and
+	// expected output —e.g., the recent turn-by-turn history between an AI tutor and a
+	// student, facts or state passed through an agentic workflow, or other
+	// domain-specific signals your system already knows and wants the model to
+	// condition on.
+	Context param.Field[[]string] `json:"context"`
 	// The ground truth for evaluating Ground Truth Adherence guardrail.
 	GroundTruth param.Field[string] `json:"ground_truth"`
 	// The system prompt used to generate the output.
