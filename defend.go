@@ -150,7 +150,7 @@ type DefendResponse struct {
 	// (`low`, `medium`, `high`) for automatic tolerance levels.
 	AutomaticHallucinationToleranceLevels map[string]DefendResponseAutomaticHallucinationToleranceLevel `json:"automatic_hallucination_tolerance_levels,required"`
 	// Extended AI capabilities available to the event, if any. Can be `web_search`,
-	// `context_awareness`, and/or `file_search`.
+	// `file_search`, and/or `context_awareness`.
 	Capabilities []DefendResponseCapability `json:"capabilities,required"`
 	// The time the workflow was created in UTC.
 	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
@@ -514,7 +514,7 @@ type WorkflowEventDetailResponse struct {
 	// (`low`, `medium`, `high`) representing automatic tolerance levels.
 	AutomaticHallucinationToleranceLevels map[string]WorkflowEventDetailResponseAutomaticHallucinationToleranceLevel `json:"automatic_hallucination_tolerance_levels"`
 	// Extended AI capabilities available to the event, if any. Can be `web_search`,
-	// `context_awareness`, and/or `file_search`.
+	// `file_search`, and/or `context_awareness`.
 	Capabilities []WorkflowEventDetailResponseCapability `json:"capabilities"`
 	// Mapping of guardrail metric names to threshold values. Values are floating point
 	// numbers (0.0-1.0) representing custom thresholds.
@@ -794,7 +794,12 @@ type DefendNewWorkflowParams struct {
 	// `instruction_adherence`, `context_adherence`, `ground_truth_adherence`, or
 	// `comprehensive_safety`.
 	AutomaticHallucinationToleranceLevels param.Field[map[string]DefendNewWorkflowParamsAutomaticHallucinationToleranceLevels] `json:"automatic_hallucination_tolerance_levels"`
-	// Whether to enable context for this workflow's evaluations. Defaults to false.
+	// Context includes any structured information that directly relates to the model’s
+	// input and expected output—e.g., the recent turn-by-turn history between an AI
+	// tutor and a student, facts or state passed through an agentic workflow, or other
+	// domain-specific signals your system already knows and wants the model to
+	// condition on. This field determines whether to enable context awareness for this
+	// workflow's evaluations. Defaults to false.
 	ContextAwareness param.Field[bool] `json:"context_awareness"`
 	// Mapping of guardrail metrics to floating point threshold values. Possible
 	// metrics are `correctness`, `completeness`, `instruction_adherence`,
@@ -915,7 +920,7 @@ func (r DefendSubmitEventParams) MarshalJSON() (data []byte, err error) {
 // ground_truth_adherence guardrail metric, `ground_truth` should be provided.
 type DefendSubmitEventParamsModelInput struct {
 	// Any structured information that directly relates to the model’s input and
-	// expected output —e.g., the recent turn-by-turn history between an AI tutor and a
+	// expected output—e.g., the recent turn-by-turn history between an AI tutor and a
 	// student, facts or state passed through an agentic workflow, or other
 	// domain-specific signals your system already knows and wants the model to
 	// condition on.
@@ -954,12 +959,101 @@ func (r DefendSubmitEventParamsRunMode) IsKnown() bool {
 }
 
 type DefendUpdateWorkflowParams struct {
-	// Description for the workflow.
+	// New mapping of guardrail metrics to hallucination tolerance levels (either
+	// `low`, `medium`, or `high`) to be used when `threshold_type` is set to
+	// `automatic`. Possible metrics are `completeness`, `instruction_adherence`,
+	// `context_adherence`, `ground_truth_adherence`, or `comprehensive_safety`.
+	AutomaticHallucinationToleranceLevels param.Field[map[string]DefendUpdateWorkflowParamsAutomaticHallucinationToleranceLevels] `json:"automatic_hallucination_tolerance_levels"`
+	// Whether to enable context awareness for this workflow's evaluations.
+	ContextAwareness param.Field[bool] `json:"context_awareness"`
+	// New mapping of guardrail metrics to floating point threshold values to be used
+	// when `threshold_type` is set to `custom`. Possible metrics are `correctness`,
+	// `completeness`, `instruction_adherence`, `context_adherence`,
+	// `ground_truth_adherence`, or `comprehensive_safety`.
+	CustomHallucinationThresholdValues param.Field[map[string]float64] `json:"custom_hallucination_threshold_values"`
+	// New description for the workflow.
 	Description param.Field[string] `json:"description"`
-	// Name of the workflow.
+	// An array of file IDs to search in the workflow's evaluations. Files must be
+	// uploaded via the DeepRails API first.
+	FileSearch param.Field[[]string] `json:"file_search"`
+	// The new action used to improve outputs that fail one or more guardrail metrics
+	// for the workflow events. May be `regen`, `fixit`, or `do_nothing`. ReGen runs
+	// the user's input prompt with minor induced variance. FixIt attempts to directly
+	// address the shortcomings of the output using the guardrail failure rationale. Do
+	// Nothing does not attempt any improvement.
+	ImprovementAction param.Field[DefendUpdateWorkflowParamsImprovementAction] `json:"improvement_action"`
+	// Max. number of improvement action attempts until a given event passes the
+	// guardrails. Defaults to 10.
+	MaxImprovementAttempts param.Field[int64] `json:"max_improvement_attempts"`
+	// New name for the workflow.
 	Name param.Field[string] `json:"name"`
+	// New type of thresholds to use for the workflow, either `automatic` or `custom`.
+	// Automatic thresholds are assigned internally after the user specifies a
+	// qualitative tolerance for the metrics, whereas custom metrics allow the user to
+	// set the threshold for each metric as a floating point number between 0.0 and
+	// 1.0.
+	ThresholdType param.Field[DefendUpdateWorkflowParamsThresholdType] `json:"threshold_type"`
+	// Whether to enable web search for this workflow's evaluations.
+	WebSearch param.Field[bool] `json:"web_search"`
 }
 
 func (r DefendUpdateWorkflowParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
+}
+
+type DefendUpdateWorkflowParamsAutomaticHallucinationToleranceLevels string
+
+const (
+	DefendUpdateWorkflowParamsAutomaticHallucinationToleranceLevelsLow    DefendUpdateWorkflowParamsAutomaticHallucinationToleranceLevels = "low"
+	DefendUpdateWorkflowParamsAutomaticHallucinationToleranceLevelsMedium DefendUpdateWorkflowParamsAutomaticHallucinationToleranceLevels = "medium"
+	DefendUpdateWorkflowParamsAutomaticHallucinationToleranceLevelsHigh   DefendUpdateWorkflowParamsAutomaticHallucinationToleranceLevels = "high"
+)
+
+func (r DefendUpdateWorkflowParamsAutomaticHallucinationToleranceLevels) IsKnown() bool {
+	switch r {
+	case DefendUpdateWorkflowParamsAutomaticHallucinationToleranceLevelsLow, DefendUpdateWorkflowParamsAutomaticHallucinationToleranceLevelsMedium, DefendUpdateWorkflowParamsAutomaticHallucinationToleranceLevelsHigh:
+		return true
+	}
+	return false
+}
+
+// The new action used to improve outputs that fail one or more guardrail metrics
+// for the workflow events. May be `regen`, `fixit`, or `do_nothing`. ReGen runs
+// the user's input prompt with minor induced variance. FixIt attempts to directly
+// address the shortcomings of the output using the guardrail failure rationale. Do
+// Nothing does not attempt any improvement.
+type DefendUpdateWorkflowParamsImprovementAction string
+
+const (
+	DefendUpdateWorkflowParamsImprovementActionRegen     DefendUpdateWorkflowParamsImprovementAction = "regen"
+	DefendUpdateWorkflowParamsImprovementActionFixit     DefendUpdateWorkflowParamsImprovementAction = "fixit"
+	DefendUpdateWorkflowParamsImprovementActionDoNothing DefendUpdateWorkflowParamsImprovementAction = "do_nothing"
+)
+
+func (r DefendUpdateWorkflowParamsImprovementAction) IsKnown() bool {
+	switch r {
+	case DefendUpdateWorkflowParamsImprovementActionRegen, DefendUpdateWorkflowParamsImprovementActionFixit, DefendUpdateWorkflowParamsImprovementActionDoNothing:
+		return true
+	}
+	return false
+}
+
+// New type of thresholds to use for the workflow, either `automatic` or `custom`.
+// Automatic thresholds are assigned internally after the user specifies a
+// qualitative tolerance for the metrics, whereas custom metrics allow the user to
+// set the threshold for each metric as a floating point number between 0.0 and
+// 1.0.
+type DefendUpdateWorkflowParamsThresholdType string
+
+const (
+	DefendUpdateWorkflowParamsThresholdTypeAutomatic DefendUpdateWorkflowParamsThresholdType = "automatic"
+	DefendUpdateWorkflowParamsThresholdTypeCustom    DefendUpdateWorkflowParamsThresholdType = "custom"
+)
+
+func (r DefendUpdateWorkflowParamsThresholdType) IsKnown() bool {
+	switch r {
+	case DefendUpdateWorkflowParamsThresholdTypeAutomatic, DefendUpdateWorkflowParamsThresholdTypeCustom:
+		return true
+	}
+	return false
 }

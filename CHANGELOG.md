@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.20.0 (2025-12-07)
+
+Full Changelog: [v0.19.0...v0.20.0](https://github.com/deeprails/deeprails-go-sdk/compare/v0.19.0...v0.20.0)
+
+### Features
+
+* **api:** Expand update endpoints ([55bff1d](https://github.com/deeprails/deeprails-go-sdk/commit/55bff1dae11a4fc491960e374295c14360f6e6c0))
+* **api:** manual updates ([20376e7](https://github.com/deeprails/deeprails-go-sdk/commit/20376e79f6234c7492c0d0aa21b9b199a4f1d2ce))
+
 ## 0.19.0 (2025-12-07)
 
 Full Changelog: [v0.18.0...v0.19.0](https://github.com/deeprails/deeprails-go-sdk/compare/v0.18.0...v0.19.0)

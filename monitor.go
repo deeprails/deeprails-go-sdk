@@ -59,8 +59,8 @@ func (r *MonitorService) Get(ctx context.Context, monitorID string, query Monito
 	return
 }
 
-// Use this endpoint to update the name, description, or status of an existing
-// monitor
+// Use this endpoint to update the name, status, and/or other details of an
+// existing monitor.
 func (r *MonitorService) Update(ctx context.Context, monitorID string, body MonitorUpdateParams, opts ...option.RequestOption) (res *MonitorUpdateResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if monitorID == "" {
@@ -148,7 +148,8 @@ func (r MonitorCreateResponseStatus) IsKnown() bool {
 }
 
 type MonitorDetailResponse struct {
-	// An array of capabilities associated with this monitor.
+	// An array of extended AI capabilities associated with this monitor. Can be
+	// `web_search`, `file_search`, and/or `context_awareness`.
 	Capabilities []MonitorDetailResponseCapability `json:"capabilities,required"`
 	// The time the monitor was created in UTC.
 	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
@@ -304,7 +305,7 @@ func (r MonitorDetailResponseEvaluationsEvaluationStatus) IsKnown() bool {
 // ground_truth_adherence guardrail metric, `ground_truth` should be provided.
 type MonitorDetailResponseEvaluationsModelInput struct {
 	// Any structured information that directly relates to the model’s input and
-	// expected output —e.g., the recent turn-by-turn history between an AI tutor and a
+	// expected output—e.g., the recent turn-by-turn history between an AI tutor and a
 	// student, facts or state passed through an agentic workflow, or other
 	// domain-specific signals your system already knows and wants the model to
 	// condition on.
@@ -458,7 +459,8 @@ func (r MonitorDetailResponseStatus) IsKnown() bool {
 }
 
 type MonitorEventDetailResponse struct {
-	// The capabilities associated with the monitor event.
+	// The extended AI capabilities associated with the monitor event. Can be
+	// `web_search`, `file_search`, and/or `context_awareness`.
 	Capabilities []MonitorEventDetailResponseCapability `json:"capabilities"`
 	// The time spent on the evaluation in seconds.
 	EvalTime string `json:"eval_time"`
@@ -684,7 +686,12 @@ type MonitorNewParams struct {
 	GuardrailMetrics param.Field[[]MonitorNewParamsGuardrailMetric] `json:"guardrail_metrics,required"`
 	// Name of the new monitor.
 	Name param.Field[string] `json:"name,required"`
-	// Whether to enable context for this workflow's evaluations. Defaults to false.
+	// Context includes any structured information that directly relates to the model’s
+	// input and expected output—e.g., the recent turn-by-turn history between an AI
+	// tutor and a student, facts or state passed through an agentic workflow, or other
+	// domain-specific signals your system already knows and wants the model to
+	// condition on. This field determines whether to enable context awareness for this
+	// monitor's evaluations. Defaults to false.
 	ContextAwareness param.Field[bool] `json:"context_awareness"`
 	// Description of the new monitor.
 	Description param.Field[string] `json:"description"`
@@ -733,17 +740,44 @@ func (r MonitorGetParams) URLQuery() (v url.Values) {
 }
 
 type MonitorUpdateParams struct {
-	// Description of the monitor.
+	// New description of the monitor.
 	Description param.Field[string] `json:"description"`
-	// Name of the monitor.
+	// An array of file IDs to search in the monitor's evaluations. Files must be
+	// uploaded via the DeepRails API first.
+	FileSearch param.Field[[]string] `json:"file_search"`
+	// An array of the new guardrail metrics that model input and output pairs will be
+	// evaluated on.
+	GuardrailMetrics param.Field[[]MonitorUpdateParamsGuardrailMetric] `json:"guardrail_metrics"`
+	// New name of the monitor.
 	Name param.Field[string] `json:"name"`
 	// Status of the monitor. Can be `active` or `inactive`. Inactive monitors no
 	// longer record and evaluate events.
 	Status param.Field[MonitorUpdateParamsStatus] `json:"status"`
+	// Whether to enable web search for this monitor's evaluations.
+	WebSearch param.Field[bool] `json:"web_search"`
 }
 
 func (r MonitorUpdateParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
+}
+
+type MonitorUpdateParamsGuardrailMetric string
+
+const (
+	MonitorUpdateParamsGuardrailMetricCorrectness          MonitorUpdateParamsGuardrailMetric = "correctness"
+	MonitorUpdateParamsGuardrailMetricCompleteness         MonitorUpdateParamsGuardrailMetric = "completeness"
+	MonitorUpdateParamsGuardrailMetricInstructionAdherence MonitorUpdateParamsGuardrailMetric = "instruction_adherence"
+	MonitorUpdateParamsGuardrailMetricContextAdherence     MonitorUpdateParamsGuardrailMetric = "context_adherence"
+	MonitorUpdateParamsGuardrailMetricGroundTruthAdherence MonitorUpdateParamsGuardrailMetric = "ground_truth_adherence"
+	MonitorUpdateParamsGuardrailMetricComprehensiveSafety  MonitorUpdateParamsGuardrailMetric = "comprehensive_safety"
+)
+
+func (r MonitorUpdateParamsGuardrailMetric) IsKnown() bool {
+	switch r {
+	case MonitorUpdateParamsGuardrailMetricCorrectness, MonitorUpdateParamsGuardrailMetricCompleteness, MonitorUpdateParamsGuardrailMetricInstructionAdherence, MonitorUpdateParamsGuardrailMetricContextAdherence, MonitorUpdateParamsGuardrailMetricGroundTruthAdherence, MonitorUpdateParamsGuardrailMetricComprehensiveSafety:
+		return true
+	}
+	return false
 }
 
 // Status of the monitor. Can be `active` or `inactive`. Inactive monitors no
@@ -788,7 +822,7 @@ func (r MonitorSubmitEventParams) MarshalJSON() (data []byte, err error) {
 // ground_truth_adherence guardrail metric, `ground_truth` should be provided.
 type MonitorSubmitEventParamsModelInput struct {
 	// Any structured information that directly relates to the model’s input and
-	// expected output —e.g., the recent turn-by-turn history between an AI tutor and a
+	// expected output—e.g., the recent turn-by-turn history between an AI tutor and a
 	// student, facts or state passed through an agentic workflow, or other
 	// domain-specific signals your system already knows and wants the model to
 	// condition on.
