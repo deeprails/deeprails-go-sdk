@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.21.0 (2025-12-15)
+
+Full Changelog: [v0.20.0...v0.21.0](https://github.com/deeprails/deeprails-go-sdk/compare/v0.20.0...v0.21.0)
+
+### Features
+
+* **api:** add precision plus codex ([6553e3c](https://github.com/deeprails/deeprails-go-sdk/commit/6553e3c0c745b3fdb15d7a46c10ce668ceedb87d))
+
 ## 0.20.0 (2025-12-07)
 
 Full Changelog: [v0.19.0...v0.20.0](https://github.com/deeprails/deeprails-go-sdk/compare/v0.19.0...v0.20.0)

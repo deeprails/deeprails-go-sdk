@@ -151,14 +151,14 @@ func TestMonitorSubmitEventWithOptionalParams(t *testing.T) {
 		"monitor_id",
 		deeprails.MonitorSubmitEventParams{
 			ModelInput: deeprails.F(deeprails.MonitorSubmitEventParamsModelInput{
+				UserPrompt:   deeprails.F("user_prompt"),
 				Context:      deeprails.F([]string{"string"}),
 				GroundTruth:  deeprails.F("ground_truth"),
 				SystemPrompt: deeprails.F("system_prompt"),
-				UserPrompt:   deeprails.F("user_prompt"),
 			}),
 			ModelOutput: deeprails.F("model_output"),
 			Nametag:     deeprails.F("nametag"),
-			RunMode:     deeprails.F(deeprails.MonitorSubmitEventParamsRunModePrecisionPlus),
+			RunMode:     deeprails.F(deeprails.MonitorSubmitEventParamsRunModePrecisionPlusCodex),
 		},
 	)
 	if err != nil {
