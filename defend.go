@@ -255,9 +255,14 @@ type DefendResponseEvent struct {
 	EventID string `json:"event_id"`
 	// Improved model output after improvement tool was applied.
 	ImprovedModelOutput string `json:"improved_model_output"`
-	// Status of the improvement tool used to improve the event.
-	ImprovementToolStatus string                  `json:"improvement_tool_status"`
-	JSON                  defendResponseEventJSON `json:"-"`
+	// Status of the improvement tool used to improve the event. `improvement_required`
+	// indicates that the evaluation is complete and the improvement action is needed
+	// but is not taking place. `improved` and `improvement_failed` indicate when the
+	// improvement action concludes, successfully and unsuccessfully, respectively.
+	// `no_improvement_required` means that the first evaluation passed all its
+	// metrics!
+	ImprovementToolStatus DefendResponseEventsImprovementToolStatus `json:"improvement_tool_status"`
+	JSON                  defendResponseEventJSON                   `json:"-"`
 }
 
 // defendResponseEventJSON contains the JSON metadata for the struct
@@ -335,6 +340,29 @@ func (r *DefendResponseEventsEvaluation) UnmarshalJSON(data []byte) (err error) 
 
 func (r defendResponseEventsEvaluationJSON) RawJSON() string {
 	return r.raw
+}
+
+// Status of the improvement tool used to improve the event. `improvement_required`
+// indicates that the evaluation is complete and the improvement action is needed
+// but is not taking place. `improved` and `improvement_failed` indicate when the
+// improvement action concludes, successfully and unsuccessfully, respectively.
+// `no_improvement_required` means that the first evaluation passed all its
+// metrics!
+type DefendResponseEventsImprovementToolStatus string
+
+const (
+	DefendResponseEventsImprovementToolStatusImproved              DefendResponseEventsImprovementToolStatus = "improved"
+	DefendResponseEventsImprovementToolStatusImprovementFailed     DefendResponseEventsImprovementToolStatus = "improvement_failed"
+	DefendResponseEventsImprovementToolStatusNoImprovementRequired DefendResponseEventsImprovementToolStatus = "no_improvement_required"
+	DefendResponseEventsImprovementToolStatusImprovementRequired   DefendResponseEventsImprovementToolStatus = "improvement_required"
+)
+
+func (r DefendResponseEventsImprovementToolStatus) IsKnown() bool {
+	switch r {
+	case DefendResponseEventsImprovementToolStatusImproved, DefendResponseEventsImprovementToolStatusImprovementFailed, DefendResponseEventsImprovementToolStatusNoImprovementRequired, DefendResponseEventsImprovementToolStatusImprovementRequired:
+		return true
+	}
+	return false
 }
 
 type DefendResponseFile struct {
@@ -502,7 +530,12 @@ type WorkflowEventDetailResponse struct {
 	ImprovedModelOutput string `json:"improved_model_output,required"`
 	// Type of improvement action used to improve the event.
 	ImprovementAction WorkflowEventDetailResponseImprovementAction `json:"improvement_action,required"`
-	// Status of the improvement tool used to improve the event.
+	// Status of the improvement tool used to improve the event. `improvement_required`
+	// indicates that the evaluation is complete and the improvement action is needed
+	// but is not taking place. `improved` and `improvement_failed` indicate when the
+	// improvement action concludes, successfully and unsuccessfully, respectively.
+	// `no_improvement_required` means that the first evaluation passed all its
+	// metrics!
 	ImprovementToolStatus WorkflowEventDetailResponseImprovementToolStatus `json:"improvement_tool_status,required,nullable"`
 	// Status of the event.
 	Status WorkflowEventDetailResponseStatus `json:"status,required"`
@@ -616,18 +649,24 @@ func (r WorkflowEventDetailResponseImprovementAction) IsKnown() bool {
 	return false
 }
 
-// Status of the improvement tool used to improve the event.
+// Status of the improvement tool used to improve the event. `improvement_required`
+// indicates that the evaluation is complete and the improvement action is needed
+// but is not taking place. `improved` and `improvement_failed` indicate when the
+// improvement action concludes, successfully and unsuccessfully, respectively.
+// `no_improvement_required` means that the first evaluation passed all its
+// metrics!
 type WorkflowEventDetailResponseImprovementToolStatus string
 
 const (
-	WorkflowEventDetailResponseImprovementToolStatusImproved            WorkflowEventDetailResponseImprovementToolStatus = "improved"
-	WorkflowEventDetailResponseImprovementToolStatusFailedOnMaxRetries  WorkflowEventDetailResponseImprovementToolStatus = "failed on max retries"
-	WorkflowEventDetailResponseImprovementToolStatusImprovementRequired WorkflowEventDetailResponseImprovementToolStatus = "improvement_required"
+	WorkflowEventDetailResponseImprovementToolStatusImproved              WorkflowEventDetailResponseImprovementToolStatus = "improved"
+	WorkflowEventDetailResponseImprovementToolStatusImprovementFailed     WorkflowEventDetailResponseImprovementToolStatus = "improvement_failed"
+	WorkflowEventDetailResponseImprovementToolStatusNoImprovementRequired WorkflowEventDetailResponseImprovementToolStatus = "no_improvement_required"
+	WorkflowEventDetailResponseImprovementToolStatusImprovementRequired   WorkflowEventDetailResponseImprovementToolStatus = "improvement_required"
 )
 
 func (r WorkflowEventDetailResponseImprovementToolStatus) IsKnown() bool {
 	switch r {
-	case WorkflowEventDetailResponseImprovementToolStatusImproved, WorkflowEventDetailResponseImprovementToolStatusFailedOnMaxRetries, WorkflowEventDetailResponseImprovementToolStatusImprovementRequired:
+	case WorkflowEventDetailResponseImprovementToolStatusImproved, WorkflowEventDetailResponseImprovementToolStatusImprovementFailed, WorkflowEventDetailResponseImprovementToolStatusNoImprovementRequired, WorkflowEventDetailResponseImprovementToolStatusImprovementRequired:
 		return true
 	}
 	return false
@@ -904,8 +943,8 @@ type DefendSubmitEventParams struct {
 	ModelUsed param.Field[string] `json:"model_used,required"`
 	// Run mode for the workflow event. The run mode allows the user to optimize for
 	// speed, accuracy, and cost by determining which models are used to evaluate the
-	// event. Available run modes include `precision_plus`, `precision`, `smart`, and
-	// `economy`. Defaults to `smart`.
+	// event. Available run modes include `precision_plus_codex`, `precision_plus`,
+	// `precision`, `smart`, and `economy`. Defaults to `smart`.
 	RunMode param.Field[DefendSubmitEventParamsRunMode] `json:"run_mode,required"`
 	// An optional, user-defined tag for the event.
 	Nametag param.Field[string] `json:"nametag"`
@@ -919,6 +958,8 @@ func (r DefendSubmitEventParams) MarshalJSON() (data []byte, err error) {
 // contain at least a `user_prompt` field or a `system_prompt` field. For the
 // ground_truth_adherence guardrail metric, `ground_truth` should be provided.
 type DefendSubmitEventParamsModelInput struct {
+	// The user prompt used to generate the output.
+	UserPrompt param.Field[string] `json:"user_prompt,required"`
 	// Any structured information that directly relates to the model’s input and
 	// expected output—e.g., the recent turn-by-turn history between an AI tutor and a
 	// student, facts or state passed through an agentic workflow, or other
@@ -929,8 +970,6 @@ type DefendSubmitEventParamsModelInput struct {
 	GroundTruth param.Field[string] `json:"ground_truth"`
 	// The system prompt used to generate the output.
 	SystemPrompt param.Field[string] `json:"system_prompt"`
-	// The user prompt used to generate the output.
-	UserPrompt param.Field[string] `json:"user_prompt"`
 }
 
 func (r DefendSubmitEventParamsModelInput) MarshalJSON() (data []byte, err error) {
@@ -939,20 +978,21 @@ func (r DefendSubmitEventParamsModelInput) MarshalJSON() (data []byte, err error
 
 // Run mode for the workflow event. The run mode allows the user to optimize for
 // speed, accuracy, and cost by determining which models are used to evaluate the
-// event. Available run modes include `precision_plus`, `precision`, `smart`, and
-// `economy`. Defaults to `smart`.
+// event. Available run modes include `precision_plus_codex`, `precision_plus`,
+// `precision`, `smart`, and `economy`. Defaults to `smart`.
 type DefendSubmitEventParamsRunMode string
 
 const (
-	DefendSubmitEventParamsRunModePrecisionPlus DefendSubmitEventParamsRunMode = "precision_plus"
-	DefendSubmitEventParamsRunModePrecision     DefendSubmitEventParamsRunMode = "precision"
-	DefendSubmitEventParamsRunModeSmart         DefendSubmitEventParamsRunMode = "smart"
-	DefendSubmitEventParamsRunModeEconomy       DefendSubmitEventParamsRunMode = "economy"
+	DefendSubmitEventParamsRunModePrecisionPlusCodex DefendSubmitEventParamsRunMode = "precision_plus_codex"
+	DefendSubmitEventParamsRunModePrecisionPlus      DefendSubmitEventParamsRunMode = "precision_plus"
+	DefendSubmitEventParamsRunModePrecision          DefendSubmitEventParamsRunMode = "precision"
+	DefendSubmitEventParamsRunModeSmart              DefendSubmitEventParamsRunMode = "smart"
+	DefendSubmitEventParamsRunModeEconomy            DefendSubmitEventParamsRunMode = "economy"
 )
 
 func (r DefendSubmitEventParamsRunMode) IsKnown() bool {
 	switch r {
-	case DefendSubmitEventParamsRunModePrecisionPlus, DefendSubmitEventParamsRunModePrecision, DefendSubmitEventParamsRunModeSmart, DefendSubmitEventParamsRunModeEconomy:
+	case DefendSubmitEventParamsRunModePrecisionPlusCodex, DefendSubmitEventParamsRunModePrecisionPlus, DefendSubmitEventParamsRunModePrecision, DefendSubmitEventParamsRunModeSmart, DefendSubmitEventParamsRunModeEconomy:
 		return true
 	}
 	return false
