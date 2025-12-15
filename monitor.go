@@ -304,6 +304,8 @@ func (r MonitorDetailResponseEvaluationsEvaluationStatus) IsKnown() bool {
 // contain at least a `user_prompt` field or a `system_prompt` field. For
 // ground_truth_adherence guardrail metric, `ground_truth` should be provided.
 type MonitorDetailResponseEvaluationsModelInput struct {
+	// The user prompt used to generate the output.
+	UserPrompt string `json:"user_prompt,required"`
 	// Any structured information that directly relates to the model’s input and
 	// expected output—e.g., the recent turn-by-turn history between an AI tutor and a
 	// student, facts or state passed through an agentic workflow, or other
@@ -313,19 +315,17 @@ type MonitorDetailResponseEvaluationsModelInput struct {
 	// The ground truth for evaluating Ground Truth Adherence guardrail.
 	GroundTruth string `json:"ground_truth"`
 	// The system prompt used to generate the output.
-	SystemPrompt string `json:"system_prompt"`
-	// The user prompt used to generate the output.
-	UserPrompt string                                         `json:"user_prompt"`
-	JSON       monitorDetailResponseEvaluationsModelInputJSON `json:"-"`
+	SystemPrompt string                                         `json:"system_prompt"`
+	JSON         monitorDetailResponseEvaluationsModelInputJSON `json:"-"`
 }
 
 // monitorDetailResponseEvaluationsModelInputJSON contains the JSON metadata for
 // the struct [MonitorDetailResponseEvaluationsModelInput]
 type monitorDetailResponseEvaluationsModelInputJSON struct {
+	UserPrompt   apijson.Field
 	Context      apijson.Field
 	GroundTruth  apijson.Field
 	SystemPrompt apijson.Field
-	UserPrompt   apijson.Field
 	raw          string
 	ExtraFields  map[string]apijson.Field
 }
@@ -808,8 +808,8 @@ type MonitorSubmitEventParams struct {
 	Nametag param.Field[string] `json:"nametag"`
 	// Run mode for the monitor event. The run mode allows the user to optimize for
 	// speed, accuracy, and cost by determining which models are used to evaluate the
-	// event. Available run modes include `precision_plus`, `precision`, `smart`, and
-	// `economy`. Defaults to `smart`.
+	// event. Available run modes include `precision_plus_codex`, `precision_plus`,
+	// `precision`, `smart`, and `economy`. Defaults to `smart`.
 	RunMode param.Field[MonitorSubmitEventParamsRunMode] `json:"run_mode"`
 }
 
@@ -821,6 +821,8 @@ func (r MonitorSubmitEventParams) MarshalJSON() (data []byte, err error) {
 // contain at least a `user_prompt` field or a `system_prompt` field. For
 // ground_truth_adherence guardrail metric, `ground_truth` should be provided.
 type MonitorSubmitEventParamsModelInput struct {
+	// The user prompt used to generate the output.
+	UserPrompt param.Field[string] `json:"user_prompt,required"`
 	// Any structured information that directly relates to the model’s input and
 	// expected output—e.g., the recent turn-by-turn history between an AI tutor and a
 	// student, facts or state passed through an agentic workflow, or other
@@ -831,8 +833,6 @@ type MonitorSubmitEventParamsModelInput struct {
 	GroundTruth param.Field[string] `json:"ground_truth"`
 	// The system prompt used to generate the output.
 	SystemPrompt param.Field[string] `json:"system_prompt"`
-	// The user prompt used to generate the output.
-	UserPrompt param.Field[string] `json:"user_prompt"`
 }
 
 func (r MonitorSubmitEventParamsModelInput) MarshalJSON() (data []byte, err error) {
@@ -841,20 +841,21 @@ func (r MonitorSubmitEventParamsModelInput) MarshalJSON() (data []byte, err erro
 
 // Run mode for the monitor event. The run mode allows the user to optimize for
 // speed, accuracy, and cost by determining which models are used to evaluate the
-// event. Available run modes include `precision_plus`, `precision`, `smart`, and
-// `economy`. Defaults to `smart`.
+// event. Available run modes include `precision_plus_codex`, `precision_plus`,
+// `precision`, `smart`, and `economy`. Defaults to `smart`.
 type MonitorSubmitEventParamsRunMode string
 
 const (
-	MonitorSubmitEventParamsRunModePrecisionPlus MonitorSubmitEventParamsRunMode = "precision_plus"
-	MonitorSubmitEventParamsRunModePrecision     MonitorSubmitEventParamsRunMode = "precision"
-	MonitorSubmitEventParamsRunModeSmart         MonitorSubmitEventParamsRunMode = "smart"
-	MonitorSubmitEventParamsRunModeEconomy       MonitorSubmitEventParamsRunMode = "economy"
+	MonitorSubmitEventParamsRunModePrecisionPlusCodex MonitorSubmitEventParamsRunMode = "precision_plus_codex"
+	MonitorSubmitEventParamsRunModePrecisionPlus      MonitorSubmitEventParamsRunMode = "precision_plus"
+	MonitorSubmitEventParamsRunModePrecision          MonitorSubmitEventParamsRunMode = "precision"
+	MonitorSubmitEventParamsRunModeSmart              MonitorSubmitEventParamsRunMode = "smart"
+	MonitorSubmitEventParamsRunModeEconomy            MonitorSubmitEventParamsRunMode = "economy"
 )
 
 func (r MonitorSubmitEventParamsRunMode) IsKnown() bool {
 	switch r {
-	case MonitorSubmitEventParamsRunModePrecisionPlus, MonitorSubmitEventParamsRunModePrecision, MonitorSubmitEventParamsRunModeSmart, MonitorSubmitEventParamsRunModeEconomy:
+	case MonitorSubmitEventParamsRunModePrecisionPlusCodex, MonitorSubmitEventParamsRunModePrecisionPlus, MonitorSubmitEventParamsRunModePrecision, MonitorSubmitEventParamsRunModeSmart, MonitorSubmitEventParamsRunModeEconomy:
 		return true
 	}
 	return false
