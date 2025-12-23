@@ -125,8 +125,11 @@ func TestDefendSubmitEventWithOptionalParams(t *testing.T) {
 		"workflow_id",
 		deeprails.DefendSubmitEventParams{
 			ModelInput: deeprails.F(deeprails.DefendSubmitEventParamsModelInput{
-				UserPrompt:   deeprails.F("user_prompt"),
-				Context:      deeprails.F([]string{"string"}),
+				UserPrompt: deeprails.F("user_prompt"),
+				Context: deeprails.F([]deeprails.DefendSubmitEventParamsModelInputContext{{
+					Content: deeprails.F("content"),
+					Role:    deeprails.F("user"),
+				}}),
 				GroundTruth:  deeprails.F("ground_truth"),
 				SystemPrompt: deeprails.F("system_prompt"),
 			}),
