@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.22.0 (2025-12-23)
+
+Full Changelog: [v0.21.0...v0.22.0](https://github.com/deeprails/deeprails-go-sdk/compare/v0.21.0...v0.22.0)
+
+### Features
+
+* **api:** add key improvements and analysis of failures ([bac9268](https://github.com/deeprails/deeprails-go-sdk/commit/bac9268e79535077062cb528366f6a90fdc8718f))
+
+
+### Bug Fixes
+
+* skip usage tests that don't work with Prism ([5867f0a](https://github.com/deeprails/deeprails-go-sdk/commit/5867f0aa0a43404bd8a10035546efb727a46f20d))
+
 ## 0.21.0 (2025-12-15)
 
 Full Changelog: [v0.20.0...v0.21.0](https://github.com/deeprails/deeprails-go-sdk/compare/v0.20.0...v0.21.0)
