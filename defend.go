@@ -249,6 +249,8 @@ func (r defendResponseCapabilityJSON) RawJSON() string {
 }
 
 type DefendResponseEvent struct {
+	// The ID of the billing request for the event.
+	BillingRequestID string `json:"billing_request_id"`
 	// An array of evaluations for this event.
 	Evaluations []DefendResponseEventsEvaluation `json:"evaluations"`
 	// A unique workflow event ID.
@@ -262,16 +264,20 @@ type DefendResponseEvent struct {
 	// `no_improvement_required` means that the first evaluation passed all its
 	// metrics!
 	ImprovementToolStatus DefendResponseEventsImprovementToolStatus `json:"improvement_tool_status"`
-	JSON                  defendResponseEventJSON                   `json:"-"`
+	// Status of the event.
+	Status DefendResponseEventsStatus `json:"status"`
+	JSON   defendResponseEventJSON    `json:"-"`
 }
 
 // defendResponseEventJSON contains the JSON metadata for the struct
 // [DefendResponseEvent]
 type defendResponseEventJSON struct {
+	BillingRequestID      apijson.Field
 	Evaluations           apijson.Field
 	EventID               apijson.Field
 	ImprovedModelOutput   apijson.Field
 	ImprovementToolStatus apijson.Field
+	Status                apijson.Field
 	raw                   string
 	ExtraFields           map[string]apijson.Field
 }
@@ -285,6 +291,9 @@ func (r defendResponseEventJSON) RawJSON() string {
 }
 
 type DefendResponseEventsEvaluation struct {
+	// Analysis of the failures of the model_output according to the guardrail metrics
+	// evaluated.
+	AnalysisOfFailures string `json:"analysis_of_failures"`
 	// The attempt number or identifier for this evaluation.
 	Attempt string `json:"attempt"`
 	// The time the evaluation was created in UTC.
@@ -299,6 +308,15 @@ type DefendResponseEventsEvaluation struct {
 	EvaluationTotalCost float64 `json:"evaluation_total_cost"`
 	// An array of guardrail metrics evaluated.
 	GuardrailMetrics []string `json:"guardrail_metrics"`
+	// Status of the improvement tool used to improve the event. `improvement_required`
+	// indicates that the evaluation is complete and the improvement action is needed
+	// but is not taking place. `improved` and `improvement_failed` indicate when the
+	// improvement action concludes, successfully and unsuccessfully, respectively.
+	// `no_improvement_required` means that the first evaluation passed all its
+	// metrics!
+	ImprovementToolStatus DefendResponseEventsEvaluationsImprovementToolStatus `json:"improvement_tool_status"`
+	// A list of key improvements made to the model_output to address the failures.
+	KeyImprovements []string `json:"key_improvements"`
 	// The model input used for the evaluation.
 	ModelInput map[string]interface{} `json:"model_input"`
 	// The model output that was evaluated.
@@ -317,21 +335,24 @@ type DefendResponseEventsEvaluation struct {
 // defendResponseEventsEvaluationJSON contains the JSON metadata for the struct
 // [DefendResponseEventsEvaluation]
 type defendResponseEventsEvaluationJSON struct {
-	Attempt             apijson.Field
-	CreatedAt           apijson.Field
-	ErrorMessage        apijson.Field
-	EvaluationResult    apijson.Field
-	EvaluationStatus    apijson.Field
-	EvaluationTotalCost apijson.Field
-	GuardrailMetrics    apijson.Field
-	ModelInput          apijson.Field
-	ModelOutput         apijson.Field
-	ModifiedAt          apijson.Field
-	Nametag             apijson.Field
-	Progress            apijson.Field
-	RunMode             apijson.Field
-	raw                 string
-	ExtraFields         map[string]apijson.Field
+	AnalysisOfFailures    apijson.Field
+	Attempt               apijson.Field
+	CreatedAt             apijson.Field
+	ErrorMessage          apijson.Field
+	EvaluationResult      apijson.Field
+	EvaluationStatus      apijson.Field
+	EvaluationTotalCost   apijson.Field
+	GuardrailMetrics      apijson.Field
+	ImprovementToolStatus apijson.Field
+	KeyImprovements       apijson.Field
+	ModelInput            apijson.Field
+	ModelOutput           apijson.Field
+	ModifiedAt            apijson.Field
+	Nametag               apijson.Field
+	Progress              apijson.Field
+	RunMode               apijson.Field
+	raw                   string
+	ExtraFields           map[string]apijson.Field
 }
 
 func (r *DefendResponseEventsEvaluation) UnmarshalJSON(data []byte) (err error) {
@@ -340,6 +361,29 @@ func (r *DefendResponseEventsEvaluation) UnmarshalJSON(data []byte) (err error) 
 
 func (r defendResponseEventsEvaluationJSON) RawJSON() string {
 	return r.raw
+}
+
+// Status of the improvement tool used to improve the event. `improvement_required`
+// indicates that the evaluation is complete and the improvement action is needed
+// but is not taking place. `improved` and `improvement_failed` indicate when the
+// improvement action concludes, successfully and unsuccessfully, respectively.
+// `no_improvement_required` means that the first evaluation passed all its
+// metrics!
+type DefendResponseEventsEvaluationsImprovementToolStatus string
+
+const (
+	DefendResponseEventsEvaluationsImprovementToolStatusImproved              DefendResponseEventsEvaluationsImprovementToolStatus = "improved"
+	DefendResponseEventsEvaluationsImprovementToolStatusImprovementFailed     DefendResponseEventsEvaluationsImprovementToolStatus = "improvement_failed"
+	DefendResponseEventsEvaluationsImprovementToolStatusNoImprovementRequired DefendResponseEventsEvaluationsImprovementToolStatus = "no_improvement_required"
+	DefendResponseEventsEvaluationsImprovementToolStatusImprovementRequired   DefendResponseEventsEvaluationsImprovementToolStatus = "improvement_required"
+)
+
+func (r DefendResponseEventsEvaluationsImprovementToolStatus) IsKnown() bool {
+	switch r {
+	case DefendResponseEventsEvaluationsImprovementToolStatusImproved, DefendResponseEventsEvaluationsImprovementToolStatusImprovementFailed, DefendResponseEventsEvaluationsImprovementToolStatusNoImprovementRequired, DefendResponseEventsEvaluationsImprovementToolStatusImprovementRequired:
+		return true
+	}
+	return false
 }
 
 // Status of the improvement tool used to improve the event. `improvement_required`
@@ -365,21 +409,42 @@ func (r DefendResponseEventsImprovementToolStatus) IsKnown() bool {
 	return false
 }
 
+// Status of the event.
+type DefendResponseEventsStatus string
+
+const (
+	DefendResponseEventsStatusCompleted  DefendResponseEventsStatus = "completed"
+	DefendResponseEventsStatusFailed     DefendResponseEventsStatus = "failed"
+	DefendResponseEventsStatusInProgress DefendResponseEventsStatus = "in_progress"
+)
+
+func (r DefendResponseEventsStatus) IsKnown() bool {
+	switch r {
+	case DefendResponseEventsStatusCompleted, DefendResponseEventsStatusFailed, DefendResponseEventsStatusInProgress:
+		return true
+	}
+	return false
+}
+
 type DefendResponseFile struct {
-	FileID   string                 `json:"file_id"`
-	FileName string                 `json:"file_name"`
-	FileSize int64                  `json:"file_size"`
-	JSON     defendResponseFileJSON `json:"-"`
+	FileID                string                 `json:"file_id"`
+	FileName              string                 `json:"file_name"`
+	FileSize              int64                  `json:"file_size"`
+	PresignedURL          string                 `json:"presigned_url"`
+	PresignedURLExpiresAt time.Time              `json:"presigned_url_expires_at" format:"date-time"`
+	JSON                  defendResponseFileJSON `json:"-"`
 }
 
 // defendResponseFileJSON contains the JSON metadata for the struct
 // [DefendResponseFile]
 type defendResponseFileJSON struct {
-	FileID      apijson.Field
-	FileName    apijson.Field
-	FileSize    apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
+	FileID                apijson.Field
+	FileName              apijson.Field
+	FileSize              apijson.Field
+	PresignedURL          apijson.Field
+	PresignedURLExpiresAt apijson.Field
+	raw                   string
+	ExtraFields           map[string]apijson.Field
 }
 
 func (r *DefendResponseFile) UnmarshalJSON(data []byte) (err error) {
@@ -476,8 +541,10 @@ type DefendUpdateResponse struct {
 	// workflows will not accept events.
 	Status DefendUpdateResponseStatus `json:"status,required"`
 	// A unique workflow ID.
-	WorkflowID string                   `json:"workflow_id,required"`
-	JSON       defendUpdateResponseJSON `json:"-"`
+	WorkflowID string `json:"workflow_id,required"`
+	// The name of the workflow.
+	Name string                   `json:"name"`
+	JSON defendUpdateResponseJSON `json:"-"`
 }
 
 // defendUpdateResponseJSON contains the JSON metadata for the struct
@@ -486,6 +553,7 @@ type defendUpdateResponseJSON struct {
 	ModifiedAt  apijson.Field
 	Status      apijson.Field
 	WorkflowID  apijson.Field
+	Name        apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
@@ -516,6 +584,7 @@ func (r DefendUpdateResponseStatus) IsKnown() bool {
 }
 
 type WorkflowEventDetailResponse struct {
+	AnalysisOfFailures []string `json:"analysis_of_failures,required"`
 	// History of evaluations for the event.
 	EvaluationHistory []WorkflowEventDetailResponseEvaluationHistory `json:"evaluation_history,required"`
 	// Evaluation result consisting of average scores and rationales for each of the
@@ -537,6 +606,7 @@ type WorkflowEventDetailResponse struct {
 	// `no_improvement_required` means that the first evaluation passed all its
 	// metrics!
 	ImprovementToolStatus WorkflowEventDetailResponseImprovementToolStatus `json:"improvement_tool_status,required,nullable"`
+	KeyImprovements       []interface{}                                    `json:"key_improvements,required"`
 	// Status of the event.
 	Status WorkflowEventDetailResponseStatus `json:"status,required"`
 	// Type of thresholds used to evaluate the event.
@@ -555,12 +625,16 @@ type WorkflowEventDetailResponse struct {
 	// List of files available to the event, if any. Will only be present if
 	// `file_search` is enabled.
 	Files []WorkflowEventDetailResponseFile `json:"files"`
-	JSON  workflowEventDetailResponseJSON   `json:"-"`
+	// The maximum number of improvement attempts to be applied to one event before it
+	// is considered failed.
+	MaxImprovementAttempts int64                           `json:"max_improvement_attempts"`
+	JSON                   workflowEventDetailResponseJSON `json:"-"`
 }
 
 // workflowEventDetailResponseJSON contains the JSON metadata for the struct
 // [WorkflowEventDetailResponse]
 type workflowEventDetailResponseJSON struct {
+	AnalysisOfFailures                    apijson.Field
 	EvaluationHistory                     apijson.Field
 	EvaluationResult                      apijson.Field
 	EventID                               apijson.Field
@@ -568,6 +642,7 @@ type workflowEventDetailResponseJSON struct {
 	ImprovedModelOutput                   apijson.Field
 	ImprovementAction                     apijson.Field
 	ImprovementToolStatus                 apijson.Field
+	KeyImprovements                       apijson.Field
 	Status                                apijson.Field
 	ThresholdType                         apijson.Field
 	WorkflowID                            apijson.Field
@@ -575,6 +650,7 @@ type workflowEventDetailResponseJSON struct {
 	Capabilities                          apijson.Field
 	CustomHallucinationThresholdValues    apijson.Field
 	Files                                 apijson.Field
+	MaxImprovementAttempts                apijson.Field
 	raw                                   string
 	ExtraFields                           map[string]apijson.Field
 }
@@ -588,40 +664,44 @@ func (r workflowEventDetailResponseJSON) RawJSON() string {
 }
 
 type WorkflowEventDetailResponseEvaluationHistory struct {
-	Attempt             string                                           `json:"attempt"`
-	CreatedAt           time.Time                                        `json:"created_at" format:"date-time"`
-	ErrorMessage        string                                           `json:"error_message"`
-	EvaluationResult    map[string]interface{}                           `json:"evaluation_result"`
-	EvaluationStatus    string                                           `json:"evaluation_status"`
-	EvaluationTotalCost float64                                          `json:"evaluation_total_cost"`
-	GuardrailMetrics    []string                                         `json:"guardrail_metrics"`
-	ModelInput          map[string]interface{}                           `json:"model_input"`
-	ModelOutput         string                                           `json:"model_output"`
-	ModifiedAt          time.Time                                        `json:"modified_at" format:"date-time"`
-	Nametag             string                                           `json:"nametag"`
-	Progress            int64                                            `json:"progress"`
-	RunMode             string                                           `json:"run_mode"`
-	JSON                workflowEventDetailResponseEvaluationHistoryJSON `json:"-"`
+	AnalysisOfFailures    string                                                            `json:"analysis_of_failures"`
+	Attempt               string                                                            `json:"attempt"`
+	CreatedAt             time.Time                                                         `json:"created_at" format:"date-time"`
+	ErrorMessage          string                                                            `json:"error_message"`
+	EvaluationResult      map[string]interface{}                                            `json:"evaluation_result"`
+	EvaluationStatus      string                                                            `json:"evaluation_status"`
+	EvaluationTotalCost   float64                                                           `json:"evaluation_total_cost"`
+	GuardrailMetrics      []string                                                          `json:"guardrail_metrics"`
+	ImprovementToolStatus WorkflowEventDetailResponseEvaluationHistoryImprovementToolStatus `json:"improvement_tool_status"`
+	KeyImprovements       []string                                                          `json:"key_improvements"`
+	ModelInput            map[string]interface{}                                            `json:"model_input"`
+	ModelOutput           string                                                            `json:"model_output"`
+	Nametag               string                                                            `json:"nametag"`
+	Progress              int64                                                             `json:"progress"`
+	RunMode               string                                                            `json:"run_mode"`
+	JSON                  workflowEventDetailResponseEvaluationHistoryJSON                  `json:"-"`
 }
 
 // workflowEventDetailResponseEvaluationHistoryJSON contains the JSON metadata for
 // the struct [WorkflowEventDetailResponseEvaluationHistory]
 type workflowEventDetailResponseEvaluationHistoryJSON struct {
-	Attempt             apijson.Field
-	CreatedAt           apijson.Field
-	ErrorMessage        apijson.Field
-	EvaluationResult    apijson.Field
-	EvaluationStatus    apijson.Field
-	EvaluationTotalCost apijson.Field
-	GuardrailMetrics    apijson.Field
-	ModelInput          apijson.Field
-	ModelOutput         apijson.Field
-	ModifiedAt          apijson.Field
-	Nametag             apijson.Field
-	Progress            apijson.Field
-	RunMode             apijson.Field
-	raw                 string
-	ExtraFields         map[string]apijson.Field
+	AnalysisOfFailures    apijson.Field
+	Attempt               apijson.Field
+	CreatedAt             apijson.Field
+	ErrorMessage          apijson.Field
+	EvaluationResult      apijson.Field
+	EvaluationStatus      apijson.Field
+	EvaluationTotalCost   apijson.Field
+	GuardrailMetrics      apijson.Field
+	ImprovementToolStatus apijson.Field
+	KeyImprovements       apijson.Field
+	ModelInput            apijson.Field
+	ModelOutput           apijson.Field
+	Nametag               apijson.Field
+	Progress              apijson.Field
+	RunMode               apijson.Field
+	raw                   string
+	ExtraFields           map[string]apijson.Field
 }
 
 func (r *WorkflowEventDetailResponseEvaluationHistory) UnmarshalJSON(data []byte) (err error) {
@@ -630,6 +710,23 @@ func (r *WorkflowEventDetailResponseEvaluationHistory) UnmarshalJSON(data []byte
 
 func (r workflowEventDetailResponseEvaluationHistoryJSON) RawJSON() string {
 	return r.raw
+}
+
+type WorkflowEventDetailResponseEvaluationHistoryImprovementToolStatus string
+
+const (
+	WorkflowEventDetailResponseEvaluationHistoryImprovementToolStatusImproved              WorkflowEventDetailResponseEvaluationHistoryImprovementToolStatus = "improved"
+	WorkflowEventDetailResponseEvaluationHistoryImprovementToolStatusImprovementFailed     WorkflowEventDetailResponseEvaluationHistoryImprovementToolStatus = "improvement_failed"
+	WorkflowEventDetailResponseEvaluationHistoryImprovementToolStatusNoImprovementRequired WorkflowEventDetailResponseEvaluationHistoryImprovementToolStatus = "no_improvement_required"
+	WorkflowEventDetailResponseEvaluationHistoryImprovementToolStatusImprovementRequired   WorkflowEventDetailResponseEvaluationHistoryImprovementToolStatus = "improvement_required"
+)
+
+func (r WorkflowEventDetailResponseEvaluationHistoryImprovementToolStatus) IsKnown() bool {
+	switch r {
+	case WorkflowEventDetailResponseEvaluationHistoryImprovementToolStatusImproved, WorkflowEventDetailResponseEvaluationHistoryImprovementToolStatusImprovementFailed, WorkflowEventDetailResponseEvaluationHistoryImprovementToolStatusNoImprovementRequired, WorkflowEventDetailResponseEvaluationHistoryImprovementToolStatusImprovementRequired:
+		return true
+	}
+	return false
 }
 
 // Type of improvement action used to improve the event.
@@ -742,20 +839,24 @@ func (r workflowEventDetailResponseCapabilityJSON) RawJSON() string {
 }
 
 type WorkflowEventDetailResponseFile struct {
-	FileID   string                              `json:"file_id"`
-	FileName string                              `json:"file_name"`
-	FileSize int64                               `json:"file_size"`
-	JSON     workflowEventDetailResponseFileJSON `json:"-"`
+	FileID                string                              `json:"file_id"`
+	FileName              string                              `json:"file_name"`
+	FileSize              int64                               `json:"file_size"`
+	PresignedURL          string                              `json:"presigned_url"`
+	PresignedURLExpiresAt time.Time                           `json:"presigned_url_expires_at" format:"date-time"`
+	JSON                  workflowEventDetailResponseFileJSON `json:"-"`
 }
 
 // workflowEventDetailResponseFileJSON contains the JSON metadata for the struct
 // [WorkflowEventDetailResponseFile]
 type workflowEventDetailResponseFileJSON struct {
-	FileID      apijson.Field
-	FileName    apijson.Field
-	FileSize    apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
+	FileID                apijson.Field
+	FileName              apijson.Field
+	FileSize              apijson.Field
+	PresignedURL          apijson.Field
+	PresignedURLExpiresAt apijson.Field
+	raw                   string
+	ExtraFields           map[string]apijson.Field
 }
 
 func (r *WorkflowEventDetailResponseFile) UnmarshalJSON(data []byte) (err error) {
@@ -767,6 +868,8 @@ func (r workflowEventDetailResponseFileJSON) RawJSON() string {
 }
 
 type WorkflowEventResponse struct {
+	// The ID of the billing request for the event.
+	BillingRequestID string `json:"billing_request_id,required"`
 	// The time the event was created in UTC.
 	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
 	// A unique workflow event ID.
@@ -781,12 +884,13 @@ type WorkflowEventResponse struct {
 // workflowEventResponseJSON contains the JSON metadata for the struct
 // [WorkflowEventResponse]
 type workflowEventResponseJSON struct {
-	CreatedAt   apijson.Field
-	EventID     apijson.Field
-	Status      apijson.Field
-	WorkflowID  apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
+	BillingRequestID apijson.Field
+	CreatedAt        apijson.Field
+	EventID          apijson.Field
+	Status           apijson.Field
+	WorkflowID       apijson.Field
+	raw              string
+	ExtraFields      map[string]apijson.Field
 }
 
 func (r *WorkflowEventResponse) UnmarshalJSON(data []byte) (err error) {
@@ -934,8 +1038,8 @@ func (r DefendGetWorkflowParams) URLQuery() (v url.Values) {
 
 type DefendSubmitEventParams struct {
 	// A dictionary of inputs sent to the LLM to generate output. The dictionary must
-	// contain at least a `user_prompt` field or a `system_prompt` field. For the
-	// ground_truth_adherence guardrail metric, `ground_truth` should be provided.
+	// contain a `user_prompt` field. For the ground_truth_adherence guardrail metric,
+	// `ground_truth` should be provided.
 	ModelInput param.Field[DefendSubmitEventParamsModelInput] `json:"model_input,required"`
 	// Output generated by the LLM to be evaluated.
 	ModelOutput param.Field[string] `json:"model_output,required"`
@@ -955,8 +1059,8 @@ func (r DefendSubmitEventParams) MarshalJSON() (data []byte, err error) {
 }
 
 // A dictionary of inputs sent to the LLM to generate output. The dictionary must
-// contain at least a `user_prompt` field or a `system_prompt` field. For the
-// ground_truth_adherence guardrail metric, `ground_truth` should be provided.
+// contain a `user_prompt` field. For the ground_truth_adherence guardrail metric,
+// `ground_truth` should be provided.
 type DefendSubmitEventParamsModelInput struct {
 	// The user prompt used to generate the output.
 	UserPrompt param.Field[string] `json:"user_prompt,required"`
@@ -965,7 +1069,7 @@ type DefendSubmitEventParamsModelInput struct {
 	// student, facts or state passed through an agentic workflow, or other
 	// domain-specific signals your system already knows and wants the model to
 	// condition on.
-	Context param.Field[[]string] `json:"context"`
+	Context param.Field[[]DefendSubmitEventParamsModelInputContext] `json:"context"`
 	// The ground truth for evaluating the Ground Truth Adherence guardrail.
 	GroundTruth param.Field[string] `json:"ground_truth"`
 	// The system prompt used to generate the output.
@@ -973,6 +1077,17 @@ type DefendSubmitEventParamsModelInput struct {
 }
 
 func (r DefendSubmitEventParamsModelInput) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+type DefendSubmitEventParamsModelInputContext struct {
+	// The content of the message.
+	Content param.Field[string] `json:"content"`
+	// The role of the speaker.
+	Role param.Field[string] `json:"role"`
+}
+
+func (r DefendSubmitEventParamsModelInputContext) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 

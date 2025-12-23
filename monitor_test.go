@@ -151,8 +151,11 @@ func TestMonitorSubmitEventWithOptionalParams(t *testing.T) {
 		"monitor_id",
 		deeprails.MonitorSubmitEventParams{
 			ModelInput: deeprails.F(deeprails.MonitorSubmitEventParamsModelInput{
-				UserPrompt:   deeprails.F("user_prompt"),
-				Context:      deeprails.F([]string{"string"}),
+				UserPrompt: deeprails.F("user_prompt"),
+				Context: deeprails.F([]deeprails.MonitorSubmitEventParamsModelInputContext{{
+					Content: deeprails.F("content"),
+					Role:    deeprails.F("user"),
+				}}),
 				GroundTruth:  deeprails.F("ground_truth"),
 				SystemPrompt: deeprails.F("system_prompt"),
 			}),
