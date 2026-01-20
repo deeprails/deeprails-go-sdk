@@ -1,5 +1,24 @@
 # Changelog
 
+## 0.23.0 (2026-01-20)
+
+Full Changelog: [v0.22.0...v0.23.0](https://github.com/deeprails/deeprails-go-sdk/compare/v0.22.0...v0.23.0)
+
+### Features
+
+* **api:** manual updates ([b9fd98c](https://github.com/deeprails/deeprails-go-sdk/commit/b9fd98c4dcd0b70825cf6df0711868ee6a369905))
+
+
+### Bug Fixes
+
+* **docs:** add missing pointer prefix to api.md return types ([e71d524](https://github.com/deeprails/deeprails-go-sdk/commit/e71d5246254ee5ba65651f868f96251b8eede7a5))
+
+
+### Chores
+
+* **internal:** codegen related update ([23952d2](https://github.com/deeprails/deeprails-go-sdk/commit/23952d2cf7511d8b742b5b6a5c6d31bca198949d))
+* **internal:** update `actions/checkout` version ([a9e7dfa](https://github.com/deeprails/deeprails-go-sdk/commit/a9e7dfa7a2b718217e38d2220d0fdd243ed40381))
+
 ## 0.22.0 (2025-12-23)
 
 Full Changelog: [v0.21.0...v0.22.0](https://github.com/deeprails/deeprails-go-sdk/compare/v0.21.0...v0.22.0)
