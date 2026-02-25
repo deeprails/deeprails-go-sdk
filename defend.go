@@ -120,12 +120,12 @@ func (r *DefendService) UpdateWorkflow(ctx context.Context, workflowID string, b
 
 type DefendCreateResponse struct {
 	// The time the workflow was created in UTC.
-	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
+	CreatedAt time.Time `json:"created_at" api:"required" format:"date-time"`
 	// Status of the selected workflow. May be `inactive` or `active`. Inactive
 	// workflows will not accept events.
-	Status DefendCreateResponseStatus `json:"status,required"`
+	Status DefendCreateResponseStatus `json:"status" api:"required"`
 	// A unique workflow ID.
-	WorkflowID string                   `json:"workflow_id,required"`
+	WorkflowID string                   `json:"workflow_id" api:"required"`
 	JSON       defendCreateResponseJSON `json:"-"`
 }
 
@@ -167,34 +167,34 @@ func (r DefendCreateResponseStatus) IsKnown() bool {
 type DefendResponse struct {
 	// Mapping of guardrail metric names to tolerance values. Values can be strings
 	// (`low`, `medium`, `high`) for automatic tolerance levels.
-	AutomaticHallucinationToleranceLevels map[string]DefendResponseAutomaticHallucinationToleranceLevel `json:"automatic_hallucination_tolerance_levels,required"`
+	AutomaticHallucinationToleranceLevels map[string]DefendResponseAutomaticHallucinationToleranceLevel `json:"automatic_hallucination_tolerance_levels" api:"required"`
 	// Extended AI capabilities available to the event, if any. Can be `web_search`,
 	// `file_search`, and/or `context_awareness`.
-	Capabilities []DefendResponseCapability `json:"capabilities,required"`
+	Capabilities []DefendResponseCapability `json:"capabilities" api:"required"`
 	// The time the workflow was created in UTC.
-	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
+	CreatedAt time.Time `json:"created_at" api:"required" format:"date-time"`
 	// Mapping of guardrail metric names to threshold values. Values can be floating
 	// point numbers (0.0-1.0) for custom thresholds.
-	CustomHallucinationThresholdValues map[string]float64 `json:"custom_hallucination_threshold_values,required"`
+	CustomHallucinationThresholdValues map[string]float64 `json:"custom_hallucination_threshold_values" api:"required"`
 	// A description for the workflow, to help you remember what that workflow means to
 	// your organization.
-	Description string `json:"description,required"`
+	Description string `json:"description" api:"required"`
 	// An array of events associated with this workflow.
-	Events []DefendResponseEvent `json:"events,required"`
+	Events []DefendResponseEvent `json:"events" api:"required"`
 	// List of files associated with the workflow. If this is not empty, models can
 	// search these files when performing evaluations or remediations
-	Files []DefendResponseFile `json:"files,required"`
+	Files []DefendResponseFile `json:"files" api:"required"`
 	// A human-readable name for the workflow that will correspond to it's workflow ID.
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// Status of the selected workflow. May be `inactive` or `active`. Inactive
 	// workflows will not accept events.
-	Status DefendResponseStatus `json:"status,required"`
+	Status DefendResponseStatus `json:"status" api:"required"`
 	// Type of thresholds used to evaluate the event.
-	ThresholdType DefendResponseThresholdType `json:"threshold_type,required"`
+	ThresholdType DefendResponseThresholdType `json:"threshold_type" api:"required"`
 	// The most recent time the workflow was updated in UTC.
-	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	// A unique workflow ID used to identify the workflow in other endpoints.
-	WorkflowID string `json:"workflow_id,required"`
+	WorkflowID string `json:"workflow_id" api:"required"`
 	// The action used to improve outputs that fail one or more guardrail metrics for
 	// the workflow events.
 	ImprovementAction DefendResponseImprovementAction `json:"improvement_action"`
@@ -555,12 +555,12 @@ func (r defendResponseStatsJSON) RawJSON() string {
 
 type DefendUpdateResponse struct {
 	// The time the workflow was last modified in UTC.
-	ModifiedAt time.Time `json:"modified_at,required" format:"date-time"`
+	ModifiedAt time.Time `json:"modified_at" api:"required" format:"date-time"`
 	// Status of the selected workflow. May be `inactive` or `active`. Inactive
 	// workflows will not accept events.
-	Status DefendUpdateResponseStatus `json:"status,required"`
+	Status DefendUpdateResponseStatus `json:"status" api:"required"`
 	// A unique workflow ID.
-	WorkflowID string `json:"workflow_id,required"`
+	WorkflowID string `json:"workflow_id" api:"required"`
 	// The name of the workflow.
 	Name string                   `json:"name"`
 	JSON defendUpdateResponseJSON `json:"-"`
@@ -603,35 +603,35 @@ func (r DefendUpdateResponseStatus) IsKnown() bool {
 }
 
 type WorkflowEventDetailResponse struct {
-	AnalysisOfFailures []string `json:"analysis_of_failures,required"`
+	AnalysisOfFailures []string `json:"analysis_of_failures" api:"required"`
 	// History of evaluations for the event.
-	EvaluationHistory []WorkflowEventDetailResponseEvaluationHistory `json:"evaluation_history,required"`
+	EvaluationHistory []WorkflowEventDetailResponseEvaluationHistory `json:"evaluation_history" api:"required"`
 	// Evaluation result consisting of average scores and rationales for each of the
 	// evaluated guardrail metrics.
-	EvaluationResult map[string]interface{} `json:"evaluation_result,required"`
+	EvaluationResult map[string]interface{} `json:"evaluation_result" api:"required"`
 	// A unique workflow event ID.
-	EventID string `json:"event_id,required"`
+	EventID string `json:"event_id" api:"required"`
 	// Whether the event was filtered and requires improvement.
-	Filtered bool `json:"filtered,required"`
+	Filtered bool `json:"filtered" api:"required"`
 	// Improved model output after improvement tool was applied and each metric passed
 	// evaluation.
-	ImprovedModelOutput string `json:"improved_model_output,required"`
+	ImprovedModelOutput string `json:"improved_model_output" api:"required"`
 	// Type of improvement action used to improve the event.
-	ImprovementAction WorkflowEventDetailResponseImprovementAction `json:"improvement_action,required"`
+	ImprovementAction WorkflowEventDetailResponseImprovementAction `json:"improvement_action" api:"required"`
 	// Status of the improvement tool used to improve the event. `improvement_required`
 	// indicates that the evaluation is complete and the improvement action is needed
 	// but is not taking place. `improved` and `improvement_failed` indicate when the
 	// improvement action concludes, successfully and unsuccessfully, respectively.
 	// `no_improvement_required` means that the first evaluation passed all its
 	// metrics!
-	ImprovementToolStatus WorkflowEventDetailResponseImprovementToolStatus `json:"improvement_tool_status,required,nullable"`
-	KeyImprovements       []interface{}                                    `json:"key_improvements,required"`
+	ImprovementToolStatus WorkflowEventDetailResponseImprovementToolStatus `json:"improvement_tool_status" api:"required,nullable"`
+	KeyImprovements       []interface{}                                    `json:"key_improvements" api:"required"`
 	// Status of the event.
-	Status WorkflowEventDetailResponseStatus `json:"status,required"`
+	Status WorkflowEventDetailResponseStatus `json:"status" api:"required"`
 	// Type of thresholds used to evaluate the event.
-	ThresholdType WorkflowEventDetailResponseThresholdType `json:"threshold_type,required"`
+	ThresholdType WorkflowEventDetailResponseThresholdType `json:"threshold_type" api:"required"`
 	// Workflow ID associated with the event.
-	WorkflowID string `json:"workflow_id,required"`
+	WorkflowID string `json:"workflow_id" api:"required"`
 	// Mapping of guardrail metric names to tolerance values. Values are strings
 	// (`low`, `medium`, `high`) representing automatic tolerance levels.
 	AutomaticHallucinationToleranceLevels map[string]WorkflowEventDetailResponseAutomaticHallucinationToleranceLevel `json:"automatic_hallucination_tolerance_levels"`
@@ -888,15 +888,15 @@ func (r workflowEventDetailResponseFileJSON) RawJSON() string {
 
 type WorkflowEventResponse struct {
 	// The ID of the billing request for the event.
-	BillingRequestID string `json:"billing_request_id,required"`
+	BillingRequestID string `json:"billing_request_id" api:"required"`
 	// The time the event was created in UTC.
-	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
+	CreatedAt time.Time `json:"created_at" api:"required" format:"date-time"`
 	// A unique workflow event ID.
-	EventID string `json:"event_id,required"`
+	EventID string `json:"event_id" api:"required"`
 	// Status of the event.
-	Status WorkflowEventResponseStatus `json:"status,required"`
+	Status WorkflowEventResponseStatus `json:"status" api:"required"`
 	// Workflow ID associated with the event.
-	WorkflowID string                    `json:"workflow_id,required"`
+	WorkflowID string                    `json:"workflow_id" api:"required"`
 	JSON       workflowEventResponseJSON `json:"-"`
 }
 
@@ -942,15 +942,15 @@ type DefendNewWorkflowParams struct {
 	// user's input prompt with minor induced variance. FixIt attempts to directly
 	// address the shortcomings of the output using the guardrail failure rationale. Do
 	// Nothing does not attempt any improvement.
-	ImprovementAction param.Field[DefendNewWorkflowParamsImprovementAction] `json:"improvement_action,required"`
+	ImprovementAction param.Field[DefendNewWorkflowParamsImprovementAction] `json:"improvement_action" api:"required"`
 	// Name of the workflow.
-	Name param.Field[string] `json:"name,required"`
+	Name param.Field[string] `json:"name" api:"required"`
 	// Type of thresholds to use for the workflow, either `automatic` or `custom`.
 	// Automatic thresholds are assigned internally after the user specifies a
 	// qualitative tolerance for the metrics, whereas custom metrics allow the user to
 	// set the threshold for each metric as a floating point number between 0.0 and
 	// 1.0.
-	ThresholdType param.Field[DefendNewWorkflowParamsThresholdType] `json:"threshold_type,required"`
+	ThresholdType param.Field[DefendNewWorkflowParamsThresholdType] `json:"threshold_type" api:"required"`
 	// Mapping of guardrail metrics to hallucination tolerance levels (either `low`,
 	// `medium`, or `high`). Possible metrics are `completeness`,
 	// `instruction_adherence`, `context_adherence`, `ground_truth_adherence`, or
@@ -1057,14 +1057,14 @@ func (r DefendGetWorkflowParams) URLQuery() (v url.Values) {
 
 type DefendSubmitAndStreamEventParams struct {
 	// The input provided to the model (e.g., prompt, messages).
-	ModelInput param.Field[map[string]interface{}] `json:"model_input,required"`
+	ModelInput param.Field[map[string]interface{}] `json:"model_input" api:"required"`
 	// The output generated by the model to be evaluated.
-	ModelOutput param.Field[string] `json:"model_output,required"`
+	ModelOutput param.Field[string] `json:"model_output" api:"required"`
 	// The model that generated the output (e.g., "gpt-4", "claude-3").
-	ModelUsed param.Field[string] `json:"model_used,required"`
+	ModelUsed param.Field[string] `json:"model_used" api:"required"`
 	// The evaluation run mode. Streaming only supports fast, precision, and
 	// precision_codex.
-	RunMode param.Field[DefendSubmitAndStreamEventParamsRunMode] `json:"run_mode,required"`
+	RunMode param.Field[DefendSubmitAndStreamEventParamsRunMode] `json:"run_mode" api:"required"`
 	// Enable SSE streaming for real-time token feedback. Only supported for
 	// single-model run modes (fast, precision, precision_codex).
 	Stream param.Field[bool] `query:"stream"`
@@ -1109,16 +1109,16 @@ type DefendSubmitEventParams struct {
 	// A dictionary of inputs sent to the LLM to generate output. The dictionary must
 	// contain a `user_prompt` field. For the ground_truth_adherence guardrail metric,
 	// `ground_truth` should be provided.
-	ModelInput param.Field[DefendSubmitEventParamsModelInput] `json:"model_input,required"`
+	ModelInput param.Field[DefendSubmitEventParamsModelInput] `json:"model_input" api:"required"`
 	// Output generated by the LLM to be evaluated.
-	ModelOutput param.Field[string] `json:"model_output,required"`
+	ModelOutput param.Field[string] `json:"model_output" api:"required"`
 	// Model ID used to generate the output, like `gpt-4o` or `o3`.
-	ModelUsed param.Field[string] `json:"model_used,required"`
+	ModelUsed param.Field[string] `json:"model_used" api:"required"`
 	// Run mode for the workflow event. The run mode allows the user to optimize for
 	// speed, accuracy, and cost by determining which models are used to evaluate the
 	// event. Available run modes include `precision_plus_codex`, `precision_plus`,
 	// `precision`, `smart`, and `economy`. Defaults to `smart`.
-	RunMode param.Field[DefendSubmitEventParamsRunMode] `json:"run_mode,required"`
+	RunMode param.Field[DefendSubmitEventParamsRunMode] `json:"run_mode" api:"required"`
 	// An optional, user-defined tag for the event.
 	Nametag param.Field[string] `json:"nametag"`
 }
@@ -1132,7 +1132,7 @@ func (r DefendSubmitEventParams) MarshalJSON() (data []byte, err error) {
 // `ground_truth` should be provided.
 type DefendSubmitEventParamsModelInput struct {
 	// The user prompt used to generate the output.
-	UserPrompt param.Field[string] `json:"user_prompt,required"`
+	UserPrompt param.Field[string] `json:"user_prompt" api:"required"`
 	// Any structured information that directly relates to the model’s input and
 	// expected output—e.g., the recent turn-by-turn history between an AI tutor and a
 	// student, facts or state passed through an agentic workflow, or other
