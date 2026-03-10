@@ -132,7 +132,7 @@ func TestDefendSubmitEventWithOptionalParams(t *testing.T) {
 			}),
 			ModelOutput: deeprails.F("model_output"),
 			ModelUsed:   deeprails.F("model_used"),
-			RunMode:     deeprails.F(deeprails.DefendSubmitEventParamsRunModePrecisionPlusCodex),
+			RunMode:     deeprails.F(deeprails.DefendSubmitEventParamsRunModeSuperFast),
 			Nametag:     deeprails.F("nametag"),
 		},
 	)

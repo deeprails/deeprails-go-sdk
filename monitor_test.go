@@ -161,7 +161,7 @@ func TestMonitorSubmitEventWithOptionalParams(t *testing.T) {
 			}),
 			ModelOutput: deeprails.F("model_output"),
 			Nametag:     deeprails.F("nametag"),
-			RunMode:     deeprails.F(deeprails.MonitorSubmitEventParamsRunModePrecisionPlusCodex),
+			RunMode:     deeprails.F(deeprails.MonitorSubmitEventParamsRunModeSuperFast),
 		},
 	)
 	if err != nil {
