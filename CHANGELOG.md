@@ -1,5 +1,29 @@
 # Changelog
 
+## 0.24.0 (2026-03-10)
+
+Full Changelog: [v0.23.0...v0.24.0](https://github.com/deeprails/deeprails-go-sdk/compare/v0.23.0...v0.24.0)
+
+### Features
+
+* **api:** manual updates ([0e12f9d](https://github.com/deeprails/deeprails-go-sdk/commit/0e12f9d62ebf9638878d7f09ccf68c7c81bc98b3))
+* **api:** update run mode lists ([b17e0db](https://github.com/deeprails/deeprails-go-sdk/commit/b17e0db7c8141b13e1e0a0bb6b0e2b83acb712cf))
+
+
+### Bug Fixes
+
+* allow canceling a request while it is waiting to retry ([0d52d2e](https://github.com/deeprails/deeprails-go-sdk/commit/0d52d2e850cfec77c0664d6993e836d4467dea42))
+
+
+### Chores
+
+* **ci:** skip uploading artifacts on stainless-internal branches ([4ac43fd](https://github.com/deeprails/deeprails-go-sdk/commit/4ac43fd6ab4c1509e21dc72a386b53bfca19d02b))
+* **internal:** codegen related update ([9023e7b](https://github.com/deeprails/deeprails-go-sdk/commit/9023e7b26efe6785e07ff3bcdce30467175d295b))
+* **internal:** codegen related update ([21c8eb0](https://github.com/deeprails/deeprails-go-sdk/commit/21c8eb0fcb5495318aaaf7d501c100072b710e5c))
+* **internal:** move custom custom `json` tags to `api` ([ab64091](https://github.com/deeprails/deeprails-go-sdk/commit/ab6409166e745d69b5bdcaf0890c5f150b01d79b))
+* **internal:** remove mock server code ([532dbc3](https://github.com/deeprails/deeprails-go-sdk/commit/532dbc37fb20d818e06e136999baca2e35cd7741))
+* update mock server docs ([de86ee8](https://github.com/deeprails/deeprails-go-sdk/commit/de86ee83b6b02f8bf9a180b4e6fb5214412d37df))
+
 ## 0.23.0 (2026-01-20)
 
 Full Changelog: [v0.22.0...v0.23.0](https://github.com/deeprails/deeprails-go-sdk/compare/v0.22.0...v0.23.0)
