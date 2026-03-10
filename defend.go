@@ -75,8 +75,8 @@ func (r *DefendService) GetWorkflow(ctx context.Context, workflowID string, quer
 	return
 }
 
-// Use this endpoint to create a new event for a guardrail workflow with real-time
-// streaming feedback via Server-Sent Events (SSE).
+// Use this endpoint to submit a model input and output pair to a workflow for
+// evaluation with streaming responses.
 func (r *DefendService) SubmitAndStreamEventStreaming(ctx context.Context, workflowID string, params DefendSubmitAndStreamEventParams, opts ...option.RequestOption) (stream *ssestream.Stream[string]) {
 	var (
 		raw *http.Response
@@ -1062,11 +1062,13 @@ type DefendSubmitAndStreamEventParams struct {
 	ModelOutput param.Field[string] `json:"model_output" api:"required"`
 	// The model that generated the output (e.g., "gpt-4", "claude-3").
 	ModelUsed param.Field[string] `json:"model_used" api:"required"`
-	// The evaluation run mode. Streaming only supports fast, precision, and
-	// precision_codex.
+	// The evaluation run mode. Streaming is supported on all run modes except
+	// precision_max and precision_max_codex. Note: super_fast does not support Web
+	// Search or File Search — if your workflow has these enabled, use a different run
+	// mode or disable the capability on the workflow.
 	RunMode param.Field[DefendSubmitAndStreamEventParamsRunMode] `json:"run_mode" api:"required"`
-	// Enable SSE streaming for real-time token feedback. Only supported for
-	// single-model run modes (fast, precision, precision_codex).
+	// Enable SSE streaming for real-time token feedback. Supported on all run modes
+	// except precision_max and precision_max_codex.
 	Stream param.Field[bool] `query:"stream"`
 	// Optional tag to identify this event.
 	Nametag param.Field[string] `json:"nametag"`
@@ -1085,21 +1087,22 @@ func (r DefendSubmitAndStreamEventParams) URLQuery() (v url.Values) {
 	})
 }
 
-// The evaluation run mode. Streaming only supports fast, precision, and
-// precision_codex.
+// The evaluation run mode. Streaming is supported on all run modes except
+// precision_max and precision_max_codex. Note: super_fast does not support Web
+// Search or File Search — if your workflow has these enabled, use a different run
+// mode or disable the capability on the workflow.
 type DefendSubmitAndStreamEventParamsRunMode string
 
 const (
-	DefendSubmitAndStreamEventParamsRunModeFast              DefendSubmitAndStreamEventParamsRunMode = "fast"
-	DefendSubmitAndStreamEventParamsRunModePrecision         DefendSubmitAndStreamEventParamsRunMode = "precision"
-	DefendSubmitAndStreamEventParamsRunModePrecisionCodex    DefendSubmitAndStreamEventParamsRunMode = "precision_codex"
-	DefendSubmitAndStreamEventParamsRunModePrecisionMax      DefendSubmitAndStreamEventParamsRunMode = "precision_max"
-	DefendSubmitAndStreamEventParamsRunModePrecisionMaxCodex DefendSubmitAndStreamEventParamsRunMode = "precision_max_codex"
+	DefendSubmitAndStreamEventParamsRunModeSuperFast      DefendSubmitAndStreamEventParamsRunMode = "super_fast"
+	DefendSubmitAndStreamEventParamsRunModeFast           DefendSubmitAndStreamEventParamsRunMode = "fast"
+	DefendSubmitAndStreamEventParamsRunModePrecision      DefendSubmitAndStreamEventParamsRunMode = "precision"
+	DefendSubmitAndStreamEventParamsRunModePrecisionCodex DefendSubmitAndStreamEventParamsRunMode = "precision_codex"
 )
 
 func (r DefendSubmitAndStreamEventParamsRunMode) IsKnown() bool {
 	switch r {
-	case DefendSubmitAndStreamEventParamsRunModeFast, DefendSubmitAndStreamEventParamsRunModePrecision, DefendSubmitAndStreamEventParamsRunModePrecisionCodex, DefendSubmitAndStreamEventParamsRunModePrecisionMax, DefendSubmitAndStreamEventParamsRunModePrecisionMaxCodex:
+	case DefendSubmitAndStreamEventParamsRunModeSuperFast, DefendSubmitAndStreamEventParamsRunModeFast, DefendSubmitAndStreamEventParamsRunModePrecision, DefendSubmitAndStreamEventParamsRunModePrecisionCodex:
 		return true
 	}
 	return false
@@ -1116,8 +1119,11 @@ type DefendSubmitEventParams struct {
 	ModelUsed param.Field[string] `json:"model_used" api:"required"`
 	// Run mode for the workflow event. The run mode allows the user to optimize for
 	// speed, accuracy, and cost by determining which models are used to evaluate the
-	// event. Available run modes include `precision_plus_codex`, `precision_plus`,
-	// `precision`, `smart`, and `economy`. Defaults to `smart`.
+	// event. Available run modes (fastest to most thorough): `super_fast`, `fast`,
+	// `precision`, `precision_codex`, `precision_max`, and `precision_max_codex`.
+	// Defaults to `fast`. Note: `super_fast` does not support Web Search or File
+	// Search — if your workflow has these capabilities enabled, use a different run
+	// mode or edit the workflow to disable them.
 	RunMode param.Field[DefendSubmitEventParamsRunMode] `json:"run_mode" api:"required"`
 	// An optional, user-defined tag for the event.
 	Nametag param.Field[string] `json:"nametag"`
@@ -1162,21 +1168,25 @@ func (r DefendSubmitEventParamsModelInputContext) MarshalJSON() (data []byte, er
 
 // Run mode for the workflow event. The run mode allows the user to optimize for
 // speed, accuracy, and cost by determining which models are used to evaluate the
-// event. Available run modes include `precision_plus_codex`, `precision_plus`,
-// `precision`, `smart`, and `economy`. Defaults to `smart`.
+// event. Available run modes (fastest to most thorough): `super_fast`, `fast`,
+// `precision`, `precision_codex`, `precision_max`, and `precision_max_codex`.
+// Defaults to `fast`. Note: `super_fast` does not support Web Search or File
+// Search — if your workflow has these capabilities enabled, use a different run
+// mode or edit the workflow to disable them.
 type DefendSubmitEventParamsRunMode string
 
 const (
-	DefendSubmitEventParamsRunModePrecisionPlusCodex DefendSubmitEventParamsRunMode = "precision_plus_codex"
-	DefendSubmitEventParamsRunModePrecisionPlus      DefendSubmitEventParamsRunMode = "precision_plus"
-	DefendSubmitEventParamsRunModePrecision          DefendSubmitEventParamsRunMode = "precision"
-	DefendSubmitEventParamsRunModeSmart              DefendSubmitEventParamsRunMode = "smart"
-	DefendSubmitEventParamsRunModeEconomy            DefendSubmitEventParamsRunMode = "economy"
+	DefendSubmitEventParamsRunModeSuperFast         DefendSubmitEventParamsRunMode = "super_fast"
+	DefendSubmitEventParamsRunModeFast              DefendSubmitEventParamsRunMode = "fast"
+	DefendSubmitEventParamsRunModePrecision         DefendSubmitEventParamsRunMode = "precision"
+	DefendSubmitEventParamsRunModePrecisionCodex    DefendSubmitEventParamsRunMode = "precision_codex"
+	DefendSubmitEventParamsRunModePrecisionMax      DefendSubmitEventParamsRunMode = "precision_max"
+	DefendSubmitEventParamsRunModePrecisionMaxCodex DefendSubmitEventParamsRunMode = "precision_max_codex"
 )
 
 func (r DefendSubmitEventParamsRunMode) IsKnown() bool {
 	switch r {
-	case DefendSubmitEventParamsRunModePrecisionPlusCodex, DefendSubmitEventParamsRunModePrecisionPlus, DefendSubmitEventParamsRunModePrecision, DefendSubmitEventParamsRunModeSmart, DefendSubmitEventParamsRunModeEconomy:
+	case DefendSubmitEventParamsRunModeSuperFast, DefendSubmitEventParamsRunModeFast, DefendSubmitEventParamsRunModePrecision, DefendSubmitEventParamsRunModePrecisionCodex, DefendSubmitEventParamsRunModePrecisionMax, DefendSubmitEventParamsRunModePrecisionMaxCodex:
 		return true
 	}
 	return false
