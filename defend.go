@@ -625,7 +625,7 @@ type WorkflowEventDetailResponse struct {
 	// `no_improvement_required` means that the first evaluation passed all its
 	// metrics!
 	ImprovementToolStatus WorkflowEventDetailResponseImprovementToolStatus `json:"improvement_tool_status" api:"required,nullable"`
-	KeyImprovements       []interface{}                                    `json:"key_improvements" api:"required"`
+	KeyImprovements       []WorkflowEventDetailResponseKeyImprovement      `json:"key_improvements" api:"required"`
 	// Status of the event.
 	Status WorkflowEventDetailResponseStatus `json:"status" api:"required"`
 	// Type of thresholds used to evaluate the event.
@@ -786,6 +786,27 @@ func (r WorkflowEventDetailResponseImprovementToolStatus) IsKnown() bool {
 		return true
 	}
 	return false
+}
+
+type WorkflowEventDetailResponseKeyImprovement struct {
+	KeyImprovement []string                                      `json:"key_improvement"`
+	JSON           workflowEventDetailResponseKeyImprovementJSON `json:"-"`
+}
+
+// workflowEventDetailResponseKeyImprovementJSON contains the JSON metadata for the
+// struct [WorkflowEventDetailResponseKeyImprovement]
+type workflowEventDetailResponseKeyImprovementJSON struct {
+	KeyImprovement apijson.Field
+	raw            string
+	ExtraFields    map[string]apijson.Field
+}
+
+func (r *WorkflowEventDetailResponseKeyImprovement) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r workflowEventDetailResponseKeyImprovementJSON) RawJSON() string {
+	return r.raw
 }
 
 // Status of the event.
