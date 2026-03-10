@@ -235,6 +235,7 @@ type MonitorDetailResponseEvaluation struct {
 	ModelOutput string `json:"model_output" api:"required"`
 	// Run mode for the evaluation. The run mode allows the user to optimize for speed,
 	// accuracy, and cost by determining which models are used to evaluate the event.
+	// Note: `super_fast` do not support Web Search or File Search capabilities.
 	RunMode MonitorDetailResponseEvaluationsRunMode `json:"run_mode" api:"required"`
 	// The time the evaluation was created in UTC.
 	CreatedAt time.Time `json:"created_at" format:"date-time"`
@@ -367,18 +368,21 @@ func (r monitorDetailResponseEvaluationsModelInputContextJSON) RawJSON() string 
 
 // Run mode for the evaluation. The run mode allows the user to optimize for speed,
 // accuracy, and cost by determining which models are used to evaluate the event.
+// Note: `super_fast` do not support Web Search or File Search capabilities.
 type MonitorDetailResponseEvaluationsRunMode string
 
 const (
-	MonitorDetailResponseEvaluationsRunModePrecisionPlus MonitorDetailResponseEvaluationsRunMode = "precision_plus"
-	MonitorDetailResponseEvaluationsRunModePrecision     MonitorDetailResponseEvaluationsRunMode = "precision"
-	MonitorDetailResponseEvaluationsRunModeSmart         MonitorDetailResponseEvaluationsRunMode = "smart"
-	MonitorDetailResponseEvaluationsRunModeEconomy       MonitorDetailResponseEvaluationsRunMode = "economy"
+	MonitorDetailResponseEvaluationsRunModeSuperFast         MonitorDetailResponseEvaluationsRunMode = "super_fast"
+	MonitorDetailResponseEvaluationsRunModeFast              MonitorDetailResponseEvaluationsRunMode = "fast"
+	MonitorDetailResponseEvaluationsRunModePrecision         MonitorDetailResponseEvaluationsRunMode = "precision"
+	MonitorDetailResponseEvaluationsRunModePrecisionCodex    MonitorDetailResponseEvaluationsRunMode = "precision_codex"
+	MonitorDetailResponseEvaluationsRunModePrecisionMax      MonitorDetailResponseEvaluationsRunMode = "precision_max"
+	MonitorDetailResponseEvaluationsRunModePrecisionMaxCodex MonitorDetailResponseEvaluationsRunMode = "precision_max_codex"
 )
 
 func (r MonitorDetailResponseEvaluationsRunMode) IsKnown() bool {
 	switch r {
-	case MonitorDetailResponseEvaluationsRunModePrecisionPlus, MonitorDetailResponseEvaluationsRunModePrecision, MonitorDetailResponseEvaluationsRunModeSmart, MonitorDetailResponseEvaluationsRunModeEconomy:
+	case MonitorDetailResponseEvaluationsRunModeSuperFast, MonitorDetailResponseEvaluationsRunModeFast, MonitorDetailResponseEvaluationsRunModePrecision, MonitorDetailResponseEvaluationsRunModePrecisionCodex, MonitorDetailResponseEvaluationsRunModePrecisionMax, MonitorDetailResponseEvaluationsRunModePrecisionMaxCodex:
 		return true
 	}
 	return false
@@ -598,15 +602,17 @@ func (r monitorEventDetailResponseFileJSON) RawJSON() string {
 type MonitorEventDetailResponseRunMode string
 
 const (
-	MonitorEventDetailResponseRunModePrecisionPlus MonitorEventDetailResponseRunMode = "precision_plus"
-	MonitorEventDetailResponseRunModePrecision     MonitorEventDetailResponseRunMode = "precision"
-	MonitorEventDetailResponseRunModeSmart         MonitorEventDetailResponseRunMode = "smart"
-	MonitorEventDetailResponseRunModeEconomy       MonitorEventDetailResponseRunMode = "economy"
+	MonitorEventDetailResponseRunModeSuperFast         MonitorEventDetailResponseRunMode = "super_fast"
+	MonitorEventDetailResponseRunModeFast              MonitorEventDetailResponseRunMode = "fast"
+	MonitorEventDetailResponseRunModePrecision         MonitorEventDetailResponseRunMode = "precision"
+	MonitorEventDetailResponseRunModePrecisionCodex    MonitorEventDetailResponseRunMode = "precision_codex"
+	MonitorEventDetailResponseRunModePrecisionMax      MonitorEventDetailResponseRunMode = "precision_max"
+	MonitorEventDetailResponseRunModePrecisionMaxCodex MonitorEventDetailResponseRunMode = "precision_max_codex"
 )
 
 func (r MonitorEventDetailResponseRunMode) IsKnown() bool {
 	switch r {
-	case MonitorEventDetailResponseRunModePrecisionPlus, MonitorEventDetailResponseRunModePrecision, MonitorEventDetailResponseRunModeSmart, MonitorEventDetailResponseRunModeEconomy:
+	case MonitorEventDetailResponseRunModeSuperFast, MonitorEventDetailResponseRunModeFast, MonitorEventDetailResponseRunModePrecision, MonitorEventDetailResponseRunModePrecisionCodex, MonitorEventDetailResponseRunModePrecisionMax, MonitorEventDetailResponseRunModePrecisionMaxCodex:
 		return true
 	}
 	return false
@@ -835,8 +841,11 @@ type MonitorSubmitEventParams struct {
 	Nametag param.Field[string] `json:"nametag"`
 	// Run mode for the monitor event. The run mode allows the user to optimize for
 	// speed, accuracy, and cost by determining which models are used to evaluate the
-	// event. Available run modes include `precision_plus_codex`, `precision_plus`,
-	// `precision`, `smart`, and `economy`. Defaults to `smart`.
+	// event. Available run modes (fastest to most thorough): `super_fast`, `fast`,
+	// `precision`, `precision_codex`, `precision_max`, and `precision_max_codex`.
+	// Defaults to `fast`. Note: `super_fast` does not support Web Search or File
+	// Search — if your monitor has these capabilities enabled, use a different run
+	// mode or edit the monitor to disable them.
 	RunMode param.Field[MonitorSubmitEventParamsRunMode] `json:"run_mode"`
 }
 
@@ -879,21 +888,25 @@ func (r MonitorSubmitEventParamsModelInputContext) MarshalJSON() (data []byte, e
 
 // Run mode for the monitor event. The run mode allows the user to optimize for
 // speed, accuracy, and cost by determining which models are used to evaluate the
-// event. Available run modes include `precision_plus_codex`, `precision_plus`,
-// `precision`, `smart`, and `economy`. Defaults to `smart`.
+// event. Available run modes (fastest to most thorough): `super_fast`, `fast`,
+// `precision`, `precision_codex`, `precision_max`, and `precision_max_codex`.
+// Defaults to `fast`. Note: `super_fast` does not support Web Search or File
+// Search — if your monitor has these capabilities enabled, use a different run
+// mode or edit the monitor to disable them.
 type MonitorSubmitEventParamsRunMode string
 
 const (
-	MonitorSubmitEventParamsRunModePrecisionPlusCodex MonitorSubmitEventParamsRunMode = "precision_plus_codex"
-	MonitorSubmitEventParamsRunModePrecisionPlus      MonitorSubmitEventParamsRunMode = "precision_plus"
-	MonitorSubmitEventParamsRunModePrecision          MonitorSubmitEventParamsRunMode = "precision"
-	MonitorSubmitEventParamsRunModeSmart              MonitorSubmitEventParamsRunMode = "smart"
-	MonitorSubmitEventParamsRunModeEconomy            MonitorSubmitEventParamsRunMode = "economy"
+	MonitorSubmitEventParamsRunModeSuperFast         MonitorSubmitEventParamsRunMode = "super_fast"
+	MonitorSubmitEventParamsRunModeFast              MonitorSubmitEventParamsRunMode = "fast"
+	MonitorSubmitEventParamsRunModePrecision         MonitorSubmitEventParamsRunMode = "precision"
+	MonitorSubmitEventParamsRunModePrecisionCodex    MonitorSubmitEventParamsRunMode = "precision_codex"
+	MonitorSubmitEventParamsRunModePrecisionMax      MonitorSubmitEventParamsRunMode = "precision_max"
+	MonitorSubmitEventParamsRunModePrecisionMaxCodex MonitorSubmitEventParamsRunMode = "precision_max_codex"
 )
 
 func (r MonitorSubmitEventParamsRunMode) IsKnown() bool {
 	switch r {
-	case MonitorSubmitEventParamsRunModePrecisionPlusCodex, MonitorSubmitEventParamsRunModePrecisionPlus, MonitorSubmitEventParamsRunModePrecision, MonitorSubmitEventParamsRunModeSmart, MonitorSubmitEventParamsRunModeEconomy:
+	case MonitorSubmitEventParamsRunModeSuperFast, MonitorSubmitEventParamsRunModeFast, MonitorSubmitEventParamsRunModePrecision, MonitorSubmitEventParamsRunModePrecisionCodex, MonitorSubmitEventParamsRunModePrecisionMax, MonitorSubmitEventParamsRunModePrecisionMaxCodex:
 		return true
 	}
 	return false

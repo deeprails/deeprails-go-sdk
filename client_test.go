@@ -352,7 +352,7 @@ func TestContextDeadlineStreaming(t *testing.T) {
 				}),
 				ModelOutput: deeprails.F("model_output"),
 				ModelUsed:   deeprails.F("model_used"),
-				RunMode:     deeprails.F(deeprails.DefendSubmitAndStreamEventParamsRunModeFast),
+				RunMode:     deeprails.F(deeprails.DefendSubmitAndStreamEventParamsRunModeSuperFast),
 			},
 		)
 		for stream.Next() {
@@ -408,7 +408,7 @@ func TestContextDeadlineStreamingWithRequestTimeout(t *testing.T) {
 				}),
 				ModelOutput: deeprails.F("model_output"),
 				ModelUsed:   deeprails.F("model_used"),
-				RunMode:     deeprails.F(deeprails.DefendSubmitAndStreamEventParamsRunModeFast),
+				RunMode:     deeprails.F(deeprails.DefendSubmitAndStreamEventParamsRunModeSuperFast),
 			},
 			option.WithRequestTimeout((100 * time.Millisecond)),
 		)
