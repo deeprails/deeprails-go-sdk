@@ -43,7 +43,7 @@ func (r *MonitorService) New(ctx context.Context, body MonitorNewParams, opts ..
 	opts = slices.Concat(r.Options, opts)
 	path := "monitor"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Use this endpoint to retrieve the details and evaluations associated with a
@@ -52,11 +52,11 @@ func (r *MonitorService) Get(ctx context.Context, monitorID string, query Monito
 	opts = slices.Concat(r.Options, opts)
 	if monitorID == "" {
 		err = errors.New("missing required monitor_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("monitor/%s", monitorID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	return res, err
 }
 
 // Use this endpoint to update the name, status, and/or other details of an
@@ -65,11 +65,11 @@ func (r *MonitorService) Update(ctx context.Context, monitorID string, body Moni
 	opts = slices.Concat(r.Options, opts)
 	if monitorID == "" {
 		err = errors.New("missing required monitor_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("monitor/%s", monitorID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Use this endpoint to retrieve the details of a specific monitor event
@@ -77,15 +77,15 @@ func (r *MonitorService) GetEvent(ctx context.Context, monitorID string, eventID
 	opts = slices.Concat(r.Options, opts)
 	if monitorID == "" {
 		err = errors.New("missing required monitor_id parameter")
-		return
+		return nil, err
 	}
 	if eventID == "" {
 		err = errors.New("missing required event_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("monitor/%s/events/%s", monitorID, eventID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Use this endpoint to submit a model input and output pair to a monitor for
@@ -94,11 +94,11 @@ func (r *MonitorService) SubmitEvent(ctx context.Context, monitorID string, body
 	opts = slices.Concat(r.Options, opts)
 	if monitorID == "" {
 		err = errors.New("missing required monitor_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("monitor/%s/events", monitorID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 type MonitorCreateResponse struct {
