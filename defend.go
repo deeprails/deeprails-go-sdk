@@ -44,7 +44,7 @@ func (r *DefendService) NewWorkflow(ctx context.Context, body DefendNewWorkflowP
 	opts = slices.Concat(r.Options, opts)
 	path := "defend"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Use this endpoint to retrieve a specific event of a guardrail workflow
@@ -52,15 +52,15 @@ func (r *DefendService) GetEvent(ctx context.Context, workflowID string, eventID
 	opts = slices.Concat(r.Options, opts)
 	if workflowID == "" {
 		err = errors.New("missing required workflow_id parameter")
-		return
+		return nil, err
 	}
 	if eventID == "" {
 		err = errors.New("missing required event_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("defend/%s/events/%s", workflowID, eventID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Use this endpoint to retrieve the details for a specific defend workflow
@@ -68,11 +68,11 @@ func (r *DefendService) GetWorkflow(ctx context.Context, workflowID string, quer
 	opts = slices.Concat(r.Options, opts)
 	if workflowID == "" {
 		err = errors.New("missing required workflow_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("defend/%s", workflowID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	return res, err
 }
 
 // Use this endpoint to submit a model input and output pair to a workflow for
@@ -86,7 +86,7 @@ func (r *DefendService) SubmitAndStreamEventStreaming(ctx context.Context, workf
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "text/event-stream")}, opts...)
 	if workflowID == "" {
 		err = errors.New("missing required workflow_id parameter")
-		return
+		return ssestream.NewStream[string](nil, err)
 	}
 	path := fmt.Sprintf("defend/%s/events?stream=true", workflowID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &raw, opts...)
@@ -99,11 +99,11 @@ func (r *DefendService) SubmitEvent(ctx context.Context, workflowID string, body
 	opts = slices.Concat(r.Options, opts)
 	if workflowID == "" {
 		err = errors.New("missing required workflow_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("defend/%s/events", workflowID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Use this endpoint to update an existing defend workflow if its details change.
@@ -111,11 +111,11 @@ func (r *DefendService) UpdateWorkflow(ctx context.Context, workflowID string, b
 	opts = slices.Concat(r.Options, opts)
 	if workflowID == "" {
 		err = errors.New("missing required workflow_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("defend/%s", workflowID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 type DefendCreateResponse struct {

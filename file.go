@@ -40,7 +40,7 @@ func (r *FileService) Upload(ctx context.Context, body FileUploadParams, opts ..
 	opts = slices.Concat(r.Options, opts)
 	path := "files/upload"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 type FileResponse struct {
