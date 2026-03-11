@@ -39,7 +39,7 @@ func TestUserAgentHeader(t *testing.T) {
 			},
 		}),
 	)
-	client.Defend.NewWorkflow(context.Background(), deeprails.DefendNewWorkflowParams{
+	_, _ = client.Defend.NewWorkflow(context.Background(), deeprails.DefendNewWorkflowParams{
 		ImprovementAction: deeprails.F(deeprails.DefendNewWorkflowParamsImprovementActionFixit),
 		Name:              deeprails.F("Push Alert Workflow"),
 		ThresholdType:     deeprails.F(deeprails.DefendNewWorkflowParamsThresholdTypeCustom),
