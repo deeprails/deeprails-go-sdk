@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.24.1 (2026-03-17)
+
+Full Changelog: [v0.24.0...v0.24.1](https://github.com/deeprails/deeprails-go-sdk/compare/v0.24.0...v0.24.1)
+
+### Chores
+
+* **internal:** minor cleanup ([7425609](https://github.com/deeprails/deeprails-go-sdk/commit/742560908e438554e224c23f2a60d81ca3b6fafb))
+* **internal:** tweak CI branches ([c061dc7](https://github.com/deeprails/deeprails-go-sdk/commit/c061dc72678d6be8215964458c0ce40597118e8d))
+* **internal:** use explicit returns ([4d6d460](https://github.com/deeprails/deeprails-go-sdk/commit/4d6d4609e1d2d9c359b4ef661c9d067825daef3b))
+* **internal:** use explicit returns in more places ([32a8269](https://github.com/deeprails/deeprails-go-sdk/commit/32a8269600ea9db51130d3c8ec82bf1cd4598927))
+
 ## 0.24.0 (2026-03-10)
 
 Full Changelog: [v0.23.0...v0.24.0](https://github.com/deeprails/deeprails-go-sdk/compare/v0.23.0...v0.24.0)
