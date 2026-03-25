@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.24.2 (2026-03-25)
+
+Full Changelog: [v0.24.1...v0.24.2](https://github.com/deeprails/deeprails-go-sdk/compare/v0.24.1...v0.24.2)
+
+### Chores
+
+* **ci:** skip lint on metadata-only changes ([3ff68ab](https://github.com/deeprails/deeprails-go-sdk/commit/3ff68abc5d8aedba902f05d4e5befcfec056f00c))
+* **internal:** update gitignore ([d5247cd](https://github.com/deeprails/deeprails-go-sdk/commit/d5247cd9aed8c808aaf37e654c3b3b546a7eedb9))
+
 ## 0.24.1 (2026-03-17)
 
 Full Changelog: [v0.24.0...v0.24.1](https://github.com/deeprails/deeprails-go-sdk/compare/v0.24.0...v0.24.1)
