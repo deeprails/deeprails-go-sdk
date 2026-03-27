@@ -1,5 +1,23 @@
 # Changelog
 
+## 0.25.0 (2026-03-27)
+
+Full Changelog: [v0.24.2...v0.25.0](https://github.com/deeprails/deeprails-go-sdk/compare/v0.24.2...v0.25.0)
+
+### Features
+
+* **internal:** support comma format in multipart form encoding ([bbde751](https://github.com/deeprails/deeprails-go-sdk/commit/bbde75142aa908940f38aa50bbee06dce4d93d6b))
+
+
+### Bug Fixes
+
+* prevent duplicate ? in query params ([61017eb](https://github.com/deeprails/deeprails-go-sdk/commit/61017eb1d2a3db19fc7fccf5cdf208def7e9e67a))
+
+
+### Chores
+
+* remove unnecessary error check for url parsing ([507cd83](https://github.com/deeprails/deeprails-go-sdk/commit/507cd834d3c532db4f3c7b9215b5d696eb5b55d8))
+
 ## 0.24.2 (2026-03-25)
 
 Full Changelog: [v0.24.1...v0.24.2](https://github.com/deeprails/deeprails-go-sdk/compare/v0.24.1...v0.24.2)
