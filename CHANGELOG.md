@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.25.1 (2026-03-28)
+
+Full Changelog: [v0.25.0...v0.25.1](https://github.com/deeprails/deeprails-go-sdk/compare/v0.25.0...v0.25.1)
+
+### Chores
+
+* **ci:** support opting out of skipping builds on metadata-only commits ([3f0a8d3](https://github.com/deeprails/deeprails-go-sdk/commit/3f0a8d3c9ebc7ec209ddadf2f4a87c4b203cc031))
+
 ## 0.25.0 (2026-03-27)
 
 Full Changelog: [v0.24.2...v0.25.0](https://github.com/deeprails/deeprails-go-sdk/compare/v0.24.2...v0.25.0)
