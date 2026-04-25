@@ -25,7 +25,7 @@ type Client struct {
 // DefaultClientOptions read from the environment (DEEPRAILS_API_KEY,
 // DEEP_RAILS_BASE_URL). This should be used to initialize new clients.
 func DefaultClientOptions() []option.RequestOption {
-	defaults := []option.RequestOption{option.WithEnvironmentV1()}
+	defaults := []option.RequestOption{option.WithHTTPClient(defaultHTTPClient()), option.WithEnvironmentV1()}
 	if o, ok := os.LookupEnv("DEEP_RAILS_BASE_URL"); ok {
 		defaults = append(defaults, option.WithBaseURL(o))
 	}
