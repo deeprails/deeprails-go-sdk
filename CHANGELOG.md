@@ -1,5 +1,27 @@
 # Changelog
 
+## 0.26.0 (2026-05-13)
+
+Full Changelog: [v0.25.0...v0.26.0](https://github.com/deeprails/deeprails-go-sdk/compare/v0.25.0...v0.26.0)
+
+### Features
+
+* **go:** add default http client with timeout ([fe4ca7c](https://github.com/deeprails/deeprails-go-sdk/commit/fe4ca7ce2a43a3ef5f659c7f0704a4b079179e9a))
+* support setting headers via env ([8f81541](https://github.com/deeprails/deeprails-go-sdk/commit/8f81541b0ef3f8f9a7b859c265e3005e8dc6ef2b))
+
+
+### Bug Fixes
+
+* **go:** avoid panic when http.DefaultTransport is wrapped ([c9d72fe](https://github.com/deeprails/deeprails-go-sdk/commit/c9d72fea70f685a576b3807bf031256072d7b42d))
+
+
+### Chores
+
+* avoid embedding reflect.Type for dead code elimination ([c9182f3](https://github.com/deeprails/deeprails-go-sdk/commit/c9182f3b11b4185c32d9d2353f27088d0f3f54e3))
+* **ci:** support opting out of skipping builds on metadata-only commits ([3f0a8d3](https://github.com/deeprails/deeprails-go-sdk/commit/3f0a8d3c9ebc7ec209ddadf2f4a87c4b203cc031))
+* **internal:** more robust bootstrap script ([5f30144](https://github.com/deeprails/deeprails-go-sdk/commit/5f30144a0c77488efd86a26e18774b3bfcdc213c))
+* redact api-key headers in debug logs ([243c059](https://github.com/deeprails/deeprails-go-sdk/commit/243c059adbb30060bb3b62cd20920c76be68ff60))
+
 ## 0.25.0 (2026-03-27)
 
 Full Changelog: [v0.24.2...v0.25.0](https://github.com/deeprails/deeprails-go-sdk/compare/v0.24.2...v0.25.0)
